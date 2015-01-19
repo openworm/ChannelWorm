@@ -16,14 +16,14 @@ The aim of the **ChannelWorm** is to integrate information and tools related to 
   * Check if the simulation fits the biological boundaries
 
 ## Some use cases
-  * I want to know which type of ion channels do we have in C. elegans!
-  * I want to know in which cell which gene encodes which protein/subtype of which ion chennel!
+  * I want to know which type of ion channels we have in C. elegans!
+  * I want to know in which cell which gene encodes which protein/subtype of which ion channel!
   * I want to view, build, or validate a model of an ion channel
   * I want to check references that data or models are based on
   * I have some graphs/data from a patch clamp experiment and want to build a HH model
   * I want to have a customized version of an ion channel model (e.g. of a mutant)
   * I want to run my customized model of ion channel(s) (along with other ion channels) in a simulation environment
-  * I want to simulate a path clamp experiment with known mutatins in genes encoding ion channels in C. elegans
+  * I want to simulate a path clamp experiment with known mutations in genes encoding ion channels in C. elegans
   * I want to simulate ion channel diseases (channelopathies), and investigate defects in neuromuscular transmission, C. elegans movement, etc.
 
 **Note:** All the models are generated in [NeuroML2](https://github.com/NeuroML) format and all the simulations in [LEMS](https://github.com/LEMS), and the verified models can be run in the [Geppetto](https://github.com/openworm/org.geppetto) simulation platform.
