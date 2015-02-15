@@ -1,4 +1,6 @@
 # ChannelWorm
+
+[![Join the chat at https://gitter.im/VahidGh/ChannelWorm](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/VahidGh/ChannelWorm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 The aim of the **ChannelWorm** is to integrate information and tools related to modeling ion channels in C. elegans for the [OpenWorm Project](https://github.com/openworm).
 
 ## Objectives
