@@ -11,7 +11,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-
+   intro
+   infoMgmt
+   modeling
+   simulation
+   
 
 Indices and tables
 ==================
