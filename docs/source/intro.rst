@@ -40,7 +40,7 @@ regulate protein function [3]_.
 
 ChannelWorm
 ===========
-Due to it's simplicity, C. elegans is one of the ideal organisms for modeling ion channels and related functionalities.
+Due to it's simplicity, C. elegans is an ideal organisms for modeling ion channels and related functionalities.
 The aim of the **ChannelWorm** is to integrate information and tools related to modeling ion channels in C. elegans
 for the `OpenWorm Project <https://github.com/openworm>`_. Here we use the Hodgkin Huxley approach for modeling Ion channel 
 kinetics and simulating action potentials in excitable cells in C. elegans (see `this tutorial <http://hodgkin-huxley-tutorial.readthedocs.org/en/latest/_static/Tutorial.html>`_).
