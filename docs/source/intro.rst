@@ -46,7 +46,7 @@ for the `OpenWorm Project <https://github.com/openworm>`_. Here we use the Hodgk
 kinetics and simulating action potentials in excitable cells in C. elegans (see `this tutorial <http://hodgkin-huxley-tutorial.readthedocs.org/en/latest/_static/Tutorial.html>`_).
 
 Objectives
-----------
+===========
 
 * **Information Management**
 
@@ -67,7 +67,7 @@ Objectives
   * Check if the simulation fits the biological boundaries
 
 Some use cases
---------------
+==============
 
 * I want to know which type of ion channels we have in C. elegans!
 * I want to know in which cell which gene encodes which protein/subtype of which ion channel!
@@ -80,13 +80,16 @@ Some use cases
 * I want to simulate ion channel diseases (channelopathies), and investigate defects in neuromuscular transmission, C. elegans movement, etc.
 
 Implementation
---------------
+==============
 
 All the models are generated in `NeuroML2 <https://github.com/NeuroML>`_ format and all the simulations in 
 `LEMS <https://github.com/LEMS>`_, and the verified models can be run in the `Geppetto <https://github.com/openworm/org.geppetto>`_ 
 simulation platform.
 
 
+
+References
+----------
 .. [1] Hille, Bertil (1984). Ionic Channels of Excitable Membranes.
 .. [2] Hobert O. The neuronal genome of Caenorhabditis elegans (August 13, 2013), WormBook, ed. The C. elegans Research Community, WormBook, doi/10.1895/wormbook.1.161.1, http://www.wormbook.org.
 .. [3] Kevin Strange. From Genes to Integrative Physiology: Ion Channel and Transporter Biology in Caenorhabditis elegans, Physiological Reviews, Apr 2003, 83 (2) 377-415; DOI: 10.1152/physrev.00025.2002
