@@ -5,7 +5,8 @@ Information Management
 In order to integrate data related to ion channels in C. elegans from different sources, structure data for better 
 representation, ease of access from different scripts and APIs, and finally keep them up-to-date, an information management 
 system is needed.
-This data includes:
+
+Data includes:
 
 * Description about the ion channel
 * Genetics, Gene Ontology, sequences, and locations
@@ -49,12 +50,12 @@ The database stores data for generating model files and together with annotation
 PyOpenWorm supports `RDF <http://pyopenworm.readthedocs.org/en/alpha0.5/process.html#why-rdf>`_ which facilitates integration of data from disparate sources.
 For example, it is possible to ask PyOpenWorm to list all the ion channels of a muscle cell named MDL08, with evidences:
 
-  >>>muscle = PyOpenWorm.Muscle('MDL08')
-  >>>muscle.channels()
-  ['EGL-19', 'SHK-1', 'SHL-1']
-  #look up what reference says this muscle has an ion channel EGL-19
-  >>>muscle.get_reference(0,'EGL-19')
-  ['http://dx.doi.org/10.1083%2Fjcb.200203055']
+    muscle = PyOpenWorm.Muscle('MDL08')
+    muscle.channels()
+    ['EGL-19', 'SHK-1', 'SHL-1']
+    #look up what reference says this muscle has an ion channel EGL-19
+    muscle.get_reference(0,'EGL-19')
+    ['http://dx.doi.org/10.1083%2Fjcb.200203055']
 
 Data Representation
 ===================
@@ -62,8 +63,10 @@ Final models are represented in `NuroML2 format <http://www.neuroml.org/neuromlv
 for defining and exchanging descriptions of neuronal cell and network models. You can find an example for this representation `here <https://github.com/VahidGh/ChannelWorm/blob/master/models/Kv1.channel.nml>`_.
 Single channel kinetics described by a NeuroML file, then could be integrated with other channels and properties in a `LEMS <http://www.neuroml.org/lems_dev>`_ format for final simulations (`LEMS sample file <https://github.com/openworm/muscle_model/blob/master/NeuroML2/LEMS_NeuronMuscle.xml>`_).
 For more information see `this tutorial <https://github.com/openworm/hodgkin_huxley_tutorial/>`_.
+
 In addition to `jNeuroML <https://github.com/NeuroML/jNeuroML>`_ these representation files could be used in `different tools <http://www.neuroml.org/tool_support>`_ that support neuronal simulation.
 `Here <https://github.com/openworm/muscle_model/#21-simulation-of-muscle-cell-ion-channels>`_ you can find an example for a simulation of muscle cell ion channels in C. elegans.
+
 Finally an `XML file <https://raw.githubusercontent.com/dkruchinin/org.geppetto.samples/muscle_model/LEMS/MuscleModel/GEPPETTO.xml>`_ could be generated for running the simulation under the `Geppetto simulator <https://github.com/openworm/org.geppetto>`_.
 
 Update Management
