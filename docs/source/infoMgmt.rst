@@ -17,11 +17,11 @@ This data includes:
 * Available models and simulations
 
   * Model type (from patch clamp studies, or estimation from known homologs)
-  * Experimental conditions (cell type, temprature, Reversal potential, age of the cell, etc)
-  * Channel Properties (conductance, activation/inactivation parameters, etc)
-  * Cells and synapses properties (membrane capacitance, surface area, external ion concentration, etc)
+  * Experimental conditions (cell type, temperature, Reversal potential, age of the cell, etc.)
+  * Channel Properties (conductance, activation/inactivation parameters, etc.)
+  * Cells and synapses properties (membrane capacitance, surface area, external ion concentration, etc.)
   * Graphs demonstrating kinetics
-  * representation file for each model/simulation
+  * Representation files for each model/simulation
 
 * Evidence(s) for all the assertions
 
@@ -30,16 +30,16 @@ Data Collection
 In the first attempt, biological information about each ion channel obtained from the `WormBase <http://www.wormbase.org>`_ database which is available in 
 `this spread sheet file <https://docs.google.com/spreadsheet/ccc?key=0Avt3mQaA-HaMdEd6S0dfVnE4blhaY2ZIWDBvZFNjT0E#gid=1>`_. Every tuple in the spread sheet has some links to its WormBase entry that could be used for more information.
 
-.. image:: https://drive.google.com/open?id=0B4qffTA1q81rUUw3ZlplY2ppTzA&authuser=0
-.. image:: https://drive.google.com/open?id=0B4qffTA1q81raXUySG9vVTRXYTg 
+.. image:: https://drive.google.com/uc?export=download&id=0B4qffTA1q81rUUw3ZlplY2ppTzA&authuser=0
+.. image:: https://drive.google.com/uc?export=download&id=0B4qffTA1q81raXUySG9vVTRXYTg 
 
-In the *ion channels with properties* section, you can find properties, such as type, subtype, kinetic properties, etc for every ion channel.
+In the *ion channels with properties* section, you can find properties, such as type, subtype, kinetic properties, etc. for every ion channel.
 
-.. image:: https://drive.google.com/open?id=0B4qffTA1q81rNnBYYjhlY2NVMmc
+.. image:: https://drive.google.com/uc?export=download&id=0B4qffTA1q81rNnBYYjhlY2NVMmc
 
 The *references* column in this table, contains links which by following, you can access reference publications on *Mendeley*.
 
-.. image:: https://drive.google.com/open?id=0B4qffTA1q81rbkZMVUhmXzVHTlE
+.. image:: https://drive.google.com/uc?export=download&id=0B4qffTA1q81rbkZMVUhmXzVHTlE
 
 
 Data Management
