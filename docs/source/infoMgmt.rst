@@ -48,7 +48,7 @@ Data Management
 To keep data in a more structured and easy-to-access way, we use the `PyOpenWorm <https://github.com/openworm/PyOpenWorm>`_, from the OpenWorm project
 The database stores data for generating model files and together with annotations describing the origins of the data.
 PyOpenWorm supports `RDF <http://pyopenworm.readthedocs.org/en/alpha0.5/process.html#why-rdf>`_ which facilitates integration of data from disparate sources.
-For example, it is possible to ask PyOpenWorm to list all the ion channels of a muscle cell named MDL08, with evidences:
+For example, it is possible to ask PyOpenWorm to list all the ion channels of a muscle cell named MDL08, with evidences::
 
     muscle = PyOpenWorm.Muscle('MDL08')
     muscle.channels()
