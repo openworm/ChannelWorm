@@ -23,7 +23,7 @@ have been lost in the C. elegans genome, with the most notable absentees being s
 and HCN channels.
 
 
-.. image:: https://drive.google.com/open?id=0B4qffTA1q81rZkhCaTNWVk5mYjQ
+.. image:: https://drive.google.com/uc?export=download&id=0B4qffTA1q81rZkhCaTNWVk5mYjQ
 
 
 Ion channels, and associated regulatory machinery have been identified in genetic screens of various processes in C. elegans
