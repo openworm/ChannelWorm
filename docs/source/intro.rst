@@ -11,16 +11,14 @@ tissues. Ion channels are considered to be one of the two traditional classes of
 known as ion transporters (including the sodium-potassium pump, sodium-calcium exchanger, and sodium-glucose transport 
 proteins, amongst others) [1]_ .
 
-Most plasma membrane ion channels in the nervous system come in four distinct topologies which likely evolved independently:[2]_ 
+Most plasma membrane ion channels in the nervous system come in four distinct topologies which likely evolved independently [2]_ :
 
 * The voltage-gated family of potassium, sodium and calcium channels
 * The cysteine-loop family of ligand-gated ion channels
 * Ionotropic glutamate receptors
 * P2X and ASIC channels
 
-The C. elegans genome codes for representatives of all the main families. Within specific families, individual member 
-have been lost in the C. elegans genome, with the most notable absentees being sodium-gated ion channels, P2X channels 
-and HCN channels.
+The C. elegans genome codes for members of all the main families of ion channels. Within specific families, there are some individual members missing, the most notable being sodium-gated ion channels, P2X channels and HCN channels.
 
 
 .. image:: https://drive.google.com/uc?export=download&id=0B4qffTA1q81rZkhCaTNWVk5mYjQ
@@ -30,11 +28,14 @@ Ion channels, and associated regulatory machinery have been identified in geneti
 such as locomotion, gonad development, mechanosensory and osmotic avoidance behavior, chemotaxis and thermotaxis, resistance 
 to fluoride ions, defecation, egg laying, toxin and heavy metal sensitivity, programmed cell death, neuronal degeneration, 
 and abnormal catecholamine levels.
+
 A wealth of powerful molecular tools and online databases are available to study ion channels and transporter functional 
-genomics in C. elegans. Conceptually, functional genomic studies can be divided into two approaches. The gene-driven approach 
-focuses on identification, cloning, and characterization of genes. Gene characterization involves expression and structure-function 
-studies and determination of where and when a gene is expressed in the organism. The phenotype-driven approach seeks to 
-determine the physiological roles of genes from the cellular to whole animal level and to identify the mechanisms that 
+genomics in C. elegans. Conceptually, functional genomic studies can be divided into two approaches. 
+
+The gene-driven approach focuses on identification, cloning, and characterization of genes. Gene characterization involves expression and structure-function 
+studies and determination of where and when a gene is expressed in the organism. 
+
+The phenotype-driven approach seeks to determine the physiological roles of genes from the cellular to whole animal level, and to identify the mechanisms that 
 regulate protein function [3]_.
 
 
@@ -42,13 +43,13 @@ ChannelWorm
 ===========
 Due to its simplicity and wealth of data available, C. elegans is an ideal organism for modeling ion channels and related functionalities.
 The aim of the **ChannelWorm** is to integrate information and tools related to modeling ion channels in C. elegans
-for the `OpenWorm Project <https://github.com/openworm>`_. Here we use the Hodgkin Huxley approach for modeling Ion channel 
+for the `OpenWorm Project <https://github.com/openworm>`_. Here we use the Hodgkin Huxley approach for modeling ion channel 
 kinetics and simulating action potentials in excitable cells in C. elegans (see `this tutorial <http://hodgkin-huxley-tutorial.readthedocs.org/en/latest/_static/Tutorial.html>`_).
 
 Objectives
 ===========
 
-* **Information Management**
+* **Information management**
 
   * Integrate and structure data related to ion channels in C. elegans, from genotype to phenotype
   * Develop APIs for accessing data
