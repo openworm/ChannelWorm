@@ -21,7 +21,7 @@ Data includes:
 * Available models and simulations
 
   * Model type (from patch clamp studies, or estimation from known homologs)
-  * Experimental conditions (cell type, temperature, Reversal potential, age of the cell, etc.)
+  * Experimental conditions (cell type, temperature, Reversal potential, age of the organism, etc.)
   * Channel Properties (conductance, activation/inactivation parameters, etc.)
   * Cell and synapse properties (membrane capacitance, surface area, external ion concentration, etc.)
   * Graphs demonstrating kinetics
