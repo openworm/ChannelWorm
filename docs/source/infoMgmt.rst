@@ -7,7 +7,7 @@ An information management system is needed in order to:
 * Integrate data related to ion channels in C. elegans from different sources
 * Structure data for better representation
 * Ease access to the data through scripts/APIs
-* Have an up-to-date source of information/data
+* Keep data up-to-date
 
 Data includes:
 
