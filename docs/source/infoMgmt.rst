@@ -3,10 +3,11 @@ Information Management
 ************************
 
 An information management system is needed in order to:
+
 * Integrate data related to ion channels in C. elegans from different sources
 * Structure data for better representation
 * Ease access to the data through scripts/APIs
-* Have an up-to-date source of information/data
+* Keep data up-to-date
 
 Data includes:
 
@@ -20,7 +21,7 @@ Data includes:
 * Available models and simulations
 
   * Model type (from patch clamp studies, or estimation from known homologs)
-  * Experimental conditions (cell type, temperature, Reversal potential, age of the cell, etc.)
+  * Experimental conditions (cell type, temperature, Reversal potential, age of the organism, etc.)
   * Channel Properties (conductance, activation/inactivation parameters, etc.)
   * Cell and synapse properties (membrane capacitance, surface area, external ion concentration, etc.)
   * Graphs demonstrating kinetics
