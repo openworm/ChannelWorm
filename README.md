@@ -33,3 +33,5 @@ The aim of the **ChannelWorm** is to integrate information and tools related to 
 Click [**here**](http://channelworm.readthedocs.org/en/latest/intro.html) for more information.
  
  [![Join the chat at https://gitter.im/VahidGh/ChannelWorm](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/VahidGh/ChannelWorm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+ 
+ [![Stories in Ready](https://badge.waffle.io/vahidgh/channelworm.png?label=ready&title=Ready)](https://waffle.io/vahidgh/channelworm)
