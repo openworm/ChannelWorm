@@ -45,11 +45,8 @@ class ReturnsNumber(sciunit.Capability):
 class RandomSample(sciunit.Model, ReturnsNumber):
     """ Generates a random number between 1 and 10. """
 
-    def __init__(self):
-        self.return_num()
-
     def return_num(self):
-        return random.randint(1, 10)
+        return random.randint()
 
 # create a class of Test
 class SingleNumberTest(sciunit.Test):
@@ -61,7 +58,7 @@ class SingleNumberTest(sciunit.Test):
     def generate_prediction(self, model):
         return model.return_num()
 
-    score_type = BooleanScore
+    score_type = sciunit.scores.BooleanScore
 
     def compute_score(self, observation, prediction):
         return prediction == observation
@@ -70,6 +67,6 @@ class SingleNumberTest(sciunit.Test):
 ten_test = SingleNumberTest(10)
 
 # create a model
-random_model = RandomSample()
+five_model = sciunit.models.ConstModel(5)
 
-print ten_test.judge(random_model)
+print ten_test.judge(five_model)
