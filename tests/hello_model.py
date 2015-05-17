@@ -49,12 +49,13 @@ class RandomSample(sciunit.Model, ReturnsNumber):
         self.return_num()
 
     def return_num(self):
-        return random.randint(1, 10)
+        return random.randint(1, 3)
 
 # create a class of Test
 class SingleNumberTest(sciunit.Test):
-    def __init__(self, name=None):
-        super(SingleNumberTest, self).__init__(None, name=name)
+    """Tests that a single a single predicted number is equal to an observed one."""
+    def __init__(self, observation=None, name=None):
+        sciunit.Test.__init__(self, observation, name)
 
     required_capabilities = ReturnsNumber,
 
@@ -67,9 +68,10 @@ class SingleNumberTest(sciunit.Test):
         return self.score_type(prediction == observation)
 
 # create an instance of a test
-ten_test = SingleNumberTest(10)
+ten_test = SingleNumberTest(3)
 
 # create a model
 random_model = RandomSample()
 
+# print test results
 print ten_test.judge(random_model)
