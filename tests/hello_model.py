@@ -64,7 +64,7 @@ class SingleNumberTest(sciunit.Test):
     score_type = BooleanScore
 
     def compute_score(self, observation, prediction):
-        return prediction == observation
+        return self.score_type(prediction == observation)
 
 # create an instance of a test
 ten_test = SingleNumberTest(10)
