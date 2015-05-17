@@ -1,7 +1,5 @@
-site_name: ChannelWorm Docs
-
+site_name: ChannelWorm
 theme: readthedocs
-
 pages:
   - [index.md, Introduction]
   - [infoMgmt.md, Information Management]
