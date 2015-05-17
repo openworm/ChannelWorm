@@ -67,11 +67,16 @@ class SingleNumberTest(sciunit.Test):
     def compute_score(self, observation, prediction):
         return self.score_type(prediction == observation)
 
-# create an instance of a test
-ten_test = SingleNumberTest(3)
+def this_is_a_test():
+    # create an instance of a test
+    ten_test = SingleNumberTest(3)
 
-# create a model
-random_model = RandomSample()
+    # create a model
+    random_model = RandomSample()
 
-# print test results
-print ten_test.judge(random_model)
+    # convert the test result to a string (either "Pass" or "Fail")
+    # and compare it to "Pass"
+    # this test should pass one in three times
+    # NOTE: it might be better to have the `assert` statement inside another method,
+    # since comparing strings is rough (and would only work with booleans)
+    assert(str(ten_test.judge(random_model)) == "Pass")
