@@ -3,5 +3,5 @@ python:
   - "2.7"
 install:
   - pip install cypy
-  - pip install sciunit
+  - pip install git+https://github.com/scidash/sciunit.git
 script: nosetests
