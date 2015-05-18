@@ -36,13 +36,13 @@ These image files can then be processed by [digitization software](http://arohat
     * There will likely be a number of relevant figures in each paper you process.
 3. Download the image, and crop the relevant portion using image editing software.
     * In our example case we just right-click on the image, save it, and crop out 2B.
-      * [The result]()
+      * [The result](https://cloud.githubusercontent.com/assets/7369273/7684968/e5d974c4-fd64-11e4-9cf0-fae6656bc4eb.png)
 4. Navigate to the [WebPlotDigitizer](http://arohatgi.info/WebPlotDigitizer/app/?), select "file > load image" and upload the cropped image.
 5. Select the "2D (X-Y) Plot" type for I/V curves and the like, and put four points on the axes.
-    * Your end result should look [something like this]().
+    * Your end result should look [something like this](https://cloud.githubusercontent.com/assets/7369273/7684985/077c3422-fd65-11e4-915e-3cb3e9895f8e.png).
     * Use the arrow keys and the magnifying glass in the upper right to make sure the alignment is accurate.
 6. Now enter the values you selected on the axes.
-    * In our case, the values [looked like this]()
+    * In our case, the values [looked like this](https://cloud.githubusercontent.com/assets/7369273/7684983/03f827fc-fd65-11e4-8dc0-f433000a24ed.png)
 7. Now add a data point for each data point on the graph.
     * Your plot should look something like [this](https://cloud.githubusercontent.com/assets/6655104/6027361/b509831c-abf6-11e4-95a4-372b911533fb.png) by now.
 8. Finally, you can click "view data > graph in Plotly" to get something easily sharable with the community.
