@@ -1,10 +1,12 @@
 Digitization
 ============
 
-Digitized figures from papers in the literature will be used to validate the ion channel models of ChannelWorm.
+Digitized figures from papers in the literature will be used to validate and refine the ion channel models of ChannelWorm.
 
 For example, a study which conducts [patch clamp recordings](https://en.wikipedia.org/wiki/Patch_clamp) will produce data that describe electrical properties of ion channels.
 This data is valuable to anyone modeling these ion channels; we can use actual ion channel data to guide our efforts toward biological realism, and incorporate it in [confirming that we are modeling what we are intending to](validation/).
+
+If you want to help digitize some figures for this part of the OpenWorm project, check out the [detailed walkthrough](#Walkthrough-of-the-process) below.
 
 ## So why digitization?
 
@@ -30,7 +32,7 @@ These image files can then be processed by [digitization software](http://arohat
 
 1. Select a paper.
     * For example, let's use [this Jospin et al. article](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2173050/).
-    * [Here]() is a list of papers *you* can choose from
+    * [Here](https://drive.google.com/folderview?id=0B4qffTA1q81rfmhoZzBva2xKRTJIVTlhR2plYTF2S2JCNXBLODJWN09KUHU4X09FN0hEQlE&usp=sharing) is a list of papers *you* can choose from
 2. Select the figures that describe ion channel properties.
     * In our example, [figure 2B](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2173050/figure/fig2/) is looking promising.
     * There will likely be a number of relevant figures in each paper you process.
