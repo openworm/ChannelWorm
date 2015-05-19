@@ -5,3 +5,5 @@ pages:
   - [index.md, Introduction]
   - [information-management.md, Information Management]
   - [digitization.md, Digitization]
+  - [validation.md, Validation]
+  - [optimization.md, Optimization]
