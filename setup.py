@@ -6,10 +6,12 @@ setup(
     install_requires=[
         'cypy',
         'sciunit',
-        'PyOpenWorm'
+        'PyOpenWorm',
+        'PyNeuroML'
     ],
     dependency_links=[
         'git+https://github.com/scidash/sciunit.git#egg=sciunit',
-        'git+https://github.com/openworm/PyOpenWorm.git#egg=PyOpenWorm'
+        'git+https://github.com/openworm/PyOpenWorm.git#egg=PyOpenWorm',
+        'git+https://github.com/NeuroML/pyNeuroML.git#egg=PyNeuroML'
     ]
 )
