@@ -79,4 +79,4 @@ def this_is_a_test():
     # this test should pass one in three times
     # NOTE: it might be better to have the `assert` statement inside another method,
     # since comparing strings is rough (and would only work with booleans)
-    assert(str(ten_test.judge(random_model)) == "Pass")
+    assert(str(pass_test.judge(random_model)) == "Pass")
