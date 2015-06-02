@@ -11,11 +11,11 @@ class Generates_IV_Curve(sciunit.Capability, Receives_Current, Generates_Membran
 class Receives_Current(sciunit.Capability):
     """ This model can receive a current when simluated. """
 
-    def receives_current(self):
+    def receive_current(self):
         raise NotImplementedError("receives_current not implemented")
 
 class Generates_Membrane_Potential(sciunit.Capability):
     """ This model can produce a membrane potential when simluated. """
 
-    def generates_membrane_potential(self):
+    def generate_membrane_potential(self):
         raise NotImplementedError("generates_membrane_potential not implemented")
