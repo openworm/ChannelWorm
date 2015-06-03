@@ -79,8 +79,8 @@ class Initiator(object):
             self.bio_params['channel_params'].extend(['ca_half_i','alpha_ca','k_ca','T_ca','cdi_power'])
             self.bio_params['unit_chan_params'].extend(['M',' ','M','S',' '])
 
-            self.bio_params['min_val_channel'].extend([10e-9,  0.1, -10e-9, 0.5e-3, 1])
-            self.bio_params['max_val_channel'].extend([300e-9, 0.4, -150e-9,  20e-3,  1])
+            self.bio_params['min_val_channel'].extend([10e-9,  0.1, -10e-9, 0.5e-3,  1])
+            self.bio_params['max_val_channel'].extend([300e-9, 0.4, -150e-9, 20e-3,  1])
 
             #self.bio_params['min_val_channel'].extend([6.41889e-08, 0.282473, -1.00056e-08, 0.0115, 1])
             #self.bio_params['max_val_channel'].extend([6.41889e-08, 0.282473, -1.00056e-08, 0.0115, 1])

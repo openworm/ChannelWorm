@@ -59,7 +59,12 @@ class Simulator(object):
 
     def boltzmannFit(self,V,Vhalf,k):
 
-        return 1/(1 + exp((Vhalf - V)/k))
+        # Preventing exp() overflow error
+        #if -708 < (Vhalf - V)/k < 708:
+        try:
+            return 1/(1 + exp((Vhalf - V)/k))
+        except:
+            return 0 #TODO: Find a better way to handle this exception
 
 
     def VClamp(self):
