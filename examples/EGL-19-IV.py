@@ -14,8 +14,7 @@ if __name__ == '__main__':
     userData = dict()
 
     cwd=os.getcwd()
-    #cwd = '/home/vahid/MyProjects/ion_channels/'
-    csv_path = os.path.dirname(cwd)+'/examples/egl-19-IClamp-IV.csv'
+    csv_path = os.path.dirname(cwd)+'/egl-19-IClamp-IV.csv'
     ref = {'fig':'2B','doi':'10.1083/jcb.200203055'}
     x_var = {'type':'Voltage','unit':'V','toSI':1}
     y_var = {'type':'Current','unit':'A/F','toSI':1}
