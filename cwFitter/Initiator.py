@@ -64,8 +64,8 @@ class Initiator(object):
                                                ' ',
                                                ' ']
 
-        self.bio_params['min_val_channel'] = [1   , 0.01, -0.01, 0.01, 0.0001,  -0.001, 0.00001, 0.01, 2, 1]
-        self.bio_params['max_val_channel'] = [1000,  0.1,-0.001,  0.1,  0.001, -0.0001,   0.001,    1, 2, 1]
+        self.bio_params['min_val_channel'] = [100 , 0.01, -0.01, 0.01, 0.0001,  -0.001, 0.00001, 0.01, 2, 1]
+        self.bio_params['max_val_channel'] = [500 ,  0.1,-0.001,  0.1,  0.001, -0.0001,   0.001,    1, 2, 1]
 
         #self.bio_params['min_val_channel'] = [220, 0.049, -0.0033, 0.025, 0.006, -0.005, 0.00010, 0.150, 2, 1]
         #self.bio_params['max_val_channel'] = [220, 0.049, -0.0033, 0.025, 0.006, -0.005, 0.00010, 0.150, 2, 1]

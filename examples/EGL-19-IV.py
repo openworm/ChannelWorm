@@ -3,7 +3,10 @@ Example of using cwFitter to generate a HH model for EGL-19 Ca2+ ion channel
 Based on experimental data from doi:10.1083/jcb.200203055
 """
 import os.path
+import sys
 from neurotune import optimizers
+
+sys.path.append("..")
 from cwFitter.Initiator import *
 from cwFitter.Evaluator import *
 from cwFitter.Simulator import *
@@ -14,7 +17,7 @@ if __name__ == '__main__':
     userData = dict()
 
     cwd=os.getcwd()
-    csv_path = os.path.dirname(cwd)+'/egl-19-IClamp-IV.csv'
+    csv_path = os.path.dirname(cwd)+'/examples/egl-19-IClamp-IV.csv'
     ref = {'fig':'2B','doi':'10.1083/jcb.200203055'}
     x_var = {'type':'Voltage','unit':'V','toSI':1}
     y_var = {'type':'Current','unit':'A/F','toSI':1}
@@ -46,7 +49,7 @@ if __name__ == '__main__':
     candidates = optimizers.CustomOptimizerA(bio_params['max_val_channel'],
                                              bio_params['min_val_channel'],
                                              myEvaluator,
-                                             population_size=100,
+                                             population_size=300, #20 times larger than free parameters
                                              max_evaluations=600,
                                              num_selected=2,
                                              num_offspring=15,
@@ -56,7 +59,7 @@ if __name__ == '__main__':
                                              seeds=None,
                                              verbose=True)
 
-    best_candidate = candidates.optimize(do_plot=True, seed=123)
+    best_candidate = candidates.optimize(do_plot=True, seed=1234)
     best_candidate_params = dict(zip(bio_params['channel_params'],best_candidate))
     cell_var = dict(zip(bio_params['cell_params'],bio_params['val_cell_params']))
     mySimulator = Simulator(sim_params,best_candidate_params,cell_var)
