@@ -65,10 +65,12 @@ class Initiator(object):
                                                ' ']
 
         self.bio_params['min_val_channel'] = [100 , 0.01, -0.01, 0.01, 0.0001,  -0.001, 0.00001, 0.01, 2, 1]
+        # self.bio_params['min_val_channel'] = [1   , -0.01, -0.1, -0.1, 0.000001, -0.1, 0.00001, 0.00001, 2, 1]
         self.bio_params['max_val_channel'] = [500 ,  0.1,-0.001,  0.1,  0.001, -0.0001,   0.001,    1, 2, 1]
+        # self.bio_params['max_val_channel'] = [1000 , 0.01, -0.1,  0.1,      0.1, -0.00001,   1,       1, 2, 1]
 
-        #self.bio_params['min_val_channel'] = [220, 0.049, -0.0033, 0.025, 0.006, -0.005, 0.00010, 0.150, 2, 1]
-        #self.bio_params['max_val_channel'] = [220, 0.049, -0.0033, 0.025, 0.006, -0.005, 0.00010, 0.150, 2, 1]
+        # self.bio_params['min_val_channel'] = [220, 0.049, -0.0033, 0.025, 0.006, -0.005, 0.00010, 0.150, 2, 1]
+        # self.bio_params['max_val_channel'] = [220, 0.049, -0.0033, 0.025, 0.006, -0.005, 0.00010, 0.150, 2, 1]
 
         if self.bio_params['ion_type'] == 'Ca':
             self.bio_params['cell_params'].extend(['ca_con'])
@@ -82,8 +84,8 @@ class Initiator(object):
             self.bio_params['min_val_channel'].extend([10e-9,  0.1, -10e-9, 0.5e-3,  1])
             self.bio_params['max_val_channel'].extend([300e-9, 0.4, -150e-9, 20e-3,  1])
 
-            #self.bio_params['min_val_channel'].extend([6.41889e-08, 0.282473, -1.00056e-08, 0.0115, 1])
-            #self.bio_params['max_val_channel'].extend([6.41889e-08, 0.282473, -1.00056e-08, 0.0115, 1])
+            # self.bio_params['min_val_channel'].extend([6.41889e-08, 0.282473, -1.00056e-08, 0.0115, 1])
+            # self.bio_params['max_val_channel'].extend([6.41889e-08, 0.282473, -1.00056e-08, 0.0115, 1])
 
             # Boyle & Cohen: thiCa = 6.1e-6/(T_Ca*gCa)
             # NeuroML: thiCa = ca_rho / area_m2

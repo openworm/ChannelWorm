@@ -23,7 +23,12 @@ class Simulator(object):
 
         #Channel parameters
         self.c_mem = cell_params['C_mem']
-        self.g = channel_params['g'] #* self.c_mem
+        # if 'g_cap' in channel_params:
+        #     self.g = channel_params['g_cap'] * cell_params['C_mem']
+        # elif 'g_dens' in channel_params:
+        #     self.g = channel_params['g_dens'] * cell_params['C_mem'] / cell_params['spec_cap']
+        # else:
+        self.g = channel_params['g']
         self.e_rev = channel_params['e_rev']
         self.v_half_a = channel_params['v_half_a']
         self.v_half_i = channel_params['v_half_i']
@@ -46,6 +51,7 @@ class Simulator(object):
             self.ca_con = cell_params['ca_con']
             self.thi_ca = self.ca_con/(self.T_ca * self.g)
 
+        #TODO: change declaration with np.zeros((n,numtests))
         # Variable Declaration        
         self.V = list()
         self.I = list()
@@ -236,4 +242,48 @@ class Simulator(object):
         # plt.show()
 
         return xaxis,self.V,self.V_max,self.I_max
+
+
+    def IV(self,v_range,ca_range=[],units={'I':'A','V':'V'},plot=False):
+        """
+        Calculates current for a given voltage.
+
+        :param v_range: voltage vector including V points
+        :param ca_range: in case of Calcium ion channel, we would need the [Ca2+] range
+        :param units: dictionary of units for converting. current unit can be A, A/F, or pA, and voltage unit V, and mV
+        :param plot: if set to True, plot will be showed
+        :return: Current vector
+        """
+
+        V = v_range
+        Ca = ca_range
+
+        numpoints = len(V)
+        I = np.zeros(numpoints)
+
+        for i in range(0,numpoints):
+            I[i] = self.g * self.boltzmannFit(V[i], self.v_half_a, self.k_a)**self.a_power * self.boltzmannFit(V[i], self.v_half_i, self.k_i)**self.i_power * (V[i] - self.e_rev)
+
+            if len(Ca) > 0:
+                I[i] *= (1 + self.boltzmannFit(Ca[i], self.ca_half_i, self.k_ca) - 1) * self.alpha_ca**self.cdi_power
+
+
+        if plot == True:
+
+            if units['I'] == 'A/F':
+                for i in I: I[i] /= self.c_mem
+            elif units['I'] == 'pA':
+                for i in I: I[i] *= 1e12
+            if units['V'] == 'mV':
+                for i in V: V[i] *= 1e3
+
+
+            plt.plot(V,I, label='Current vs Voltage')
+            plt.ylabel('I (%s)'%(units['I']))
+            plt.xlabel('V (%s)'%(units['V']))
+            plt.grid('on')
+
+            plt.show()
+
+        return I
 

@@ -30,7 +30,7 @@ class Modelator(object):
             plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
             #plt.ylim(-80.0,80.0)
             #plt.xlim(0.0,1000.0)
-            plt.title("The Best Model fitted to data for voltage-clamp")
+            plt.title("The Best Model fitted to data for voltage-clamp using GA")
             plt.xlabel("Time (s)")
             plt.ylabel("Current (A)")
             plt.savefig("data_vs_candidate-VClamp.png",bbox_inches='tight',format='png')
@@ -53,7 +53,7 @@ class Modelator(object):
             plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
             #plt.ylim(-80.0,80.0)
             #plt.xlim(0.0,1000.0)
-            plt.title("The Best Model fitted to data for current-clamp")
+            plt.title("The Best Model fitted to data for current-clamp using GA")
             plt.xlabel("Time (s)")
             plt.ylabel("Voltage (V)")
             plt.savefig("data_vs_candidate-IClamp.png",bbox_inches='tight',format='png')
@@ -65,17 +65,17 @@ class Modelator(object):
         if 'IV' in sampleData:
 
             ref = sampleData['IV']['ref']
-            sample_plot, = plt.plot(sampleData['IV']['V'],sampleData['IV']['I'])
+            sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I'])
             if 'VClamp' in simData:
-                model_plot, = plt.plot(simData['VClamp']['V_max'],simData['VClamp']['I_max'])
+                model_plot, = plt.plot([round(x*1e3) for x in simData['VClamp']['V_max']],simData['VClamp']['I_max'])
             else:
-                model_plot, = plt.plot(simData['IClamp']['V_max'],simData['IClamp']['I_max'])
+                model_plot, = plt.plot([round(x*1e3) for x in simData['IClamp']['V_max']],simData['IClamp']['I_max'])
 
             plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
             #plt.ylim(-80.0,80.0)
             #plt.xlim(0.0,1000.0)
-            plt.title("The Best Model fitted to data for I/V curve")
-            plt.xlabel("Voltage (V)")
+            plt.title("The Best Model fitted to data for I/V curve using GA")
+            plt.xlabel("Voltage (mV)")
             plt.ylabel("Current (A/F)")
             plt.savefig("data_vs_candidate-IV.png",bbox_inches='tight',format='png')
 

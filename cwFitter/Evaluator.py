@@ -114,7 +114,7 @@ class Evaluator(object):
         N = 0
 
         for target_x in target[0]:
-            index = sim_x.index(min(sim_x, key=lambda x:abs(x-target_x))) #TODO: check if the distance is in a reasonable range
+            index = sim_x.index(min(sim_x, key=lambda x:abs(x-target_x))) #TODO: check if the distance is in a reasonable range (consider a sigma)
             if sim[1][index]:
                 #if there is a comparable data and it's the first time, initialize the cost value with zero to calculate the total cost
                 #else return a big number, to ignore this candidate

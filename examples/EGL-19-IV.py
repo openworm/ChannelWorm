@@ -5,12 +5,16 @@ Based on experimental data from doi:10.1083/jcb.200203055
 import os.path
 import sys
 from neurotune import optimizers
+from scipy.optimize import curve_fit
 
 sys.path.append("..")
 from cwFitter.Initiator import *
 from cwFitter.Evaluator import *
 from cwFitter.Simulator import *
 from cwFitter.Modelator import *
+
+def IV_act(V,g,Vhalf,k,a_power,e_rev):
+    return g * (1/(1 + np.exp((Vhalf - V)/k)))**int(a_power) * (V - e_rev)
 
 if __name__ == '__main__':
 
@@ -60,6 +64,10 @@ if __name__ == '__main__':
                                              verbose=True)
 
     best_candidate = candidates.optimize(do_plot=True, seed=1234)
+    # best_candidate = [189.66504757196532, 0.04619592278775828, -0.0015715032129984834, 0.03232782689368996,
+    #                   0.0009038799935426481, -0.0006996189007248855, 0.0002076054785033701, 0.5361776032113692,
+    #                   2.0, 1.0, 2.9942088447494227e-07, 0.18712673917281542, -1.1396759086697654e-07,
+    #                   0.014145060464901655, 1.0]
     best_candidate_params = dict(zip(bio_params['channel_params'],best_candidate))
     cell_var = dict(zip(bio_params['cell_params'],bio_params['val_cell_params']))
     mySimulator = Simulator(sim_params,best_candidate_params,cell_var)
@@ -76,4 +84,33 @@ if __name__ == '__main__':
 
     myModelator = Modelator(bio_params,sim_params).compare_plots(sampleData,bestSim,show=True)
 
+
+    # Fitting to the I/V curve and optimizing parameters
+    # According to the literature, the I/V plot coming from only the activation expression
+    vData = np.arange(-0.040, 0.080, 0.001)
+    p0 = [best_candidate_params['g'],best_candidate_params['v_half_a'],best_candidate_params['k_a'],best_candidate_params['a_power'],best_candidate_params['e_rev']]
+
+    Vsample = np.asarray(sampleData['IV']['V'])
+    Isample = np.asarray(sampleData['IV']['I'])
+    popt,pcov = curve_fit(IV_act, Vsample,Isample,p0)
+    Iopt = IV_act(vData,popt[0],popt[1],popt[2],popt[3],popt[4])
+
+
+    print p0
+    print popt
+
+    if 'VClamp' in bestSim:
+        model_plot, = plt.plot([x*1e3 for x in bestSim['VClamp']['V_max']],bestSim['VClamp']['I_max'], label = 'simulated using GA')
+    else:
+        model_plot, = plt.plot([x*1e3 for x in bestSim['IClamp']['V_max']],bestSim['IClamp']['I_max'])
+    sample, = plt.plot([x*1e3 for x in sampleData['IV']['V']],sampleData['IV']['I'], 'y', label = 'sample data')
+    # sim, =plt.plot(vData,I, label = 'simulated_curve')
+    opt, =plt.plot([x*1e3 for x in vData],Iopt, 'r', label = 'optimized with GA and curve_fit')
+    plt.legend([model_plot,sample,opt])
+    # plt.legend([model_plot,sample,opt,sim])
+    # plt.legend([sample,opt])
+    plt.title("The Best Model fitted to data using GA and SciPy curve_fit")
+    plt.ylabel('I (A/F)')
+    plt.xlabel('V (mV)')
+    plt.show()
 
