@@ -36,8 +36,8 @@ class Simulator(object):
         self.k_i = channel_params['k_i']
         self.T_a = channel_params['T_a']
         self.T_i = channel_params['T_i']
-        self.a_power = channel_params['a_power']
-        self.i_power = channel_params['i_power']
+        self.a_power = int(channel_params['a_power'])
+        self.i_power = int(channel_params['i_power'])
 
         if self.ion_type == 'Ca':
             self.Ca = list()
@@ -46,7 +46,7 @@ class Simulator(object):
             self.k_ca = channel_params['k_ca']
             self.T_ca = channel_params['T_ca']
             self.alpha_ca = channel_params['alpha_ca']
-            self.cdi_power = channel_params['cdi_power']
+            self.cdi_power = int(channel_params['cdi_power'])
 
             self.ca_con = cell_params['ca_con']
             self.thi_ca = self.ca_con/(self.T_ca * self.g)
@@ -70,7 +70,10 @@ class Simulator(object):
         try:
             return 1/(1 + exp((Vhalf - V)/k))
         except:
-            return 0 #TODO: Find a better way to handle this exception
+            if (Vhalf - V)/k > 0:
+                return 0
+            else:
+                return 1
 
 
     def VClamp(self):
