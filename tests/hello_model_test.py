@@ -49,7 +49,7 @@ class RandomSample(sciunit.Model, ReturnsNumber):
         self.return_num()
 
     def return_num(self):
-        return random.randint(1, 3)
+        return random.randint(3, 3)
 
 # create a class of Test
 class SingleNumberTest(sciunit.Test):
@@ -69,7 +69,7 @@ class SingleNumberTest(sciunit.Test):
 
 def this_is_a_test():
     # create an instance of a test
-    ten_test = SingleNumberTest(3)
+    pass_test = SingleNumberTest(3)
 
     # create a model
     random_model = RandomSample()
@@ -79,4 +79,4 @@ def this_is_a_test():
     # this test should pass one in three times
     # NOTE: it might be better to have the `assert` statement inside another method,
     # since comparing strings is rough (and would only work with booleans)
-    assert(str(ten_test.judge(random_model)) == "Pass")
+    assert(str(pass_test.judge(random_model)) == "Pass")
