@@ -7,7 +7,7 @@ setup(
         'cypy',
         'sciunit',
         'PyOpenWorm',
-        'PyNeuroML>=0.0.5'
+        'PyNeuroML'
     ],
     dependency_links=[
         'git+https://github.com/scidash/sciunit.git#egg=sciunit',
