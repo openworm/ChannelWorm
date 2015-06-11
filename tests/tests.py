@@ -1,4 +1,5 @@
 from sciunit import Test
+from capabilities import *
 
 class IV_Curve_Test(Test):
     """Compares the IV curve produced by a model to an observed curve"""
