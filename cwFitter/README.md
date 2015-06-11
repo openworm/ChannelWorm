@@ -1,0 +1,1 @@
+**cwFitter** (ChannelWorm Fitter): fits models to experimental patch clamp data
