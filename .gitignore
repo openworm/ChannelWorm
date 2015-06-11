@@ -65,3 +65,7 @@ pip-delete-this-directory.txt
 # JIRA plugin
 atlassian-ide-plugin.xml
 
+# generated on install
+dist/
+ChannelWorm.egg-info/
+
