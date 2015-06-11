@@ -4,14 +4,12 @@ Based on experimental data from doi:10.1083/jcb.200203055
 """
 import os.path
 import sys
-from neurotune import optimizers
 from scipy.optimize import curve_fit
 
+from neurotune import optimizers
+
 sys.path.append("..")
-from cwFitter.Initiator import *
-from cwFitter.Evaluator import *
-from cwFitter.Simulator import *
-from cwFitter.Modelator import *
+from ChannelWorm.cwFitter import *
 
 def IV_act(V,g,Vhalf,k,a_power,e_rev):
     return g * (1/(1 + np.exp((Vhalf - V)/k)))**int(a_power) * (V - e_rev)
