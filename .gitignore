@@ -9,6 +9,8 @@ __pycache__/
 # C extensions
 *.so
 
+# Mac-specific directory file
+.DS_Store
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
