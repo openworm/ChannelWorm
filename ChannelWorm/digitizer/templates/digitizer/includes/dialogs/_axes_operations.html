@@ -1,0 +1,360 @@
+{% load staticfiles %}
+<!-- Choose axes type -->
+<div id="axesList" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Choose Plot Type</h4>
+            </div>
+            <div class="modal-body ">
+                <table>
+                    <tr>
+                        <td align="left"><label><input type="radio" name="plotlisting" id="r_xy" checked> 2D (X-Y) Plot</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left"><label><input type="radio" name="plotlisting" id="r_bar"> 2D Bar Plot</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left"><label><input type="radio" name="plotlisting" id="r_polar"> Polar
+                            Diagram</label></td>
+                    </tr>
+                    <tr>
+                        <td align="left"><label><input type="radio" name="plotlisting" id="r_ternary"> Ternary
+                            Diagram</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left"><label><input type="radio" name="plotlisting" id="r_map"> Map With Scale
+                            Bar</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left"><label><input type="radio" name="plotlisting" id="r_image"> Image</label></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Align Axes" class="btn btn-primary" onclick="wpd.alignAxes.start();"/>
+                <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- XY Alignment -->
+<div id="xyAlignment" class="modal fade" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">X and Y Axes Calibration</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center">Enter X-values of the two points clicked on X-axis and Y-values of the two points
+                    clicked on
+                    Y-axes</p>
+
+                <table padding="10">
+                    <tr>
+                        <td></td>
+                        <td align="center" valign="bottom">Point 1</td>
+                        <td align="center" valign="bottom" width="80">Point 2</td>
+                        <td align="center" valign="bottom" width="82">Log Scale</td>
+                    </tr>
+                    <tr>
+                        <td align="center">X-Axis:</td>
+                        <td align="center"><input type="text" size="8" id="xmin" value="0" class="form-control"/></td>
+                        <td align="center"><input type="text" size="8" id="xmax" value="1" class="form-control"/></td>
+                        <td align="center"><input type="checkbox" id="xlog"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">Y-Axis:</td>
+                        <td align="center"><input type="text" size="8" id="ymin" value="0" class="form-control"/></td>
+                        <td align="center"><input type="text" size="8" id="ymax" value="1" class="form-control"/></td>
+                        <td align="center"><input type="checkbox" id="ylog"/></td>
+                    </tr>
+                </table>
+                <p align="center" class="footnote">*For dates, use yyyy/mm/dd format (e.g. 2013/10/23 or 2013/10). For
+                    exponents, enter values as 1e-3 for 10^-3.</p>
+
+                <p>&nbsp;</p>
+            </div>
+
+            <div class="modal-footer">
+                <input type="button" id="xybtn" value="OK" class="btn btn-primary" onclick="wpd.alignAxes.align();"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bar Alignment -->
+<div id="barAlignment" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Bar Chart Calibration</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center">Enter the values at the two points selected on the continuous axes along the bars</p>
+                <table padding="10">
+                    <tr>
+                        <td align="center" valign="bottom">Point 1</td>
+                        <td align="center" valign="bottom" width="80">Point 2</td>
+                        <td align="center" valign="Log Scale" width="80">Log Scale</td>
+                    </tr>
+                    <tr>
+                        <td align="center"><input type="text" size="8" id="bar-axes-p1" value="0"/></td>
+                        <td align="center"><input type="text" size="8" id="bar-axes-p2" value="1"/></td>
+                        <td align="center"><input type="checkbox" id="bar-axes-log-scale"/></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="OK" class="btn btn-primary" onclick="wpd.alignAxes.align();"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Map Alignment -->
+<div id="mapAlignment" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Scale Size</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center"><input type="text" size="6" id="scaleLength" value="1">
+                    <input type="text" size="6" id="scaleUnits" value="Units"/>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="OK" class="btn btn-primary" onclick="wpd.alignAxes.align();">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Polar Alignment -->
+<div id="polarAlignment" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Align Polar Axes</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center"><b>Point 1</b> <!-- <input type="checkbox" id="xlog"> Log Scale --></p>
+
+                <p align="center">R<sub>1</sub>: <input type="text" size="6" id="rpoint1" value="1"></p>
+
+                <p align="center">Θ<sub>1</sub>: <input type="text" size="6" id="thetapoint1" value="1"></p>
+
+                <p align="center"><b>Point 2</b> <!-- <input type="checkbox" id="xlog"> Log Scale --></p>
+
+                <p align="center">R<sub>2</sub>: <input type="text" size="6" id="rpoint2" value="1"></p>
+
+                <p align="center">Θ<sub>2</sub>: <input type="text" size="6" id="thetapoint2" value="1"></p>
+
+                <p align="center"><input type="radio" id="degrees" name="angleUnits" checked> Degrees <input
+                        type="radio"
+                        id="radians"
+                        name="angleUnits">
+                    Radians</p>
+
+                <p align="center"><input type="checkbox" id="clockwise"> Clockwise</p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="OK" class="btn btn-primary" onclick="wpd.alignAxes.align();">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ternary Alignment -->
+<div id="ternaryAlignment" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Axes Orientation</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center">
+                <table>
+                    <tr>
+                        <td><img src="{% static 'digitizer/images/ternarynormal.png' %}" class="img-thumbnail"></td>
+                        <td><img src="{% static 'digitizer/images/ternaryreverse.png' %}" class="img-thumbnail"></td>
+                    </tr>
+                    <tr>
+                        <td><p align="center"><input type="radio" name="ternaryOrientation" id="ternarynormal" checked>
+                            Normal
+                        </p></td>
+                        <td><p align="center"><input type="radio" name="ternaryOrientation" id="ternaryreverse"> Reverse
+                        </p>
+                        </td>
+                    </tr>
+                </table>
+                </p>
+                <p>Range of Variables</p>
+                <table>
+                    <tr>
+                        <td><p align="center"><input type="radio" id="range0to1" name="ternaryRange" checked> 0 to 1&nbsp;&nbsp;
+                        </p></td>
+                        <td><p align="center">&nbsp;&nbsp;<input type="radio" id="range0to100" name="ternaryRange"> 0 to
+                            100</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="OK" class="btn btn-primary" onclick="wpd.alignAxes.align();">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- XY Axes Calibration Instructions -->
+<div id="xyAxesInfo" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Align X-Y Axes</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center"><img src="{% static 'digitizer/images/xyaxes.png' %}"/></p>
+
+                <p align="center">Click four known points on the axes in the <font color="red">order shown in red</font>.
+                    Two on the
+                    X axis (X1, X2) and two on the Y axis (Y1, Y2).</p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Proceed" class="btn btn-primary" onclick="wpd.xyCalibration.pickCorners();">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bar Chart Axes Calibration Intructions -->
+<div id="barAxesInfo" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Align Bar Chart Axes</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center"><img src="{% static 'digitizer/images/barchart.png' %}" class="img-thumbnail"/></p>
+
+                <p align="center">Click on two known points (P1, P2) on the continuous axes along the bars</p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Proceed" class="btn btn-primary"
+                       onclick="wpd.barCalibration.pickCorners();"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Map Axes Calibration Instructions -->
+<div id="mapAxesInfo" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Align Map To Scale Bar</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center"><img src="{% static 'digitizer/images/map.png' %}" class="img-thumbnail"/></p>
+
+                <p align="center">Click on the two ends of the scale bar on the map.</p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Proceed" class="btn btn-primary"
+                       onclick="wpd.mapCalibration.pickCorners();">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Polar Axes Calibration Instructions -->
+<div id="polarAxesInfo" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Align Polar Axes</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center"><img src="{% static 'digitizer/images/polaraxes.png' %}" class="img-thumbnail"/></p>
+
+                <p align="center">Click on the center, followed by two known points.</p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Proceed" class="btn btn-primary"
+                       onclick="wpd.polarCalibration.pickCorners();">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ternary Axes Calibration Instructions -->
+<div id="ternaryAxesInfo" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Align Ternary Axes</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center"><img src="{% static 'digitizer/images/ternaryaxes.png' %}" class="img-thumbnail"/></p>
+
+                <p align="center">Click on the three corners in the order shown above.</p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Proceed" class="btn btn-primary"
+                       onclick="wpd.ternaryCalibration.pickCorners();">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Axes Transformation Equations -->
+<div id="axes-transformation-equations-window" class="modal fade" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Transformation Equations</h4>
+            </div>
+            <div class="modal-body ">
+                <p>The following relationships are being used to convert image pixels to data:</p>
+                <div id="axes-transformation-equation-list"></div>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Close" class="btn btn-primary"
+                       onclick="wpd.popup.close('axes-transformation-equations-window');"/>
+            </div>
+        </div>
+    </div>
+</div>

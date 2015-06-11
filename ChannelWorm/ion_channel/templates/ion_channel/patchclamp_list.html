@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block page_title %}{% trans 'Patch Clamp List' %}{% endblock %}
+{% block page_header %}{% trans 'Patch Clamp List' %}{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li class="active">{% trans 'Patch Clamps' %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="fa fa-pinterest-p"></i>
+
+                    <h3 class="box-title">{% trans 'Patch Clamp' %}</h3>
+
+                    <div class="box-tools pull-right">
+                        <a href="{% url 'ion_channel:patch-clamp-create' %}"
+                           class="btn btn-success btn-sm">
+                            <i class="fa fa-plus"></i>
+                            {% trans 'Add Patch Clamp' %}
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <table id="result_table" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>{% trans 'Type' %}</th>
+                            <th>{% trans 'Duration' %}</th>
+                            <th>{% trans 'Delta' %}</th>
+                            <th>{% trans 'Start Time' %}</th>
+                            <th>{% trans 'End Time' %}</th>
+                            <th>{% trans 'Protocol Start' %}</th>
+                            <th>{% trans 'Protocol End' %}</th>
+                            <th>{% trans 'Protocol Step' %}</th>
+                            <th>{% trans 'Experiment' %}</th>
+                            <th>{% trans 'Action' %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for patch_clamp in patch_clamps %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{ patch_clamp.type }}</td>
+                                <td>{{ patch_clamp.duration }}</td>
+                                <td>{{ patch_clamp.delta }}</td>
+                                <td>{{ patch_clamp.start_time }}</td>
+                                <td>{{ patch_clamp.end_time }}</td>
+                                <td>{{ patch_clamp.protocol_start }}</td>
+                                <td>{{ patch_clamp.protocol_end }}</td>
+                                <td>{{ patch_clamp.protocol_step }}</td>
+                                <td>{{ patch_clamp.experiment.doi }}</td>
+                                <td>
+                                    <a href="{% url 'ion_channel:patch-clamp-update' patch_clamp.id %}"
+                                       class="badge bg-light-blue">
+                                        <i class="fa fa-edit"></i>
+                                        {% trans 'Edit' %}
+                                    </a>
+                                    <a href="{% url 'ion_channel:patch-clamp-delete' patch_clamp.id %}"
+                                       class="badge bg-red">
+                                        <i class="fa fa-remove"></i>
+                                        {% trans 'Delete' %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block inline-script %}
+    <script type="text/javascript">
+        $("#result_table").dataTable();
+    </script>
+{% endblock %}

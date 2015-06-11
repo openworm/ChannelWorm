@@ -1,0 +1,50 @@
+<!--
+	WebPlotDigitizer - http://arohatgi.info/WebPlotDigitizer
+
+	Copyright 2010-2015 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+
+	This file is part of WebPlotDigitizer.
+
+    WebPlotDigitizer is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    WebPlotDigitizer is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
+-->
+{% load staticfiles %}
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="Description"
+          content="WebPlotDigitizer v3.8 - Web based tool to extract numerical data from plots and graph images."/>
+    <meta name="Keywords"
+          content="Plot, Digitizer, WebPlotDigitizer, Ankit Rohatgi, Extract Data, Convert Plots, XY, Polar, Ternary, Map, HTML5"/>
+    <meta name="Author" content="Ankit Rohatgi"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <title>WebPlotDigitizer - Copyright 2010-2015 Ankit Rohatgi</title>
+    <link rel="stylesheet" href="{% static 'digitizer/css/styles.css' %}" type="text/css" media="screen"/>
+
+    <link rel="stylesheet" href="{% static 'digitizer/thirdparty/bootstrap-3.3.4/css/bootstrap.min.css' %}" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="{% static 'digitizer/thirdparty/bootstrap-3.3.4/css/bootstrap-theme.css' %}" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="{% static 'digitizer/thirdparty/toastr/toastr.min.css' %}" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="{% static 'digitizer/css/cwd-style.css' %}" type="text/css" media="screen"/>
+
+{#    <script src="{% static 'ion_channel/js/combined.js' %}"></script>#}
+    {% include 'digitizer/includes/_scripts.html' %}
+    <script src="{% static 'digitizer/js/cwd.js' %}"></script>
+
+    <!-- thirdparty scripts -->
+    <script src="{% static 'digitizer/thirdparty/bootstrap-3.3.4/js/jquery.min.js' %}"></script>
+    <script src="{% static 'digitizer/thirdparty/bootstrap-3.3.4/js/bootstrap.js' %}"></script>
+    <script src="{% static 'digitizer/thirdparty/numeric-1.2.6.min.js' %}"></script>
+
+    <script src="{% static 'digitizer/thirdparty/toastr/toastr.js' %}"></script>
+</head>

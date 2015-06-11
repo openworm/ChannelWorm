@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block page_title %}{% trans 'Ion Channel Model List' %}{% endblock %}
+{% block page_header %}{% trans 'Ion Channel Model List' %}{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li class="active">{% trans 'Ion Channel Models' %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="fa fa-neuter"></i>
+
+                    <h3 class="box-title">{% trans 'Ion Channel Model' %}</h3>
+
+                    <div class="box-tools pull-right">
+                        <a href="{% url 'ion_channel:ion-channel-create' %}"
+                           class="btn btn-success btn-sm">
+                            <i class="fa fa-plus"></i>
+                            {% trans 'Add Ion Channel Model' %}
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <table id="result_table" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>{% trans 'Channel Type' %}</th>
+                            <th>{% trans 'Ion Type' %}</th>
+                            <th>{% trans 'Expressions' %}</th>
+                            <th>{% trans 'Experiment' %}</th>
+                            <th style="width: 200px">{% trans 'Action' %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ion_channel in ion_channel_models %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{ ion_channel.channel_type }}</td>
+                                <td>{{ ion_channel.ion_type }}</td>
+                                <td>{{ ion_channel.expressions }}</td>
+                                <td>{{ ion_channel.experiment.doi }}</td>
+                                <td>
+                                    <a href="{% url 'ion_channel:ion-channel-update' ion_channel.id %}"
+                                       class="badge bg-light-blue">
+                                        <i class="fa fa-edit"></i>
+                                        {% trans 'Edit' %}
+                                    </a>
+                                    <a href="{% url 'ion_channel:ion-channel-delete' ion_channel.id %}"
+                                       class="badge bg-red">
+                                        <i class="fa fa-remove"></i>
+                                        {% trans 'Delete' %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block inline-script %}
+    <script type="text/javascript">
+        $("#result_table").dataTable();
+    </script>
+{% endblock %}

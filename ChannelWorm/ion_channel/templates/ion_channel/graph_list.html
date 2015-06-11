@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block page_title %}{% trans 'Graph List' %}{% endblock %}
+{% block page_header %}{% trans 'Graph List' %}{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li class="active">{% trans 'Graphs' %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="fa fa-bar-chart"></i>
+
+                    <h3 class="box-title">{% trans 'Graph' %}</h3>
+
+                    <div class="box-tools pull-right">
+                        <a href="{% url 'ion_channel:graph-create' %}"
+                           class="btn btn-success btn-sm">
+                            <i class="fa fa-plus"></i>
+                            {% trans 'Add Graph' %}
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <table id="result_table" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>{% trans 'X Type' %}</th>
+                            <th>{% trans 'X Unit' %}</th>
+                            <th>{% trans 'Y Type' %}</th>
+                            <th>{% trans 'Y Unit' %}</th>
+                            <th>{% trans 'Ref Address' %}</th>
+                            <th>{% trans 'Ref Cpation' %}</th>
+                            <th>{% trans 'Patch Clamp' %}</th>
+                            <th>{% trans 'Experiment' %}</th>
+                            <th>{% trans 'Action' %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for graph in graphs %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ graph.x_axis_type }}</td>
+                                <td>{{ graph.x_axis_unit }}</td>
+                                <td>{{ graph.y_axis_type }}</td>
+                                <td>{{ graph.y_axis_unit }}</td>
+                                <td>{{ graph.figure_ref_address }}</td>
+                                <td>{{ graph.figure_ref_caption }}</td>
+                                <td>{{ graph.patch_clamp }}</td>
+                                <td>{{ graph.experiment }}</td>
+                                <td>
+                                    <a href="{% url 'ion_channel:graph-update' graph.id %}"
+                                       class="badge bg-light-blue">
+                                        <i class="fa fa-edit"></i>
+                                        {% trans 'Edit' %}
+                                    </a>
+                                    <a href="{% url 'ion_channel:graph-delete' graph.id %}"
+                                       class="badge bg-red">
+                                        <i class="fa fa-remove"></i>
+                                        {% trans 'Delete' %}
+                                    </a>
+                                    <a href="{% url 'digitizer:digitize' graph.id %}"
+                                       class="badge bg-green">
+                                        <i class="fa fa-file-text-o"></i>
+                                        {% trans 'Digitize' %}
+                                    </a>
+                                    <a href="{% url 'ion_channel:graph-data-index' graph.id %}"
+                                       class="badge bg-yellow">
+                                        <i class="fa fa-file-text-o"></i>
+                                        {% trans 'Series' %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block inline-script %}
+    <script type="text/javascript">
+        $("#result_table").dataTable();
+    </script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base_collapsed_sidebar.html" %}
+
+{% load staticfiles %}
+{% load i18n %}
+
+{% block page_title %}{% trans 'WebPlotDigitizer - Copyright 2010-2015 Ankit Rohatgi' %}{% endblock %}
+{% block page_header %}{% trans 'Digitizer' %}{% endblock %}
+{% block page_header_description %}{% trans 'Digitizing graphs' %}{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li><a href="{% url 'ion_channel:graph-index' %}"><i class="fa fa-bar-chart"></i> {% trans 'Graph' %}</a></li>
+    <li class="active">{% trans 'Digitizer' %}</li>
+{% endblock %}
+
+{% block inline-css %}
+    <link rel="stylesheet" href="{% static 'digitizer/thirdparty/toastr/toastr.min.css' %}" type="text/css"
+          media="screen"/>
+    <link rel="stylesheet" href="{% static 'digitizer/css/cwd-style.css' %}" type="text/css" media="screen"/>
+{% endblock %}
+
+{% block inline-script %}
+    {% include 'digitizer/includes/_scripts.html' %}
+    <script src="{% static 'digitizer/js/cwd.js' %}"></script>
+    <script src="{% static 'digitizer/thirdparty/numeric-1.2.6.min.js' %}"></script>
+    <script src="{% static 'digitizer/thirdparty/toastr/toastr.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="loadingCurtain" style="display:none">Loading application, please wait...</div>
+    <form id="frm_graph_data" method="post" class="form" action="{% url 'ion_channel:graph-data-create' %}">
+        {% csrf_token %}
+        <input type="hidden" id="graph_url" name="graph_url" value="/media/{{ graph.file }}"/>
+        <input type="hidden" id="graph_id" name="graph_id" value="{{ graph.id }}"/>
+        <input type="hidden" id="series_name" name="series_name"/>
+        <input type="hidden" id="series_data" name="series_data"/>
+    </form>
+
+    <div class="row" id="allContainer">
+        {% include 'digitizer/includes/_toolbox.html' %}
+        <div id="mainContainer" class="col-sm-9">
+            <div id="graphicsContainer" class="box box-primary">
+
+                {% include 'digitizer/includes/_toolbars.html' %}
+                <div class="box-body">
+                    <div id="canvasDiv" style="position:relative;" class="box-body">
+                        <canvas id="mainCanvas" class="canvasLayers" style="z-index:1;" width=600 height=400></canvas>
+                        <canvas id="dataCanvas" class="canvasLayers" style="z-index:2;" width=600 height=400></canvas>
+                        <canvas id="drawCanvas" class="canvasLayers" style="z-index:3;" width=600 height=400></canvas>
+                        <canvas id="hoverCanvas" class="canvasLayers" style="z-index:4;" width=600 height=400></canvas>
+                        <canvas id="topCanvas" class="canvasLayers" style="z-index:5;" width=600 height=400></canvas>
+                    </div>
+                </div>
+                <div class="overlay cwd-loading">
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- popup windows go here -->
+    {% include 'digitizer/includes/_dialogs.html' %}
+{% endblock %}
