@@ -39,7 +39,7 @@ class Evaluator(object):
             cand_var = dict(zip(self.bio_params['channel_params'],candidate))
             cell_var = dict(zip(self.bio_params['cell_params'],self.bio_params['val_cell_params']))
 
-            mySimulator = Simulator(self.sim_params,cand_var,cell_var)
+            mySimulator = Simulator.Simulator(self.sim_params,cand_var,cell_var)
 
             if ('VClamp' in self.sampleData) or (('IV' in self.sampleData) and (('VClamp' and 'IClamp') not in self.sampleData)):
 

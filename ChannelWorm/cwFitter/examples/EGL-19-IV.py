@@ -3,13 +3,11 @@ Example of using cwFitter to generate a HH model for EGL-19 Ca2+ ion channel
 Based on experimental data from doi:10.1083/jcb.200203055
 """
 import os.path
-import sys
 from scipy.optimize import curve_fit
-
+import numpy as np
+import matplotlib.pyplot as plt
 from neurotune import optimizers
-
-sys.path.append("..")
-from ChannelWorm.cwFitter import *
+from cwFitter import *
 
 def IV_act(V,g,Vhalf,k,a_power,e_rev):
     return g * (1/(1 + np.exp((Vhalf - V)/k)))**int(a_power) * (V - e_rev)
@@ -40,13 +38,13 @@ if __name__ == '__main__':
     # IClamp = {'ref':ref_IC,'traces':traces_IC}
     # userData['samples'] = {'IClamp':IClamp,'IV':IV}
 
-    myInitiator = Initiator(userData)
+    myInitiator = Initiator.Initiator(userData)
     sampleData = myInitiator.getSampleParameters()
     bio_params = myInitiator.getBioParameters()
     # sim_params = myInitiator.getSimParameters(type='IClamp')
     sim_params = myInitiator.getSimParameters()
 
-    myEvaluator = Evaluator(sampleData,sim_params,bio_params)
+    myEvaluator = Evaluator.Evaluator(sampleData,sim_params,bio_params)
 
     candidates = optimizers.CustomOptimizerA(bio_params['max_val_channel'],
                                              bio_params['min_val_channel'],
@@ -68,7 +66,7 @@ if __name__ == '__main__':
     #                   0.014145060464901655, 1.0]
     best_candidate_params = dict(zip(bio_params['channel_params'],best_candidate))
     cell_var = dict(zip(bio_params['cell_params'],bio_params['val_cell_params']))
-    mySimulator = Simulator(sim_params,best_candidate_params,cell_var)
+    mySimulator = Simulator.Simulator(sim_params,best_candidate_params,cell_var)
     bestSim = dict()
 
     # The I/V plot could come from either VClamp or IClamp (VClamp is preferred as is more common)
@@ -80,11 +78,12 @@ if __name__ == '__main__':
         bestSim.update({'IClamp':{}})
         bestSim['IClamp']['t'],bestSim['IClamp']['V'],bestSim['IClamp']['V_max'],bestSim['IClamp']['I_max'] = mySimulator.IClamp()
 
-    myModelator = Modelator(bio_params,sim_params).compare_plots(sampleData,bestSim,show=True)
+    myModelator = Modelator.Modelator(bio_params,sim_params).compare_plots(sampleData,bestSim,show=True)
 
 
     # Fitting to the I/V curve and optimizing parameters
-    # According to the literature, the I/V plot coming from only the activation expression
+    # According to the literature, the I/V plot coming from steady state currents
+    # Only activation expressions will be considered
     vData = np.arange(-0.040, 0.080, 0.001)
     p0 = [best_candidate_params['g'],best_candidate_params['v_half_a'],best_candidate_params['k_a'],best_candidate_params['a_power'],best_candidate_params['e_rev']]
 
