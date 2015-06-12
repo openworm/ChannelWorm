@@ -1,4 +1,0 @@
-[submodule "PyOpenWorm"]
-	path = data/PyOpenWorm
-	url = https://github.com/openworm/PyOpenWorm.git
-	branch = channelworm

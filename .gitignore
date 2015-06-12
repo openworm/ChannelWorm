@@ -9,6 +9,8 @@ __pycache__/
 # C extensions
 *.so
 
+# Mac-specific directory file
+.DS_Store
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -64,4 +66,8 @@ pip-delete-this-directory.txt
 
 # JIRA plugin
 atlassian-ide-plugin.xml
+
+# generated on install
+dist/
+ChannelWorm.egg-info/
 
