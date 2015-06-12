@@ -2,6 +2,7 @@
 Example of using cwFitter to generate a HH model for EGL-19 Ca2+ ion channel
 Based on experimental data from doi:10.1083/jcb.200203055
 """
+
 import os.path
 from scipy.optimize import curve_fit
 import numpy as np

@@ -1,6 +1,6 @@
 import numpy as np
 
-from ChannelWorm.cwFitter import Simulator
+from cwFitter import Simulator
 
 
 class Evaluator(object):
