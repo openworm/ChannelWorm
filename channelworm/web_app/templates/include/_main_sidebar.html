@@ -1,0 +1,42 @@
+{% load staticfiles %}
+{% load i18n %}
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="{% static 'third_party/lte/dist/img/avatar5.png' %}" class="img-circle"
+                     alt="User Image"/>
+            </div>
+            <div class="pull-left info">
+                <p>Sample User</p>
+                <!-- Status -->
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <ul class="sidebar-menu">
+            <li class="header">MAIN NAVIGATION</li>
+            <!-- Optionally, you can add icons to the links -->
+            <li><a href="{% url 'ion_channel:experiment-index' %}">
+                <i class='fa fa fa-flask'></i><span>{% trans 'Experiments' %}</span></a>
+            </li>
+            <li><a href="{% url 'ion_channel:ion-channel-index' %}">
+                <i class='fa fa-neuter'></i><span>{% trans 'Ion Channel Model' %}</span></a>
+            </li>
+            <li><a href="{% url 'ion_channel:patch-clamp-index' %}">
+                <i class='fa fa-pinterest-p'></i><span>{% trans 'Patch Clamp' %}</span></a>
+            </li>
+            <li><a href="{% url 'ion_channel:graph-index' %}">
+                <i class='fa fa-bar-chart'></i><span>{% trans 'Graph' %}</span></a>
+            </li>
+        </ul>
+        <!-- /.sidebar-menu -->
+    </section>
+    <!-- /.sidebar -->
+</aside>

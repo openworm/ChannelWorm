@@ -1,0 +1,201 @@
+<!-- Manage Data Series -->
+<div id="manage-data-series-window" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Manage Datasets</h4>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tr>
+                        <td align="right">Selected Dataset:</td>
+                        <td> &nbsp;<select id="manage-data-series-list" style="width:200px;"
+                                           onchange="wpd.dataSeriesManagement.changeSelectedSeries();">
+                            <option>Default Dataset</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="right">Dataset Name:</td>
+                        <td> &nbsp;
+                            <input type="text" id="manage-data-series-name"
+                                   onblur="wpd.dataSeriesManagement.editSeriesName();"
+                                   onchange="wpd.dataSeriesManagement.editSeriesName();"/>
+                            <input type="button" value="Change" onclick="wpd.dataSeriesManagement.editSeriesName();"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">Data Points:</td>
+                        <td> &nbsp;<span id="manage-data-series-point-count">0</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <input type="button" value="Add" class="btn btn-primary"
+                       onclick="wpd.dataSeriesManagement.addSeries();"/>
+                <input type="button" value="Delete" class="btn btn-primary"
+                       onclick="wpd.dataSeriesManagement.deleteSeries();"/>
+                <input type="button" value="View Data" class="btn btn-primary"
+                       onclick="wpd.dataSeriesManagement.viewData();"/>
+                <input type="button" value="Close" class="btn btn-default"
+                       onclick="wpd.popup.close('manage-data-series-window');"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Data -->
+<div id="csvWindow" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Acquired Data</h4>
+            </div>
+            <div class="modal-body">
+                <div class="overlay cwd-loading" id="save_data_graph_loading" style="display: none">
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
+                <table style="width:780px;">
+                    <tr>
+                        <td>
+                            <!-- left panel -->
+                            <span id="data-table-dataset-control"><p>Dataset: <select id="data-table-dataset-list"
+                                                                                      onchange="wpd.dataTable.changeDataset();"></select>
+                            </p></span>
+
+                            <p align="center">Variables: <span id="dataVariables"></span></p>
+
+                            <p align="center"><textarea id="digitizedDataTable"
+                                                        style="width: 480px; height: 250px;"></textarea></p>
+
+                            <p align="center" class="footnote">*Plotly is a secure data analysis and graphing site with
+                                data sharing and access controls.</p>
+
+                            <p align="center" class="footnote">Visit <a href="http://plot.ly" target="plotlyWebsite">http://plot.ly</a>
+                                for details.</p>
+                        </td>
+                        <td valign="top" style="width:250px;">
+                            <!-- data side controls -->
+                            <p><b>Sort</b></p>
+
+                            <p class="leftIndent">Sort by: <select id="data-sort-variables"
+                                                                   onchange="wpd.dataTable.reSort();"></select></p>
+
+                            <p class="leftIndent">Order:
+                                <select id="data-sort-order" onchange="wpd.dataTable.reSort();">
+                                    <option value="ascending">Ascending</option>
+                                    <option value="descending">Descending</option>
+                                </select>
+                            </p>
+                            <hr/>
+                            <p><b>Format</b></p>
+
+                            <p class="leftIndent">
+		<span id="data-date-formatting-container">
+		Date Formatting:
+        <span id="data-date-formatting"></span>
+		</span>
+                            </p>
+
+                            <p class="leftIndent">Number Formatting:</p>
+
+                            <p>Digits: <input type="text" value="5" size="2" id="data-number-format-digits"/>
+                                <select id="data-number-format-style">
+                                    <option value="ignore">Ignore</option>
+                                    <option value="fixed">Fixed</option>
+                                    <option value="precision">Precision</option>
+                                    <option value="exponential">Exponential</option>
+                                </select>
+                            </p>
+                            <p>Column Separator: <input type="text" value=", " size="2"
+                                                        id="data-number-format-separator"/></p>
+
+                            <p align="right"><input type="button" value="Format" onclick="wpd.dataTable.reSort();"/></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-success" value="Save" onclick="cwd.graphData.save();"/>
+                <input type="button" class="btn btn-primary" value="Select All" onclick="wpd.dataTable.selectAll();"/>
+                <input type="button" class="btn btn-primary" value="Download .CSV"
+                       onclick="wpd.dataTable.generateCSV();"/>
+                <input type="button" class="btn btn-primary" value="Graph in Plotly*"
+                       onclick="wpd.dataTable.exportToPlotly();"/>
+                <input type="button" class="btn btn-default" value="Close" onclick="wpd.popup.close('csvWindow');"/>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Color Selection -->
+<div id="color-selection-widget" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 id="color-selection-title" class="modal-title">Specify Color</h4>
+            </div>
+            <div class="modal-body">
+
+                <div style="text-align:center;">
+                    <div id="color-selection-selected-color-box" class="largeColorBox"></div>
+                </div>
+                <p align="center">
+                    R:<input type="text" value="255" id="color-selection-red" size="3">&nbsp;
+                    G:<input type="text" id="color-selection-green" value="255" size="3"> &nbsp;
+                    B:<input type="text" id="color-selection-blue" value="255" size="3">
+                    <input type="button" value="Color Picker" class="btn btn-default"
+                           onclick="wpd.colorSelectionWidget.pickColor();"></p>
+
+                <p> Dominant Colors:
+
+                <div id="color-selection-options" style="text-align:center;"></div>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Done" class="btn btn-primary"
+                       onclick="wpd.colorSelectionWidget.setColor();">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Data point label editor -->
+<div id="data-point-label-editor" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Edit Label</h4>
+            </div>
+            <div class="modal-body">
+                Label: <input type="text" value="Data Point" id="data-point-label-field"
+                              onkeydown="wpd.dataPointLabelEditor.keydown(event);"/>
+
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="OK" class="btn btn-primary" onclick="wpd.dataPointLabelEditor.ok();"/>
+                <input type="button" value="Cancel" class="btn btn-default"
+                       onclick="wpd.dataPointLabelEditor.cancel();"/>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

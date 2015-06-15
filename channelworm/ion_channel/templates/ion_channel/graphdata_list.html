@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block page_title %}{% trans 'Graph Data List' %}{% endblock %}
+{% block page_header %}{% trans 'Graph Data List' %}{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li><a href="{% url 'ion_channel:graph-index' %}"><i class="fa fa-bar-chart"></i> {% trans 'Graph' %}</a></li>
+    <li class="active">{% trans 'Graph Data' %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="fa fa-file-text-o"></i>
+
+                    <h3 class="box-title">{% trans 'Graph Data' %}</h3>
+                </div>
+                <div class="box-body">
+                    <table id="result_table" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>{% trans 'Series Name' %}</th>
+                            <th>{% trans 'Series Data' %}</th>
+                            <th>{% trans 'Graph' %}</th>
+                            <th>{% trans 'Action' %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for data in graph_data %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.series_name }}</td>
+                                <td>{{ data.series_data }}</td>
+                                <td>{{ data.graph }}</td>
+                                <td>
+                                    <a href="{% url 'ion_channel:graph-data-delete' data.graph.id data.id %}"
+                                       class="badge bg-red">
+                                        <i class="fa fa-remove"></i>
+                                        {% trans 'Delete' %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block inline-script %}
+    <script type="text/javascript">
+        $("#result_table").dataTable();
+    </script>
+{% endblock %}

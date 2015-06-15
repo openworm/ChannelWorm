@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block page_title %}{% trans 'Delete Ion Channel Model' %}{% endblock %}
+{% block page_header %}{% trans 'Delete Ion Channel Model' %}{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li><a href="{% url 'ion_channel:ion-channel-index' %}">{% trans 'Ion Channel Models' %}</a></li>
+    <li class="active">{% trans 'Delete' %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-warning">
+                <div class="box-header">
+                    <i class="fa fa-warning"></i>
+
+                    <h3 class="box-title">{% trans 'Confirmation' %}</h3>
+                </div>
+                <form method="post" class="form">
+                    {% csrf_token %}
+                    <div class="box-body">
+                        <div class="callout callout-warning">
+                            <p>
+                                {% blocktrans %}
+                                    Are you sure you want to delete the <strong>"{{ object }}"<strong>?
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <input type="submit" value="{% trans 'Yes' %}" class="btn btn-success"/>
+                        <a href="{% url 'ion_channel:ion-channel-index' %}" class="btn btn-default">{% trans 'No' %}</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

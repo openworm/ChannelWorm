@@ -1,0 +1,151 @@
+<div id="messagePopup" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 id="message-popup-heading" class="modal-title">Import JSON</h4>
+            </div>
+            <div class="modal-body">
+                <p id="message-popup-text"></p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="OK" class="btn btn-primary" onclick="wpd.messagePopup.close()"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Generic Ok/Cancel Popup -->
+<div id="okCancelPopup" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 id="ok-cancel-popup-heading" class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="ok-cancel-popup-text"></div>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="OK" class="btn btn-success" onclick="wpd.okCancelPopup.ok()"/>
+                <input type="button" value="Cancel" class="btn btn-danger" onclick="wpd.okCancelPopup.cancel()"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Zoom Settings -->
+<div id="zoom-settings-popup" class="modal fade " role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Magnified View Settings</h4>
+            </div>
+            <div class="modal-body ">
+                <table>
+                    <tr>
+                        <td><p>Magnification: </p></td>
+                        <td><p><input type="text" id="zoom-magnification-value" size="3"/> Times</p></td>
+                    </tr>
+                    <tr>
+                        <td><p>Crosshair Color: </p></td>
+                        <td>
+                            <select id="zoom-crosshair-color-value">
+                                <option value="black">Black</option>
+                                <option value="red">Red</option>
+                                <option value="yellow">Yellow</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Apply" class="btn btn-primary" onclick="wpd.zoomView.applySettings();"/>
+                <input type="button" value="Cancel" class="btn btn-default"
+                       onclick="wpd.popup.close('zoom-settings-popup');"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Adjust Data Points Keyboard Shortcuts -->
+<div id="adjust-data-points-keyboard-shortcuts-window" class="modal fade " role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+                <p>Click to select a data point. The following keys can then be used to the adjust the position:</p>
+                <table cellspacing="5" border="0">
+                    <tr>
+                        <td align="right">Cursor (Arrows) -</td>
+                        <td>Move up/down/right/left</td>
+                    </tr>
+                    <tr>
+                        <td align="right">Shift + Cursor -</td>
+                        <td>Faster rate of movement</td>
+                    </tr>
+                    <tr>
+                        <td align="right">Q -</td>
+                        <td>Select next point</td>
+                    </tr>
+                    <tr>
+                        <td align="right">W -</td>
+                        <td>Select previous point</td>
+                    </tr>
+                    <tr>
+                        <td align="right">Del/Backspace -</td>
+                        <td>Delete point</td>
+                    </tr>
+                    <tr>
+                        <td align="right">E -</td>
+                        <td>Edit label (Bar Chart)</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Close" class="btn btn-default"
+                       onclick="wpd.popup.close('adjust-data-points-keyboard-shortcuts-window');"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About WPD -->
+<div id="helpWindow" class="modal fade" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">WebPlotDigitizer - Web Based Plot Digitizer</h4>
+            </div>
+            <div class="modal-body">
+                <p align="center">Version {{ wpdVersion }}</p>
+
+                <p align="center">This program is distributed under the <a
+                        href="https://www.gnu.org/licenses/gpl-3.0-standalone.html" target="_blank">GNU General Public
+                    License
+                    Version 3</a>.</p>
+                <p align="center">Copyright 2010-2015 Ankit Rohatgi &lt;ankitrohatgi@hotmail.com&gt;</p>
+
+                <p align="center"><a href="http://arohatgi.info/WebPlotDigitizer" target="website">http://arohatgi.info/WebPlotDigitizer</a>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Close" class="btn btn-default" onclick="wpd.popup.close('helpWindow');">
+            </div>
+        </div>
+    </div>
+</div>
