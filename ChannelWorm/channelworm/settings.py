@@ -128,3 +128,9 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'media')
 MEDIA_URL = '/media/'
+
+# initialize as empty so we can do `settings.configure()`
+DEFAULT_INDEX_TABLESPACE = ''
+DEFAULT_TABLESPACE = ''
+ABSOLUTE_URL_OVERRIDES = {}
+
