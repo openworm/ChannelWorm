@@ -1,9 +1,14 @@
-# configure djangot to use default settings
+# configure django to use default settings
 # note that this can also be done using an environment variable
-from channelworm import settings as defaults
 from django.conf import settings
-settings.configure(default_settings=defaults, DEBUG=True)
+from django.core.exceptions import ImproperlyConfigured
 
+try:
+    settings.__file__
+except ImproperlyConfigured:
+    # load default settings if they're not set
+    from channelworm import settings as defaults
+    settings.configure(default_settings=defaults, DEBUG=True)
 
 import ion_channel.models as C
 import PyOpenWorm as P
