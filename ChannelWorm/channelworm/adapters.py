@@ -1,8 +1,12 @@
+# configure djangot to use default settings
+# note that this can also be done using an environment variable
 from channelworm import settings as defaults
 from django.conf import settings
 settings.configure(default_settings=defaults, DEBUG=True)
-import PyOpenWorm as P
+
+
 import ion_channel.models as C
+import PyOpenWorm as P
 from django.forms.models import model_to_dict
 
 
@@ -21,3 +25,8 @@ class PatchClampAdapter(object):
         for key, value in cw_dict:
             self.pyopenworm_object.conditions.set(key, value)
 
+    def get_pow(self):
+        return self.pyopenworm_object
+
+    def get_cw(self):
+        return self.channelworm_object
