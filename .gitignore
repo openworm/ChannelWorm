@@ -68,7 +68,6 @@ pip-delete-this-directory.txt
 atlassian-ide-plugin.xml
 
 # generated on install
-dist/
 ChannelWorm.egg-info/
 
 channelworm/fitter/data/

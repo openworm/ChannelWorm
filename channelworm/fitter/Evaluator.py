@@ -1,5 +1,4 @@
 import numpy as np
-
 from fitter import Simulator
 
 
@@ -21,11 +20,13 @@ class Evaluator(object):
         I/V curve is also considered as an evaluation factor and coming from VClamp or IClamp simulations.
         The approach is based on Gurkiewicz & Korngreen study (doi:10.1371/journal.pcbi.0030169.)
 
-        :return: total_cost
+        :param: candidates: Candidate set from the GA that should be evaluated.
+        :param: args: arguments if needed (based on Inspyred requirements for evaluate function)
+        :return: total_fitness
         """
 
-        #TODO: Include weights and minimization function (e.g. prAxis)
-        #Based on Gurkiewicz & Korngreen approach (doi:10.1371/journal.pcbi.0030169.)
+        # TODO: Include weights and minimization function (e.g. prAxis)
+        # Based on Gurkiewicz & Korngreen approach (doi:10.1371/journal.pcbi.0030169.)
 
         fitness = 1e10
         total_fitness = []
@@ -102,12 +103,17 @@ class Evaluator(object):
         return total_fitness
 
 
-    def cost(self, sim, target, norm=True):
+    def cost(self, sim, target, scale=True):
         """
-        Get simulation data and target data (experimental/digitazed) to calculate cost.
+        Gets simulation data and target data (experimental/digitazed) to calculate cost.
         Cost function calculation is based on Gurkiewicz & Korngreen approach (doi:10.1371/journal.pcbi.0030169.)
+        The closest values in X-axis will be compared with corresponding values in Y-axis
+        For scaling, the cost value will be divided by the mean value of the Y-axis in the target dataset.
 
-        :return:
+        :param: sim: A 2D array of simulated figure
+        :param: terget: A 2D array of experimental/digitized data
+        :param: scale: if True, then scales the cost value by dividing by the mean value of the Y-axis in the target dataset.
+        :return: cost_val: the cost value, N: number of comparable points
         """
         #TODO: a better way to calculate cost is to measure the area between two plots!!
 
@@ -124,10 +130,10 @@ class Evaluator(object):
 
                 if cost_val == 1e9: cost_val = 0
                 sim_y = sim[1][index]
-                target_y = target[1][target[0].index(target_x)] #TODO: look for a better way to work with indices
+                target_y = target[1][target[0].index(target_x)]
                 cost_val +=  (target_y - sim_y)**2
-                # Normalize distance
-                if norm:
+                # scale distance
+                if scale:
                     cost_val /= mu**2
                 N += 1
 
