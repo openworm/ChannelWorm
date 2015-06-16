@@ -5,12 +5,14 @@ setup(
     long_description=open('README.md').read(),
     install_requires=[
         'cypy',
-        'sciunit',
-        'PyOpenWorm',
-        'PyNeuroML',
+        'django',
         'inspyred',
+        'neurotune',
+        'pillow',
         'pyelectro',
-        'neurotune'
+        'PyNeuroML',
+        'PyOpenWorm',
+        'sciunit'
     ],
     dependency_links=[
         'git+https://github.com/scidash/sciunit.git#egg=sciunit',
