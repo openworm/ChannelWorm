@@ -102,7 +102,7 @@ class Evaluator(object):
         return total_fitness
 
 
-    def cost(self, sim, target):
+    def cost(self, sim, target, norm=True):
         """
         Get simulation data and target data (experimental/digitazed) to calculate cost.
         Cost function calculation is based on Gurkiewicz & Korngreen approach (doi:10.1371/journal.pcbi.0030169.)
@@ -114,6 +114,7 @@ class Evaluator(object):
         sim_x = sim[0]
         cost_val = 1e9
         N = 0
+        mu = np.mean(target[1])
 
         for target_x in target[0]:
             index = sim_x.index(min(sim_x, key=lambda x:abs(x-target_x))) #TODO: check if the distance is in a reasonable range (consider a sigma)
@@ -124,9 +125,11 @@ class Evaluator(object):
                 if cost_val == 1e9: cost_val = 0
                 sim_y = sim[1][index]
                 target_y = target[1][target[0].index(target_x)] #TODO: look for a better way to work with indices
-                cost_val +=  (target_y - sim_y)**2 #TODO: normalize distance
+                cost_val +=  (target_y - sim_y)**2
+                # Normalize distance
+                if norm:
+                    cost_val /= mu**2
                 N += 1
 
         return cost_val , N
-
 
