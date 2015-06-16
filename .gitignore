@@ -71,4 +71,4 @@ atlassian-ide-plugin.xml
 dist/
 ChannelWorm.egg-info/
 
-cwFitter/data/
+channelworm/fitter/data/
