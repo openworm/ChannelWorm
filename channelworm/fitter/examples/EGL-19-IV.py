@@ -8,7 +8,7 @@ from scipy.optimize import curve_fit
 import numpy as np
 import matplotlib.pyplot as plt
 from neurotune import optimizers
-from cwFitter import *
+from fitter import *
 
 def IV_act(V,g,Vhalf,k,a_power,e_rev):
     return g * (1/(1 + np.exp((Vhalf - V)/k)))**int(a_power) * (V - e_rev)

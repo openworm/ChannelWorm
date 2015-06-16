@@ -1,6 +1,6 @@
 import numpy as np
 
-from cwFitter import Simulator
+from fitter import Simulator
 
 
 class Evaluator(object):
