@@ -114,6 +114,11 @@ TEMPLATE_DIRS = (
 #     'django.template.loaders.app_directories.Loader',
 # )
 
+STATIC_ROOT = os.path.join(
+                os.path.dirname(__file__),
+                'static',
+              )
+
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
