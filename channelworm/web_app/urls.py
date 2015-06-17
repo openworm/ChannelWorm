@@ -26,7 +26,7 @@ base_urlpatterns = [
     url(r'^$', 'ion_channel.views.index' ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns = patterns('',
+urlpatterns = [
     '^', include(base_urlpatterns), # if you wish to maintain the un-prefixed URL's too
     '^application/', include(base_urlpatterns),
-)
+]
