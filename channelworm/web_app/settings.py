@@ -71,9 +71,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'web_app.wsgi.application'
+WSGI_APPLICATION = 'web_app.wsgi'
 
-FORCE_SCRIPT_NAME = '/test/'
+FORCE_SCRIPT_NAME = '/test1/'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
