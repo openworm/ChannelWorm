@@ -18,10 +18,15 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
 
-urlpatterns = [
+base_urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^digitizer/', include('digitizer.urls', namespace="digitizer"), ),
     url(r'^ion_channel/', include('ion_channel.urls', namespace="ion_channel"), ),
     url(r'^index$', 'ion_channel.views.index' ),
     url(r'^$', 'ion_channel.views.index' ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns = patterns('',
+    '^', include(base_urlpatterns), # if you wish to maintain the un-prefixed URL's too
+    '^application/', include(base_urlpatterns),
+)
