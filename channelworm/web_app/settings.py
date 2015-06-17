@@ -116,7 +116,7 @@ TEMPLATE_DIRS = (
 
 STATIC_ROOT = os.path.join(
                 os.path.dirname(__file__),
-                'static',
+                'static_openshift',
               )
 
 # Additional locations of static files
