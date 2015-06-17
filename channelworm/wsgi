@@ -16,5 +16,5 @@ try:
 except:
     pass
 
-import django.core.wsgi
+from django.core.handlers import wsgi
 application = wsgi.WSGIHandler()
