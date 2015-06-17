@@ -73,7 +73,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'web_app.wsgi.application'
 
-SERVER_PREFIX = '/test/'
+FORCE_SCRIPT_NAME = '/test/'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
