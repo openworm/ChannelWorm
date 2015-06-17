@@ -2,9 +2,10 @@
 
 cd ~/app-root/runtime/repo
 
-# rm -rf ChannelWorm
+rm -rf ChannelWorm
 
-# git clone https://github.com/VahidGh/ChannelWorm.git --branch change_web_app_package_name#65
+git clone https://github.com/joebowen/ChannelWorm.git
 
-# cp -r ChannelWorm/django/* ~/app-root/runtime/repo
+cp -r ChannelWorm/channelworm/* ~/app-root/runtime/repo
+cp -r ChannelWorm/channelworm/.openshift/* ~/app-root/runtime/repo/.openshift
 
