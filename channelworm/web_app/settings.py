@@ -114,10 +114,7 @@ TEMPLATE_DIRS = (
 #     'django.template.loaders.app_directories.Loader',
 # )
 
-STATIC_ROOT = os.path.join(
-                os.path.dirname(__file__),
-                'static_openshift',
-              )
+STATIC_ROOT = os.path.join(BASE_DIR, 'wsgi','static')
 
 # Additional locations of static files
 STATICFILES_DIRS = (

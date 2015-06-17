@@ -22,6 +22,6 @@ else
 fi
 
 # GETTING-STARTED: change 'myproject' to your project name:
-# echo "Executing 'python $OPENSHIFT_REPO_DIR/manage.py collectstatic --noinput'"
+echo "Executing 'python $OPENSHIFT_REPO_DIR/manage.py collectstatic --noinput'"
 # GETTING-STARTED: change 'myproject' to your project name:
-# python "$OPENSHIFT_REPO_DIR"manage.py collectstatic --noinput
+python "$OPENSHIFT_REPO_DIR"manage.py collectstatic --noinput
