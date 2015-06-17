@@ -13,7 +13,7 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import include, url
+from django.conf.urls import include, url, patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
@@ -25,3 +25,4 @@ urlpatterns = [
     url(r'^index$', 'ion_channel.views.index' ),
     url(r'^$', 'ion_channel.views.index' ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

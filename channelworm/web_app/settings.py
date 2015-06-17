@@ -73,7 +73,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'web_app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
@@ -115,6 +114,8 @@ TEMPLATE_DIRS = (
 #     'django.template.loaders.app_directories.Loader',
 # )
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'wsgi','static')
+
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
@@ -133,4 +134,3 @@ MEDIA_URL = '/media/'
 DEFAULT_INDEX_TABLESPACE = ''
 DEFAULT_TABLESPACE = ''
 ABSOLUTE_URL_OVERRIDES = {}
-
