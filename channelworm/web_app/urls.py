@@ -27,6 +27,6 @@ base_urlpatterns = [
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = [
-    url('^', include(base_urlpatterns)), # if you wish to maintain the un-prefixed URL's too
+    # url('^', include(base_urlpatterns)), # if you wish to maintain the un-prefixed URL's too
     url('^application/', include(base_urlpatterns)),
 ]
