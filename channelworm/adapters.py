@@ -17,7 +17,29 @@ from django.forms.models import model_to_dict
 
 
 class PatchClampAdapter(object):
-    """Map a channelworm model to a pyopenworm model"""
+    """
+    Map a channelworm patch clamp model to a pyopenworm model.
+
+    Example usage ::
+
+        >>> import adapters
+        >>> cw_patch = ion_channel.models.PatchClamp.objects.all()[0]    # get some saved patch-clamp experiment from CW
+        >>> pca = adapters.PatchClampAdapter(cw_patch)    # create an adapter object with it
+        >>> pca.get_pow()    # get back the corresponding PyOW model
+        Experiment(reference=`Evidence(AssertsAllAbout(), year=`None', title=`SALAM', doi=`Salam')', Conditions())
+        >>> pyow_patch = pca.get_pow()    # assign the PyOW to a variable and use it elsewhere
+    
+    Attributes
+    ----------
+
+    channelworm_object : A representation of the object in ChannelWorm form
+    pyopenworm_object : A representation of the object in PyOpenWorm form
+
+    Parameters
+    ----------
+
+    cw_obj : The input ChannelWorm object
+    """
 
     def __init__(self, cw_obj):
         # initialize PyOpenWorm connection so we can access its API
@@ -47,7 +69,9 @@ class PatchClampAdapter(object):
         P.disconnect()
 
     def get_pow(self):
+        """Return the PyOpenWorm representation of the object"""
         return self.pyopenworm_object
 
     def get_cw(self):
+        """Return the ChannelWorm representation of the object"""
         return self.channelworm_object
