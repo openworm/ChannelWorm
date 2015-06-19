@@ -69,5 +69,6 @@ atlassian-ide-plugin.xml
 
 # generated on install
 ChannelWorm.egg-info/
-
-channelworm/fitter/data/
+tests/.ipynb_checkpoints
+tests/*.dat
+tests/*.xml
