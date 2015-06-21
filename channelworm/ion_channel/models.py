@@ -22,13 +22,13 @@ class IonChannelModel(models.Model):
 class PatchClamp(models.Model):
     experiment = models.ForeignKey(Experiment)
     type = models.CharField(max_length=200)
-    duration = models.IntegerField()
-    delta = models.IntegerField()
-    start_time = models.IntegerField()
-    end_time = models.IntegerField()
-    protocol_start = models.IntegerField()
-    protocol_end = models.IntegerField()
-    protocol_step = models.IntegerField()
+    duration = models.FloatField()
+    delta = models.FloatField()
+    start_time = models.FloatField()
+    end_time = models.FloatField()
+    protocol_start = models.FloatField()
+    protocol_end = models.FloatField()
+    protocol_step = models.FloatField()
 
     def __unicode__(self):
         return self.type + " " + `self.duration`
