@@ -11,5 +11,5 @@ git clone https://github.com/VahidGh/ChannelWorm.git
 cp -r ChannelWorm/channelworm/* ~/app-root/runtime/repo
 cp -r ChannelWorm/channelworm/.openshift/* ~/app-root/runtime/repo/.openshift
 
-echo "y" | python manage.py makemigrations
-python manage.py migrate
+#echo "y" | python manage.py makemigrations
+#python manage.py migrate
