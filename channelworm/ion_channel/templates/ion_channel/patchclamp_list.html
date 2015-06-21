@@ -31,14 +31,14 @@
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
-                            <th>{% trans 'Type' %}</th>
-                            <th>{% trans 'Duration' %}</th>
-                            <th>{% trans 'Delta' %}</th>
-                            <th>{% trans 'Start Time' %}</th>
-                            <th>{% trans 'End Time' %}</th>
-                            <th>{% trans 'Protocol Start' %}</th>
-                            <th>{% trans 'Protocol End' %}</th>
-                            <th>{% trans 'Protocol Step' %}</th>
+                            <th>{% trans 'Patch-Clamp Type' %}</th>
+                            <th>{% trans 'Duration (s)' %}</th>
+                            <th>{% trans 'Time interval-Deltat (s)' %}</th>
+                            <th>{% trans 'Start Time (s)' %}</th>
+                            <th>{% trans 'End Time (s)' %}</th>
+                            <th>{% trans 'From (V or A)' %}</th>
+                            <th>{% trans 'To (V or A)' %}</th>
+                            <th>{% trans 'Steps (V or A)' %}</th>
                             <th>{% trans 'Experiment' %}</th>
                             <th>{% trans 'Action' %}</th>
                         </tr>
@@ -49,7 +49,7 @@
                                 <td>{{forloop.counter}}</td>
                                 <td>{{ patch_clamp.type }}</td>
                                 <td>{{ patch_clamp.duration }}</td>
-                                <td>{{ patch_clamp.delta }}</td>
+                                <td>{{ patch_clamp.deltat }}</td>
                                 <td>{{ patch_clamp.start_time }}</td>
                                 <td>{{ patch_clamp.end_time }}</td>
                                 <td>{{ patch_clamp.protocol_start }}</td>

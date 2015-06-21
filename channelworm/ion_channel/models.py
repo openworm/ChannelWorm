@@ -19,16 +19,21 @@ class IonChannelModel(models.Model):
         return self.channel_type + self.ion_type
 
 
+PatchClamp_Type_CHOICES = (
+    ('VClamp', 'Voltage-Clamp'),
+    ('IClamp', 'Current-Clamp')
+)
+
 class PatchClamp(models.Model):
     experiment = models.ForeignKey(Experiment)
-    type = models.CharField(max_length=200)
-    duration = models.FloatField()
-    delta = models.FloatField()
-    start_time = models.FloatField()
-    end_time = models.FloatField()
-    protocol_start = models.FloatField()
-    protocol_end = models.FloatField()
-    protocol_step = models.FloatField()
+    type = models.CharField(max_length=200,choices=PatchClamp_Type_CHOICES)
+    duration = models.FloatField(verbose_name='Patch-Clamp Duration (s)')
+    deltat = models.FloatField(verbose_name='Time interval-Deltat (s)')
+    start_time = models.FloatField(verbose_name='Start time (s)')
+    end_time = models.FloatField(verbose_name='End time (s)')
+    protocol_start = models.FloatField(verbose_name='Beginning of holding potential or stimulated current (V or A)')
+    protocol_end = models.FloatField(verbose_name='End of Holding potential or stimulated current (V or A)')
+    protocol_step = models.FloatField('Steps of Holding potential or stimulated current (V or A)')
 
     def __unicode__(self):
         return self.type + " " + `self.duration`
