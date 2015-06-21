@@ -11,5 +11,5 @@ rm ChannelWorm/channelworm/db.sqlite3
 cp -r ChannelWorm/channelworm/* ~/app-root/runtime/repo
 cp -r ChannelWorm/channelworm/.openshift/* ~/app-root/runtime/repo/.openshift
 
-python manage.py makemigrations
+echo "y" | python manage.py makemigrations
 python manage.py migrate
