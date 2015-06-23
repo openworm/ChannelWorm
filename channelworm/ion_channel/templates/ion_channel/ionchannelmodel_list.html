@@ -31,10 +31,14 @@
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
-                            <th>{% trans 'Channel Type' %}</th>
-                            <th>{% trans 'Ion Type' %}</th>
-                            <th>{% trans 'Expressions' %}</th>
+                            <th>{% trans 'Channel Name' %}</th>
+                            <th>{% trans 'Graph(s)' %}</th>
+                            <th>{% trans 'Date' %}</th>
+                            <th>{% trans 'Score' %}</th>
                             <th>{% trans 'Experiment' %}</th>
+                            <th>{% trans 'Contributer' %}</th>
+                            <th>{% trans 'Curated' %}</th>
+                            <th>{% trans 'NeuroML2 File' %}</th>
                             <th style="width: 200px">{% trans 'Action' %}</th>
                         </tr>
                         </thead>
@@ -42,10 +46,14 @@
                         {% for ion_channel in ion_channel_models %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
-                                <td>{{ ion_channel.channel_type }}</td>
-                                <td>{{ ion_channel.ion_type }}</td>
-                                <td>{{ ion_channel.expressions }}</td>
+                                <td>{{ ion_channel.channel_name }}</td>
+                                <td>{{ ion_channel.graph.file }}</td>
+                                <td>{{ ion_channel.date }}</td>
+                                <td>{{ ion_channel.score }}</td>
                                 <td>{{ ion_channel.experiment.doi }}</td>
+                                <td>{{ ion_channel.username }}</td>
+                                <td>{{ ion_channel.curated }}</td>
+                                <td>{{ ion_channel.neuroML2_file }}</td>
                                 <td>
                                     <a href="{% url 'ion_channel:ion-channel-update' ion_channel.id %}"
                                        class="badge bg-light-blue">
