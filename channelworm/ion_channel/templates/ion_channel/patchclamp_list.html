@@ -32,6 +32,11 @@
                         <tr>
                             <th style="width: 10px">#</th>
                             <th>{% trans 'Patch-Clamp Type' %}</th>
+                            <th>{% trans 'Patch Type' %}</th>
+                            <th>{% trans 'Ion Type' %}</th>
+                            <th>{% trans 'Type of the cell' %}</th>
+                            <th>{% trans 'Age of the cell (days)' %}</th>
+                            <th>{% trans 'Temperature (Celsius)' %}</th>
                             <th>{% trans 'Duration (s)' %}</th>
                             <th>{% trans 'Time interval-Deltat (s)' %}</th>
                             <th>{% trans 'Start Time (s)' %}</th>
@@ -48,6 +53,11 @@
                             <tr>
                                 <td>{{forloop.counter}}</td>
                                 <td>{{ patch_clamp.type }}</td>
+                                <td>{{ patch_clamp.patch_type }}</td>
+                                <td>{{ patch_clamp.ion_type }}</td>
+                                <td>{{ patch_clamp.cell_type }}</td>
+                                <td>{{ patch_clamp.cell_age }}</td>
+                                <td>{{ patch_clamp.temperature }}</td>
                                 <td>{{ patch_clamp.duration }}</td>
                                 <td>{{ patch_clamp.deltat }}</td>
                                 <td>{{ patch_clamp.start_time }}</td>
