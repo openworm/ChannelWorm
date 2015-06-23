@@ -1,0 +1,66 @@
+{% load i18n %}
+<div class="box-header with-border">
+    <i class="fa fa-bar-chart"></i>
+
+    <h3 class="box-title">{% trans 'Graph' %}</h3>
+
+    <div class="box-tools pull-right">
+        <button class="btn btn-box-tool" onclick="wpd.graphicsWidget.zoom100perc();">100%</button>
+        <button class="btn btn-box-tool" onclick="wpd.graphicsWidget.zoomIn();" title="{% trans 'Zoom In' %}">
+            <li class="fa fa-search-plus"></li>
+        </button>
+
+        <button class="btn btn-box-tool" onclick="wpd.graphicsWidget.zoomFit();" title="{% trans 'Fits' %}">
+            <li class="fa fa-search"></li>
+        </button>
+        <button class="btn btn-box-tool" onclick="wpd.graphicsWidget.zoomOut();" title="{% trans 'Zoom Out' %}">
+            <li class="fa fa-search-minus"></li>
+        </button>
+
+        <button class="btn btn-box-tool" onclick="wpd.graphicsWidget.toggleExtendedCrosshairBtn();"
+                title="{% trans 'Crosshair' %}">
+            <li class="fa fa-crosshairs"></li>
+        </button>
+
+        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        <div class="btn-group">
+            <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"
+                    aria-expanded="true"><i class="fa fa-wrench"></i></button>
+            <ul class="dropdown-menu" role="menu">
+                <li id="wpd-axesmenu-defineaxes" onclick="cwd.alignAxes.start()">
+                    <a href="#">Calibrate Axes</a>
+                </li>
+                <li id="wpd-axesmenu-tranformation-equations"
+                    onclick="wpd.transformationEquations.show();">
+                    <a href="#">Transformation Equations</a>
+                </li>
+                <li class="divider"></li>
+                <li id="wpd-datamenu-acquire" onclick="wpd.acquireData.load();">
+                    <a href="#">Acquire Data</a>
+                </li>
+                <li id="wpd-datamenu-manage" onclick="wpd.dataSeriesManagement.start();">
+                    <a href="#">Manage Datasets</a>
+                </li>
+            </ul>
+        </div>
+        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+
+    </div>
+</div>
+<!-- Erase Toolbar -->
+<div id="eraseToolbar" class="collapse well">
+    <p><input type="button" id="clearMaskBtn" value="Erase All" class="btn btn-primary"
+              onclick="wpd.dataMask.clearMask();"/>
+        Stroke Width <input type="range" id="eraseThickness" min="1" max="150" value="20" style="width:100px;"></p>
+</div>
+
+<!-- Paint Toolbar -->
+<div id="paintToolbar" class="collapse well">
+    <p>Stroke Width <input type="range" id="paintThickness" min="1" max="150" value="20" style="width:100px;"></p>
+</div>
+
+<!-- Adjust Points Toolbar -->
+<div id="adjustDataPointsToolbar" class="collapse well">
+    <p><input type="button" class="btn btn-info" value="View Keyboard Shortcuts"
+              onclick="wpd.popup.show('adjust-data-points-keyboard-shortcuts-window');"/></p>
+</div>

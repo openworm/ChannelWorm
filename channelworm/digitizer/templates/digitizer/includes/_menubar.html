@@ -1,0 +1,82 @@
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        File<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li id="wpd-filemenu-loadimage" data-toggle="modal" data-target="#loadNewImage">
+                            <a href="#">LoadImage</a>
+                        </li>
+                        <li id="wpd-filemenu-capture" onclick="wpd.webcamCapture.start();">
+                            <a href="#">Webcam Capture</a></li>
+                        <li id="wpd-filemenu-runscript" onclick="wpd.scriptInjector.start();">
+                            <a href="#">Run Script</a>
+                        </li>
+                        <li id="wpd-filemenu-saveimage" onclick="wpd.graphicsWidget.saveImage();">
+                            <a href="#">Save Image</a></li>
+                        <li id="wpd-filemenu-exportdata" onclick="wpd.saveResume.save();">
+                            <a href="#">Export JSON</a>
+                        </li>
+                        <li id="wpd-filemenu-import" onclick="wpd.saveResume.load();">
+                            <a href="#">Import JSON</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        Axes<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li id="wpd-axesmenu-defineaxes" onclick="cwd.alignAxes.start()">
+                            <a href="#">Calibrate Axes</a>
+                        </li>
+                        <li id="wpd-axesmenu-tranformation-equations" onclick="wpd.transformationEquations.show();">
+                            <a href="#">Transformation Equations</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        Data<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li id="wpd-datamenu-acquire" onclick="wpd.acquireData.load();">
+                            <a href="#">Acquire Data</a>
+                        </li>
+                        <li id="wpd-datamenu-manage" onclick="wpd.dataSeriesManagement.start();">
+                            <a href="#">Manage Datasets</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        Analyze<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+
+                        <li id="wpd-analyzemenu-distance" onclick="wpd.distanceMeasurement.start();">
+                            <a href="#">Measure Distances</a>
+                        </li>
+                        <li id="wpd-analyzemenu-angles" onclick="wpd.angleMeasurement.start();">
+                            <a href="#">Measure Angles</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>

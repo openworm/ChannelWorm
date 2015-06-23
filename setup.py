@@ -5,13 +5,20 @@ setup(
     long_description=open('README.md').read(),
     install_requires=[
         'cypy',
-        'sciunit',
+        'django',
+        'inspyred',
+        'neurotune',
+        'pillow',
+        'pyelectro',
+        'PyNeuroML',
         'PyOpenWorm',
-        'PyNeuroML'
+        'sciunit'
     ],
     dependency_links=[
         'git+https://github.com/scidash/sciunit.git#egg=sciunit',
         'git+https://github.com/openworm/PyOpenWorm.git#egg=PyOpenWorm',
-        'git+https://github.com/NeuroML/pyNeuroML.git#egg=PyNeuroML'
+        'git+https://github.com/NeuroML/pyNeuroML.git#egg=PyNeuroML',
+        'git+https://github.com/pgleeson/pyelectro.git#egg=pyelectro',
+        'git+https://github.com/pgleeson/neurotune.git#egg=neurotune'
     ]
 )

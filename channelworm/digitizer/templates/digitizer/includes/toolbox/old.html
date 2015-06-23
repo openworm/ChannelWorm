@@ -1,0 +1,245 @@
+{% load i18n %}
+<div style="position:relative;" class="box box-primary" id="sidebarControlsContainer">
+    <div class="box-header">
+        <i class="fa fa-wrench"></i>
+
+        <h3 class="box-title">{% trans 'Toolbox' %}</h3>
+    </div>
+    <!-- axes calibration -->
+    <div id="axes-calibration-sidebar" class="row toolbox-item">
+        <p class="toolbox-title">Axes Calibration</p>
+
+        <p>Click points to select and use cursor keys to adjust positions. Use Shift+Arrow for faster
+            movement.
+            Click complete when finished.</p>
+
+        <p align="center"><input type="button" value="Complete!" class="btn btn-lg btn-sm btn-success"
+                                 onclick="wpd.alignAxes.getCornerValues();"/></p>
+    </div>
+
+    <!-- manual mode -->
+    <div id="acquireDataSidebar" class="toolbox-item row">
+        <p class="toolbox-title">Manual Mode <input type="button" value="Automatic Mode"
+                                                    class="btn btn-lg btn-sm btn-default"
+                                                    onclick="wpd.autoExtraction.start();"></p>
+        <hr/>
+        <p>Dataset <select id="manual-sidebar-dataset-list" onchange="wpd.acquireData.changeDataset(this);"
+                           style="width:160px;"></select></p>
+        <hr/>
+        <p class="btn-group btn-group-justified" role="group" aria-label="...">
+            <a href="#" class="btn btn-lg btn-sm btn-success" id="manual-select-button"
+               role="button" onclick="wpd.acquireData.manualSelection();">Add Point (A)</a>
+            <a href="#" class="btn btn-lg btn-sm btn-success" id="manual-adjust-button"
+               role="button" onclick="wpd.acquireData.adjustPoints();">Adjust Point (S)</a>
+        </p>
+
+        <p class="btn-group btn-group-justified" role="group" aria-label="...">
+            <a href="#" class="btn btn-lg btn-sm btn-danger" id="delete-point-button"
+               role="button" onclick="wpd.acquireData.deletePoint();">Delete Point (D)</a>
+            <a href="#" class="btn btn-lg btn-sm btn-danger" id="clearAllBtn"
+               role="button" onclick="wpd.acquireData.clearAll();">Clear Points</a>
+        </p>
+
+        <p class="btn-group btn-group-justified" role="group" aria-label="...">
+            <a href="#" class="btn btn-lg btn-sm btn-info" id="edit-data-labels"
+               role="button" onclick="wpd.acquireData.editLabels();">Edit Labels (E)</a>
+            <a href="#" class="btn btn-lg btn-sm btn-info" id="saveBtn"
+               role="button" onclick="wpd.dataTable.showTable();">View Data</a>
+        </p>
+
+        <div class="vertical-spacer"></div>
+        <p>Data Points: <span class="data-point-counter">0</span></p>
+    </div>
+
+    <!-- automatic mode -->
+    <div id="auto-extraction-sidebar" class="toolbox-item row">
+        <p class="toolbox-title">Automatic Mode <input type="button" value="Manual Mode"
+                                                       style="width:110px;"
+                                                       class="btn btn-lg btn-sm btn-default"
+                                                       onclick="wpd.acquireData.load();"/></p>
+        <hr/>
+        <p>Dataset <select id="automatic-sidebar-dataset-list"
+                           onchange="wpd.acquireData.changeDataset(this);"
+                           style="width:160px;"></select></p>
+        <hr/>
+        Mask
+        <p class="btn-group btn-group-justified" role="group" aria-label="...">
+            <a href="#" class="btn btn-lg btn-sm btn-info" id="box-mask"
+               role="button" onclick="wpd.dataMask.markBox();">Box</a>
+            <a href="#paintToolbar" class="btn btn-lg btn-sm btn-info" id="pen-mask"
+               data-toggle="collapse" aria-expanded="false" aria-controls="paintToolbar"
+               role="button" onclick="wpd.dataMask.markPen();">Pen</a>
+            <a href="#eraseToolbar" class="btn btn-lg btn-sm btn-info" id="erase-mask"
+               data-toggle="collapse" aria-expanded="false" aria-controls="eraseToolbar"
+               role="button" onclick="wpd.dataMask.eraseMarks();">Erase</a>
+            <a href="#" class="btn btn-lg btn-sm btn-info" id="view-mask"
+               role="button" onclick="wpd.dataMask.viewMask();">View</a>
+        </p>
+
+        <hr/>
+        <p>Color
+            <select id="color-detection-mode-select" onchange="wpd.colorPicker.changeDetectionMode();">
+                <option value="fg">Foreground Color</option>
+                <option value="bg">Background Color</option>
+            </select>
+            <input type="button" id="color-button" value=" " onclick="wpd.colorPicker.startPicker();"
+                   style="width: 25px;" title="Click to change color"/>
+        </p>
+        <p>
+            <span>Distance</span>
+
+        <div class="input-group input-group-sm">
+            <input type="text" class="form-control" placeholder="Distance" aria-describedby="basic-addon1"
+                   id="color-distance-value" onchange="wpd.colorPicker.changeColorDistance()">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"
+                                        onclick="wpd.colorPicker.testColorDetection();">
+                                    Filter Colors
+                                </button>
+                            </span>
+        </div>
+        </p>
+        <hr/>
+        <p>Algorithm
+            <select id="auto-extract-algo-name" onchange="wpd.algoManager.applyAlgoSelection();"></select>
+        </p>
+
+        <div id="algo-parameter-container" style="margin-left: 10px; margin-top: 5px;"></div>
+
+        <p class="btn-group btn-group-justified" role="group" aria-label="...">
+            <a href="#" class="btn btn-lg btn-sm btn-success" role="button"
+               onclick="wpd.algoManager.run();">Run</a>
+            <a href="#" class="btn btn-lg btn-sm btn-danger" role="button"
+               onclick="wpd.acquireData.clearAll();">Clear
+                Points</a>
+            <a href="#" class="btn btn-lg btn-sm btn-info" role="button"
+               onclick="wpd.dataTable.showTable();">View
+                Data</a>
+        </p>
+        <hr/>
+        <p>Data Points: <span class="data-point-counter">0</span></p>
+    </div>
+
+    <!-- edit image -->
+    <div id="editImageToolbar" class="toolbox-item row">
+        <p align="center"><b>Edit Image</b></p>
+
+        <p align="center"><input type="button" value="H. Flip" style="width: 75px;"
+                                 onclick="hflip();"><input
+                type="button" value="V. Flip" style="width: 75px;" onClick="vflip();"></p>
+
+        <p align="center"><input type="button" value="Crop" style="width: 150px;" onclick="cropPlot();"></p>
+
+        <p align="center"><input type="button" value="Restore" style="width: 150px;"
+                                 onclick="restoreOriginalImage();"></p>
+
+        <p align="center"><input type="button" value="Save .PNG" style="width: 150px;" onclick="savePNG();">
+        </p>
+    </div>
+
+    <!-- distance measurement -->
+    <div id="measure-distances-sidebar" class="toolbox-item row">
+        <p class="toolbox-title">Measure Distances</p>
+
+        <p>
+            <input type="button" value="Add Pair (A)" style="width: 115px;" id="add-pair-button"
+                   onclick="wpd.distanceMeasurement.addPair();"/>
+            <input type="button" value="Delete Pair (D)" style="width: 115px;" id="delete-pair-button"
+                   onclick="wpd.distanceMeasurement.deletePair();"/>
+        </p>
+
+        <div class="vertical-spacer"></div>
+        <p>
+            <input type="button" value="Clear All" style="width: 115px;" id="clear-all-pairs-button"
+                   onclick="wpd.distanceMeasurement.clearAll();"/>
+            <input type="button" value="View Data" style="width: 115px;" id="view-measurement-data-button"
+                   onclick="wpd.dataTable.showDistanceData();"/>
+        </p>
+    </div>
+
+    <!-- angle measurement -->
+    <div id="measure-angles-sidebar" class="toolbox-item row">
+        <p class="toolbox-title">Measure Angles</p>
+
+        <p>
+            <input type="button" value="Add Angle (A)" style="width: 115px;" id="add-angle-button"
+                   onclick="wpd.angleMeasurement.addAngle();"/>
+            <input type="button" value="Delete Angle (D)" style="width: 115px;" id="delete-angle-button"
+                   onclick="wpd.angleMeasurement.deleteAngle();"/>
+        </p>
+
+        <div class="vertical-spacer"></div>
+        <p>
+            <input type="button" value="Clear All" style="width: 115px;"
+                   onclick="wpd.angleMeasurement.clearAll();"/>
+            <input type="button" value="View Data" style="width: 115px;"
+                   onclick="wpd.dataTable.showAngleData();"/>
+        </p>
+    </div>
+
+    <!-- grid detection -->
+    <div id="grid-detection-sidebar" class="toolbox-item row">
+        <p class="toolbox-title">Detect Grid</p>
+
+        <p>
+            Mask
+            <input type="button" value="Box" style="width: 60px;" id="grid-mask-box"
+                   onclick="wpd.gridDetection.markBox();"/>
+            <input type="button" value="Clear" style="width: 60px;" id="grid-mask-clear"
+                   onclick="wpd.gridDetection.clearMask();"/>
+            <input type="button" value="View" style="width: 60px;" id="grid-mask-view"
+                   onclick="wpd.gridDetection.viewMask();"/>
+        </p>
+        <hr/>
+        <p>
+            Color
+            <input type="button" value="Pick" style="width: 60px;" id="grid-color-picker-button"
+                   onclick="wpd.gridDetection.startColorPicker();"/>
+            <input type="text" value="120" style="width: 60px;" id="grid-color-distance"
+                   onchange="wpd.gridDetection.changeColorDistance();"/>
+            <input type="button" value="Test" style="width: 60px;" id="grid-color-test"
+                   onclick="wpd.gridDetection.testColor();"/>
+        </p>
+        <hr/>
+        <table>
+            <tr>
+                <td align="right">Horizontal</td>
+                <td><input type="checkbox" id="grid-horiz-enable" checked/></td>
+            </tr>
+            <tr>
+                <td align="right">Detection Width</td>
+                <td>&nbsp; <input type="text" value="5" id="grid-horiz-detection-width"
+                                  style="width: 40px;"/>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">Line Width</td>
+                <td>&nbsp; <input type="text" value="5" id="grid-horiz-line-width" style="width: 40px;"/>
+                </td>
+            </tr>
+        </table>
+        <hr/>
+        <table>
+            <tr>
+                <td align="right">Vertical</td>
+                <td><input type="checkbox" id="grid-vert-enable" checked/></td>
+            </tr>
+            <tr>
+                <td align="right">Detection Width</td>
+                <td>&nbsp; <input type="text" value="5" id="grid-vert-detection-width"
+                                  style="width: 40px;"/>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">Line Width</td>
+                <td>&nbsp; <input type="text" value="5" id="grid-vert-line-width" style="width: 40px;"/>
+                </td>
+            </tr>
+        </table>
+        <hr/>
+        <p>
+            <input type="button" value="Detect" style="width: 80px;" onclick="wpd.gridDetection.run();"/>
+            <input type="button" value="Clear" style="width: 80px;" onclick="wpd.gridDetection.clear();"/>
+        </p>
+    </div>
+</div>

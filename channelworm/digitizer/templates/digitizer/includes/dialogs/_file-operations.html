@@ -1,0 +1,120 @@
+<!-- Load Image -->
+<div id="loadNewImage" class="modal fade " role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Load Image File</h4>
+            </div>
+            <div class="modal-body ">
+                <p align="center"><input type="file" id="fileLoadBox"/></p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Load" class="btn btn-primary" onclick="wpd.graphicsWidget.load();"/>
+                <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Webcam Capture -->
+<div id="webcamCapture" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Webcam Capture</h4>
+            </div>
+            <div class="modal-body">
+                <video id="webcamVideo" autoplay="true" height="350"></video>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Capture" class="btn btn-primary" onclick="wpd.webcamCapture.capture();"/>
+                <input type="button" value="Cancel" class="btn btn-default" onclick="wpd.webcamCapture.cancel();"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Run Script -->
+<div id="runScriptPopup" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Run Script</h4>
+            </div>
+            <div class="modal-body">
+                Load a Javascript file to further extend the capabilities of WebPlotDigitizer. For examples, visit the
+                <a href="http://github.com/ankitrohatgi/WebPlotDigitizer-Examples" target="_blank">
+                    WebPlotDigitizer-Examples repository
+                </a>.
+                <p align="center"><input type="file" id="runScriptFileInput"/></p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Run" class="btn btn-primary" onclick="wpd.scriptInjector.load();"/>
+                <input type="button" value="Cancel" class="btn btn-default" onclick="wpd.scriptInjector.cancel();"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Export JSON -->
+<div id="export-json-window" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Export JSON</h4>
+            </div>
+            <div class="modal-body">
+                <p>This JSON file contains the axes calibration and the digitized data points from this plot. This file
+                    can be
+                    imported later to resume work or reuse the calibration in another plot.</p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Download" class="btn btn-primary" onclick="wpd.saveResume.download();"/>
+                <input type="button" value="Close" class="btn btn-default"
+                       onclick="wpd.popup.close('export-json-window');"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import JSON -->
+<div id="import-json-window" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Import JSON</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Import JSON -->
+                <p>Specify a previously exported JSON file to load here. Note that this will clear any unsaved data
+                    points in the current plot.</p>
+
+                <div class="form-group">
+                    <label for="exampleInputFile">File input</label>
+                    <input type="file" id="import-json-file"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Import" class="btn btn-primary" onclick="wpd.saveResume.read();"/>
+                <input type="button" value="Cancel" class="btn btn-default"
+                       onclick="wpd.popup.close('import-json-window');"/>
+
+            </div>
+        </div>
+    </div>
+</div>
+
