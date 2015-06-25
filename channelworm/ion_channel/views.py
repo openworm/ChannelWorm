@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 # Create your views here.
 # Create your views here.
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from ion_channel.models import Experiment, IonChannelModel, PatchClamp, Graph, GraphData
+from models import Experiment, IonChannelModel, PatchClamp, Graph, GraphData
 
 
 def index(request):

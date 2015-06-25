@@ -1,31 +1,73 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
-class Role(models.Model):
-    role = models.CharField(max_length=300,unique=True)
-    permissions = models.CharField(max_length=300)
+Channel_Type_CHOICES = (
+    ('Ca', 'Calcium Channel'),
+    ('K', 'Potassium Channel')
+)
+Ion_Type_CHOICES = (
+    ('Ca', 'Calcium'),
+    ('K', 'Potassium'),
+    ('Cl', 'Chloride')
+)
+class IonChannel(models.Model):
+    channel_name = models.CharField(null=True, max_length=300)
+    description = models.TextField(blank=True, null=True)
+    description_evidences = models.TextField(blank=True, null=True,verbose_name='PMID for description evidence')
+    protein_short_name = models.CharField(blank=True, null=True, max_length=300)
+    proteins = models.CharField(blank=True, null=True, max_length=300)
+    gene_WB_ID = models.CharField(blank=True, null=True, max_length=300)
+    gene_class = models.CharField(blank=True, null=True, max_length=300)
+    expression_pattern = models.TextField(blank=True, null=True)
+    expression_evidences = models.TextField(blank=True, null=True,verbose_name='PMID for expression evidence')
+    channel_type = models.CharField(blank=True, null=True, max_length=300,choices=Channel_Type_CHOICES)
+    channel_subtype = models.CharField(blank=True, null=True, max_length=300)
+    ion_type = models.CharField(blank=True, null=True, max_length=200,choices=Ion_Type_CHOICES)
 
     def __unicode__(self):
-        return self.role
+        return self.channel_name
 
 
-class User(models.Model):
-    username = models.CharField(max_length=300)
-    password = models.CharField(max_length=50)
-    first_name = models.CharField(max_length=300)
-    last_name = models.CharField(max_length=300)
-    email = models.EmailField(max_length=300)
-    role = models.ForeignKey(Role)
+class Cell(models.Model):
+    cell_name = models.CharField(max_length=300)
+    cell_type = models.CharField(max_length=300,choices=Channel_Type_CHOICES)
+    channels = models.ManyToManyField(IonChannel)
 
     def __unicode__(self):
-        return self.username
+        return self.cell_name
 
 
-class Experiment(models.Model):
-    doi = models.CharField(max_length=300)
+Reference_Type_CHOICES = (
+    ('Genomics', 'Genomics'),
+    ('Proteomics', 'Proteomics'),
+    ('Electrophysiology', 'Electrophysiology'),
+    ('Other', 'Other')
+)
+class Reference(models.Model):
+    doi = models.CharField(max_length=300,unique=True)
+    headline = models.TextField(blank=True, null=True)
+    publish_date = models.DateTimeField(blank=True, null=True)
+    author = models.CharField(max_length=300,blank=True, null=True)
+    journal = models.CharField(max_length=300,blank=True, null=True)
+    PMID = models.CharField(max_length=300,blank=True, null=True)
+    create_date = models.DateTimeField(auto_now=True)
+    username = models.ForeignKey(User,verbose_name='Contributer')
+    channels = models.ManyToManyField(IonChannel)
+    subject = models.CharField(max_length=300,choices=Reference_Type_CHOICES)
+    url = models.URLField(blank=True, null=True)
 
     def __unicode__(self):
         return self.doi
+
+class Experiment(models.Model):
+    reference = models.ForeignKey(Reference)
+    create_date = models.DateTimeField(auto_now=True)
+    last_update = models.DateTimeField(auto_now=True)
+    username = models.ForeignKey(User,verbose_name='Contributer')
+
+    def __unicode__(self):
+        return self.reference
 
 
 PatchClamp_Type_CHOICES = (
@@ -38,6 +80,7 @@ Patch_Type_CHOICES = (
 )
 
 # TODO: Define cell types or get from other table
+# TODO: Consider mutants or blockers
 
 class PatchClamp(models.Model):
     experiment = models.ForeignKey(Experiment)
@@ -53,14 +96,18 @@ class PatchClamp(models.Model):
     deltat = models.FloatField(verbose_name='Time interval-Deltat (s)')
     start_time = models.FloatField(verbose_name='Start time (s)')
     end_time = models.FloatField(verbose_name='End time (s)')
-    protocol_start = models.FloatField(verbose_name='Beginning of holding potential or stimulated current (V or A)')
+    protocol_start = models.FloatField(verbose_name='Initial holding potential or stimulated current (V or A)')
     protocol_end = models.FloatField(verbose_name='End of Holding potential or stimulated current (V or A)')
     protocol_step = models.FloatField(verbose_name='Steps of Holding potential or stimulated current (V or A)')
-    username = models.ForeignKey(User,verbose_name='Contributer')
+    initial_voltage = models.FloatField(blank=True, null=True, verbose_name='Initial voltage for current-clamp (V)')
+    mutants = models.TextField(blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582)')
+    blockers = models.TextField(blank=True, null=True, verbose_name='Ion channel blockers (e.g. 500e-6 Cd2+,)')
 
     def __unicode__(self):
         return self.type + " " + `self.experiment`
 
+# TODO: consider normalized currents!
+# TODO: consider multiple channels
 
 Axis_Type_CHOICES = (
     ('I', 'Current'),
@@ -87,11 +134,11 @@ class Graph(models.Model):
 
 
     figure_ref_address = models.CharField(max_length=500,verbose_name='Figure number (e.g. 2A)')
-    figure_ref_caption = models.CharField(max_length=500,verbose_name='Figure caption')
+    figure_ref_caption = models.TextField(verbose_name='Figure caption')
     file = models.ImageField(upload_to='ion_channel/graph/%Y/%m/%d')
 
     def __unicode__(self):
-        return self.x_axis_type + "/" + self.y_axis_type+ " " + self.figure_ref_address
+        return self.experiment+ " " + self.figure_ref_address
 
 
 class GraphData(models.Model):
@@ -100,33 +147,20 @@ class GraphData(models.Model):
     series_data = models.TextField()
 
 
-Channel_Type_CHOICES = (
-    ('Ca', 'Calcium'),
-    ('K', 'Potassium')
+Model_Type_CHOICES = (
+    ('Experimental', 'Experimental'),
+    ('Estimated', 'Estimated')
 )
-Ion_Type_CHOICES = (
-    ('Ca', 'Calcium'),
-    ('K', 'Potassium'),
-    ('Cl', 'Chloride')
-)
-class IonChannel(models.Model):
-    channel_name = models.CharField(max_length=300)
-    channel_type = models.CharField(max_length=300,choices=Channel_Type_CHOICES)
-    channel_family = models.CharField(max_length=300)
-    ion_type = models.CharField(max_length=200,choices=Ion_Type_CHOICES)
-
-    def __unicode__(self):
-        return self.channel_name
-
 class IonChannelModel(models.Model):
     channel_name = models.ForeignKey(IonChannel)
+    model_type = models.CharField(max_length=300,choices=Model_Type_CHOICES)
     experiment = models.ForeignKey(Experiment)
     graph = models.ForeignKey(Graph)
     score = models.FloatField(default=None, blank=True, null=True,verbose_name='Evaluated Score')
     username = models.ForeignKey(User,verbose_name='Contributer')
     date = models.DateTimeField(auto_now=True)
-    curated = models.BooleanField(default=False)
-    neuroML2_file = models.FilePathField()
+    neuroML_file = models.FilePathField()
+    references = models.ManyToManyField(Reference)
 
     def __unicode__(self):
         return self.channel_name + " " + self.date
