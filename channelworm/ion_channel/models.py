@@ -2,6 +2,20 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class ParamDict(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.name
+
+class KeyVal(models.Model):
+    container = models.ForeignKey(ParamDict, db_index=True)
+    key = models.CharField(max_length=240, db_index=True)
+    value = models.CharField(max_length=240, db_index=True)
+
+    def __unicode__(self):
+        return self.container
+
 Channel_Type_CHOICES = (
     ('Ca', 'Calcium Channel'),
     ('K', 'Potassium Channel')
@@ -16,6 +30,7 @@ class IonChannel(models.Model):
     description = models.TextField(blank=True, null=True)
     description_evidences = models.TextField(blank=True, null=True,verbose_name='PMID for description evidence')
     protein_short_name = models.CharField(blank=True, null=True, max_length=300)
+    protein_sequence = models.TextField(blank=True, null=True)
     proteins = models.CharField(blank=True, null=True, max_length=300)
     gene_WB_ID = models.CharField(blank=True, null=True, max_length=300)
     gene_class = models.CharField(blank=True, null=True, max_length=300)
@@ -24,6 +39,7 @@ class IonChannel(models.Model):
     channel_type = models.CharField(blank=True, null=True, max_length=300,choices=Channel_Type_CHOICES)
     channel_subtype = models.CharField(blank=True, null=True, max_length=300)
     ion_type = models.CharField(blank=True, null=True, max_length=200,choices=Ion_Type_CHOICES)
+    last_update = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.channel_name
@@ -80,7 +96,6 @@ Patch_Type_CHOICES = (
 )
 
 # TODO: Define cell types or get from other table
-# TODO: Consider mutants or blockers
 
 class PatchClamp(models.Model):
     experiment = models.ForeignKey(Experiment)
@@ -156,12 +171,12 @@ class IonChannelModel(models.Model):
     model_type = models.CharField(max_length=300,choices=Model_Type_CHOICES)
     experiment = models.ForeignKey(Experiment)
     graph = models.ForeignKey(Graph)
-    score = models.FloatField(default=None, blank=True, null=True,verbose_name='Evaluated Score')
     username = models.ForeignKey(User,verbose_name='Contributer')
     date = models.DateTimeField(auto_now=True)
-    neuroML_file = models.FilePathField()
+    parameters = models.ForeignKey(ParamDict, blank=True, null=True)
+    score = models.FloatField(default=None, blank=True, null=True,verbose_name='Evaluated Score')
+    neuroML_file = models.FilePathField(blank=True, null=True)
     references = models.ManyToManyField(Reference)
 
     def __unicode__(self):
         return self.channel_name + " " + self.date
-
