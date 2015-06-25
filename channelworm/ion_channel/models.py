@@ -39,7 +39,7 @@ class IonChannel(models.Model):
     channel_type = models.CharField(blank=True, null=True, max_length=300,choices=Channel_Type_CHOICES)
     channel_subtype = models.CharField(blank=True, null=True, max_length=300)
     ion_type = models.CharField(blank=True, null=True, max_length=200,choices=Ion_Type_CHOICES)
-    last_update = models.DateTimeField(auto_now=True)
+    last_update = models.DateTimeField(auto_now=True, null=True)
 
     def __unicode__(self):
         return self.channel_name
