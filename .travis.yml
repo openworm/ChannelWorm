@@ -9,7 +9,7 @@ virtualenv:
 
 before_install:
     - sudo apt-get update
-    - sudo apt-get install scipy
+    - sudo apt-get install python-scipy
 
 install:
   - python setup.py install
