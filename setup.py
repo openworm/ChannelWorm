@@ -26,6 +26,7 @@ setup(
         'git+https://github.com/scidash/sciunit.git#egg=sciunit',
         'git+https://github.com/NeuroML/pyNeuroML.git#egg=PyNeuroML',
         'git+https://github.com/pgleeson/pyelectro.git#egg=pyelectro',
-        'git+https://github.com/pgleeson/neurotune.git#egg=neurotune'
+        'git+https://github.com/pgleeson/neurotune.git#egg=neurotune',
+        'git+https://github.com/rgerkin/neuronunit.git#egg=neuronunit'
     ]
 )
