@@ -75,36 +75,3 @@ class PatchClampAdapter(object):
     def get_cw(self):
         """Return the ChannelWorm representation of the object"""
         return self.channelworm_object
-
-class IonChannelAdapter(object):
-    """
-    Map a channelworm ion channel data model to a pyopenworm model.
-    """
-
-    def __init__(self, cw_obj):
-        P.connect()
-
-        self.channelworm_object = cw_obj
-        cw_dict = model_to_dict(self.channelworm_object)
-
-        self.pyopenworm_object = P.Channel()
-
-        self.pyopenworm_object.name = cw_dict['channel_name']
-
-        #TODO: Add models for the ion channel
-
-        P.disconnect()
-
-class IonChannelModelAdapter(object):
-    """
-    Map a channelworm ion channel model to a pyopenworm ion channel model.
-    """
-
-    def __init__(self, cw_obj):
-        P.connect()
-
-        self.channelworm_object = cw_obj
-        cw_dict = model_to_dict(self.channelworm_object)
-
-        self.pyopenworm_object = P.ChannelModel()
-

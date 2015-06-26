@@ -14,6 +14,7 @@ setup(
         'cypy',
         'django',
         'inspyred',
+        'neuronunit',
         'neurotune',
         'pillow',
         'pyelectro',
