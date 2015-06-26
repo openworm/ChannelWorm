@@ -11,7 +11,7 @@ else:
     from web_app import settings as defaults
     settings.configure(default_settings=defaults, DEBUG=True)
 
-import ion_channel.models as C
+from channelworm.ion_channel import models as C
 import PyOpenWorm as P
 from django.forms.models import model_to_dict
 
