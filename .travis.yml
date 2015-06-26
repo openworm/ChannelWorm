@@ -5,10 +5,10 @@ python:
 
 install:
   # Install conda
-  - sudo pip install conda
+  - pip install conda
   # install deps
-  - sudo conda init
-  - sudo conda update conda --yes
+  - conda init
+  - conda update conda --yes
   - deps='pip numpy nose numpydoc sphinx'
   - conda create -p $HOME/py --yes $deps "python=$TRAVIS_PYTHON_VERSION"
   - export PATH=$HOME/py/bin:$PATH
