@@ -64,6 +64,4 @@ print("The score was computed according to '%s' with raw value %s" % (score.desc
 # In[7]:
 
 rd = score.related_data
-score.plot(rd['v'],rd['i_obs'],color='k',label='Observed (data)')
-score.plot(rd['v'],rd['i_pred'],same_fig=True,color='r',label='Predicted (model)')
 
