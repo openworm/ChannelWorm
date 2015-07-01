@@ -75,3 +75,4 @@ class PatchClampAdapter(object):
     def get_cw(self):
         """Return the ChannelWorm representation of the object"""
         return self.channelworm_object
+
