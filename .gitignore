@@ -72,3 +72,6 @@ ChannelWorm.egg-info/
 tests/.ipynb_checkpoints
 tests/*.dat
 tests/*.xml
+
+# some lingering egg files
+dist/*.egg
