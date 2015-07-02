@@ -25,6 +25,9 @@ Ion_Type_CHOICES = (
     ('K', 'Potassium'),
     ('Cl', 'Chloride')
 )
+Ligand_Type_CHOICES = (
+
+)
 class IonChannel(models.Model):
     channel_name = models.CharField(null=True, max_length=300)
     description = models.TextField(blank=True, null=True)
@@ -32,13 +35,18 @@ class IonChannel(models.Model):
     gene_name = models.CharField(blank=True, null=True, max_length=300)
     gene_WB_ID = models.CharField(blank=True, null=True, max_length=300)
     gene_class = models.CharField(blank=True, null=True, max_length=300)
-    protein_sequence = models.TextField(blank=True, null=True)
     proteins = models.CharField(blank=True, null=True, max_length=300)
+    protein_sequence = models.TextField(blank=True, null=True)
+    structure = models.TextField(blank=True, null=True)
+    uniprot_ID = models.CharField(blank=True, null=True, max_length=300)
+    pdb_ID = models.CharField(blank=True, null=True, max_length=300)
+    interpro_ID = models.CharField(blank=True, null=True, max_length=300)
     expression_pattern = models.TextField(blank=True, null=True)
     expression_evidences = models.TextField(blank=True, null=True,verbose_name='PMID for expression evidence')
     channel_type = models.CharField(blank=True, null=True, max_length=300,choices=Channel_Type_CHOICES)
     channel_subtype = models.CharField(blank=True, null=True, max_length=300)
     ion_type = models.CharField(blank=True, null=True, max_length=200,choices=Ion_Type_CHOICES)
+    ligand_type = models.CharField(blank=True, null=True, max_length=200,choices=Ligand_Type_CHOICES)
     last_update = models.DateTimeField(auto_now=True, null=True)
 
     def __unicode__(self):
@@ -121,7 +129,6 @@ class PatchClamp(models.Model):
     def __unicode__(self):
         return self.type + " " + `self.experiment`
 
-# TODO: consider normalized currents!
 # TODO: consider multiple channels
 
 Axis_Type_CHOICES = (
@@ -130,7 +137,7 @@ Axis_Type_CHOICES = (
     ('T', 'Time'),
     ('G', 'Conductance'),
     ('G/G_max', 'Conductance'),
-    ('NP', 'Open Probability'),
+    ('Po', 'Open Probability'),
     ('Concentration', 'Concentration'),
     ('Bar', 'Bar Chart'),
 )
@@ -162,13 +169,19 @@ class GraphData(models.Model):
     series_data = models.TextField()
 
 
-Model_Type_CHOICES = (
+Modeling_Method_CHOICES = (
     ('Experimental', 'Experimental'),
     ('Estimated', 'Estimated')
 )
+
+Model_Type_CHOICES = (
+    ('HH', 'Hodgkin-Huxley'),
+    ('Markov', 'Markov')
+)
 class IonChannelModel(models.Model):
     channel_name = models.ForeignKey(IonChannel)
-    model_type = models.CharField(max_length=300,choices=Model_Type_CHOICES)
+    model_type = models.CharField(max_length=300,choices=Model_Type_CHOICES, default='HH')
+    modeling_type = models.CharField(max_length=300,choices=Modeling_Method_CHOICES,default='Experimental')
     experiment = models.ForeignKey(Experiment)
     graph = models.ForeignKey(Graph)
     username = models.ForeignKey(User,verbose_name='Contributer')
