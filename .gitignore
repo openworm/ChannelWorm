@@ -12,6 +12,9 @@ __pycache__/
 # Mac-specific directory file
 .DS_Store
 
+# created on running setup.py install
+dist/
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
