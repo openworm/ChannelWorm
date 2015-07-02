@@ -11,7 +11,7 @@ else:
     from web_app import settings as defaults
     settings.configure(default_settings=defaults, DEBUG=True)
 
-import ion_channel.models as C
+from channelworm.ion_channel import models as C
 import PyOpenWorm as P
 from django.forms.models import model_to_dict
 
@@ -65,7 +65,7 @@ class PatchClampAdapter(object):
         for key, value in cw_dict.iteritems():
             self.pyopenworm_object.conditions.set(key, value)
 
-        # we not longer need PyOW API so we can kill the connection
+        # we no longer need PyOW API so we can kill the connection
         P.disconnect()
 
     def get_pow(self):
@@ -75,4 +75,3 @@ class PatchClampAdapter(object):
     def get_cw(self):
         """Return the ChannelWorm representation of the object"""
         return self.channelworm_object
-
