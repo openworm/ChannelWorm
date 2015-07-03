@@ -5,10 +5,9 @@
 {% block page_title %}{% trans 'Login' %}{% endblock %}
 
 {% block content %}
-    <p class="login-box-msg">Sign in to start your session</p>
-    <form method="post" class="form" action="{% url 'django.contrib.auth.views.login' %}">
+    <p class="login-box-msg">Register a new membership</p>
+    <form method="post" class="form" >
         {% csrf_token %}
-        <input type="hidden" name="next" value="{{ next }}" />
         {% for field in form %}
             <div class="form-group has-feedback">
                 {{ field.label_tag }}
@@ -19,10 +18,9 @@
         <div class="row">
             <div class="col-xs-8">
                 <!--<p><a href="{% url 'password_reset' %}">{% trans 'Lost password?' %}</a></p>-->
-                <p><a href="{% url 'account:register' %}" >{% trans 'Sign up for ChannelWorm' %}</a></p>
             </div>
             <div class="col-xs-4">
-                <input type="submit" value="{% trans 'Sign In' %}" class="btn btn-primary pull-right"/>
+                <input type="submit" value="{% trans 'Register' %}" class="btn btn-primary pull-right"/>
 
             </div>
         </div>

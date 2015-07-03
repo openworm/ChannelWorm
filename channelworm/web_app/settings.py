@@ -38,7 +38,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'digitizer',
-    'ion_channel'
+    'ion_channel',
+    'account',
+
 )
 
 MIDDLEWARE_CLASSES = (
