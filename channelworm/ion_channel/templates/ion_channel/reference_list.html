@@ -36,7 +36,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for reference in Reference %}
+                        {% for reference in references %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
                                 <td>{{ reference.doi }}</td>
@@ -65,6 +65,6 @@
 
 {% block inline-script %}
     <script type="text/javascript">
-        $("#experiments_table").dataTable();
+        $("#references_table").dataTable();
     </script>
 {% endblock %}

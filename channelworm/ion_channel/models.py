@@ -96,7 +96,7 @@ class Experiment(models.Model):
     username = models.ForeignKey(User,verbose_name='Contributer')
 
     def __unicode__(self):
-        return self.reference
+        return `self.reference` + " " + str(self.create_date)
 
 
 PatchClamp_Type_CHOICES = (

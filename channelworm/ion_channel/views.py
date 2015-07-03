@@ -23,14 +23,13 @@ class ReferenceCreate(CreateView):
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:reference-index')
 
-    def form_valid(self, form_class):
-        form_class.instance.created_by = self.request.user
-        return super(ReferenceCreate, self).form_valid(form_class)
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super(ReferenceCreate, self).form_valid(form)
 
 class ReferenceUpdate(UpdateView):
-    class Meta:
-        model = Reference
-        exclude = ('username','create_date')
+    model = Reference
+    form_class = ReferenceForm
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:reference-index')
 
@@ -51,6 +50,9 @@ class ExperimentCreate(CreateView):
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
 
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super(ExperimentCreate, self).form_valid(form)
 
 class ExperimentUpdate(UpdateView):
     model = Experiment
