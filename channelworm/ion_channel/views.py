@@ -9,7 +9,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from ion_channel.models import Experiment, IonChannelModel, PatchClamp, Graph, GraphData
 
-@login_required()
+@login_required(login_url='login')
 def index(request):
     return render(request, 'ion_channel/index.html')
 
