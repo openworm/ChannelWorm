@@ -70,16 +70,21 @@ Reference_Type_CHOICES = (
 )
 class Reference(models.Model):
     doi = models.CharField(max_length=300,unique=True)
-    headline = models.TextField(blank=True, null=True)
-    publish_date = models.DateTimeField(blank=True, null=True)
-    author = models.CharField(max_length=300,blank=True, null=True)
-    journal = models.CharField(max_length=300,blank=True, null=True)
     PMID = models.CharField(max_length=300,blank=True, null=True)
+    title = models.TextField(blank=True, null=True)
+    citation = models.TextField(blank=True, null=True)
+    year = models.CharField(max_length=300,blank=True, null=True)
+    authors = models.CharField(max_length=300,blank=True, null=True)
+    journal = models.CharField(max_length=300,blank=True, null=True)
+    volume = models.CharField(max_length=300,blank=True, null=True)
+    issue = models.CharField(max_length=300,blank=True, null=True)
+    pages = models.CharField(max_length=300,blank=True, null=True)
+    url = models.URLField(blank=True, null=True)
     create_date = models.DateTimeField(auto_now=True)
     username = models.ForeignKey(User,verbose_name='Contributer')
-    channels = models.ManyToManyField(IonChannel)
+    ion_channels = models.ManyToManyField(IonChannel)
     subject = models.CharField(max_length=300,choices=Reference_Type_CHOICES)
-    url = models.URLField(blank=True, null=True)
+    file_url = models.URLField(blank=True, null=True)
 
     def __unicode__(self):
         return self.doi
@@ -133,10 +138,12 @@ class PatchClamp(models.Model):
 
 Axis_Type_CHOICES = (
     ('I', 'Current'),
+    ('I_ss', 'Steady-state Current'),
+    ('I_peak', 'Peak Current'),
     ('V', 'Voltage'),
     ('T', 'Time'),
     ('G', 'Conductance'),
-    ('G/G_max', 'Conductance'),
+    ('G/G_max', 'G/G_max'),
     ('Po', 'Open Probability'),
     ('Concentration', 'Concentration'),
     ('Bar', 'Bar Chart'),

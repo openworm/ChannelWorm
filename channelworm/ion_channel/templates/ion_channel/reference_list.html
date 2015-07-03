@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load widget_filters %}
 
-{% block page_title %}{% trans 'Experiment List' %}{% endblock %}
-{% block page_header %}{% trans 'Experiment List' %}{% endblock %}
+{% block page_title %}{% trans 'References List' %}{% endblock %}
+{% block page_header %}{% trans 'References List' %}{% endblock %}
 {% block breadcrumb %}
     <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
-    <li class="active">{% trans 'Experiments' %}</li>
+    <li class="active">{% trans 'References' %}</li>
 {% endblock %}
 
 {% block content %}
@@ -14,39 +14,39 @@
         <div class="col-sm-12">
             <div class="box box-primary">
                 <div class="box-header">
-                    <i class="fa fa-flask"></i>
+                    <i class="fa fa-file-text-o"></i>
 
-                    <h3 class="box-title">{% trans 'Experiment' %}</h3>
+                    <h3 class="box-title">{% trans 'Reference' %}</h3>
 
                     <div class="box-tools pull-right">
-                        <a href="{% url 'ion_channel:experiment-create' %}"
+                        <a href="{% url 'ion_channel:reference-create' %}"
                            class="btn btn-success btn-sm">
                             <i class="fa fa-plus"></i>
-                            {% trans 'Add Experiment' %}
+                            {% trans 'Add Reference' %}
                         </a>
                     </div>
                 </div>
                 <div class="box-body">
-                    <table id="experiments_table" class="table table-bordered table-striped">
+                    <table id="Reference_table" class="table table-bordered table-striped">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
-                            <th>{% trans 'Reference' %}</th>
+                            <th>{% trans 'DOI' %}</th>
                             <th style="width: 200px">{% trans 'Action' %}</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for experiment in experiments %}
+                        {% for reference in Reference %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
-                                <td>{{ experiment.reference }}</td>
+                                <td>{{ reference.doi }}</td>
                                 <td>
-                                    <a href="{% url 'ion_channel:experiment-update' experiment.id %}"
+                                    <a href="{% url 'ion_channel:reference-update' reference.id %}"
                                        class="badge bg-light-blue">
                                         <i class="fa fa-edit"></i>
                                         {% trans 'Edit' %}
                                     </a>
-                                    <a href="{% url 'ion_channel:experiment-delete' experiment.id %}"
+                                    <a href="{% url 'ion_channel:reference-delete' reference.id %}"
                                        class="badge bg-red">
                                         <i class="fa fa-remove"></i>
                                         {% trans 'Delete' %}

@@ -4,14 +4,40 @@ from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
-# Create your views here.
-# Create your views here.
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from models import Experiment, IonChannelModel, PatchClamp, Graph, GraphData
+from models import *
+from form import *
 
 @login_required(login_url='login')
 def index(request):
     return render(request, 'ion_channel/index.html')
+
+class ReferenceList(ListView):
+    model = Reference
+    context_object_name = 'references'
+
+
+class ReferenceCreate(CreateView):
+    model = Reference
+    form_class = ReferenceForm
+    template_name_suffix = '_create_form'
+    success_url = reverse_lazy('ion_channel:reference-index')
+
+    def form_valid(self, form_class):
+        form_class.instance.created_by = self.request.user
+        return super(ReferenceCreate, self).form_valid(form_class)
+
+class ReferenceUpdate(UpdateView):
+    class Meta:
+        model = Reference
+        exclude = ('username','create_date')
+    template_name_suffix = '_update_form'
+    success_url = reverse_lazy('ion_channel:reference-index')
+
+
+class ReferenceDelete(DeleteView):
+    model = Reference
+    success_url = reverse_lazy('ion_channel:reference-index')
 
 
 class ExperimentList(ListView):
@@ -21,14 +47,14 @@ class ExperimentList(ListView):
 
 class ExperimentCreate(CreateView):
     model = Experiment
-    fields = ['doi']
+    fields = ['reference']
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
 
 
 class ExperimentUpdate(UpdateView):
     model = Experiment
-    fields = ['doi']
+    fields = ['reference']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
 
