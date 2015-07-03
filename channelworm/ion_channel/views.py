@@ -1,4 +1,5 @@
 import json
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -6,9 +7,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 # Create your views here.
 # Create your views here.
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from models import Experiment, IonChannelModel, PatchClamp, Graph, GraphData
+from ion_channel.models import Experiment, IonChannelModel, PatchClamp, Graph, GraphData
 
-
+@login_required()
 def index(request):
     return render(request, 'ion_channel/index.html')
 
