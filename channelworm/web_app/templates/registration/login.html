@@ -1,0 +1,29 @@
+{% extends  "auth_base.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block page_title %}{% trans 'Login' %}{% endblock %}
+
+{% block content %}
+    <p class="login-box-msg">Sign in to start your session</p>
+    <form method="post" class="form" action="{% url 'django.contrib.auth.views.login' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}" />
+        {% for field in form %}
+            <div class="form-group has-feedback">
+                {{ field.label_tag }}
+                {{ field |addcss:"form-control" }}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        <div class="row">
+            <div class="col-xs-8">
+                <!--<p><a href="{% url 'password_reset' %}">{% trans 'Lost password?' %}</a></p>-->
+            </div>
+            <div class="col-xs-4">
+                <input type="submit" value="{% trans 'Sign In' %}" class="btn btn-primary pull-right"/>
+
+            </div>
+        </div>
+    </form>
+{% endblock %}

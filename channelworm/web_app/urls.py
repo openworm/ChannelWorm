@@ -19,10 +19,11 @@ from django.contrib import admin
 from django.conf import settings
 
 urlpatterns = [
+    url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^digitizer/', include('digitizer.urls', namespace="digitizer"), ),
     url(r'^ion_channel/', include('ion_channel.urls', namespace="ion_channel"), ),
     url(r'^index$', 'ion_channel.views.index' ),
-    url(r'^$', 'ion_channel.views.index' ),
+    url(r'^$', 'ion_channel.views.index' ,name='home'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
