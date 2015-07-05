@@ -20,4 +20,4 @@ class ReferenceForm(ModelForm):
 
 class PubForm(forms.Form):
     DOI = forms.CharField(max_length=100,required=False,label='Search by DOI')
-    PMID = forms.CharField(max_length=100,required=False,label='Search by PMID')
+    PMID = forms.IntegerField(required=False,label='Search by PMID')

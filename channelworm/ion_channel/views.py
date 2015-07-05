@@ -1,7 +1,7 @@
 import json
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
 
@@ -9,14 +9,13 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from models import *
 from form import *
 
-@login_required(login_url='login')
 def index(request):
     return render(request, 'ion_channel/index.html')
+
 
 class ReferenceList(ListView):
     model = Reference
     context_object_name = 'references'
-
 
 class ReferenceCreate(CreateView):
     model = Reference
@@ -51,13 +50,11 @@ class ReferenceWizard(SessionWizardView):
         initial = {}
         if step == '1':
 
-            # Test to resolve problem with creating .cache in HOME dir in OpenShift
+            # TODO: Better handle the problem with creating .cache in HOME dir in OpenShift
             import os
-            home = os.environ["HOME"]
-            if home == "/var/lib/openshift/55454af95973ca347e00011b":
+            home_dir = os.environ["HOME"]
+            if home_dir == "/var/lib/openshift/55454af95973ca347e00011b":
                 os.environ["HOME"] = "/var/lib/openshift/55454af95973ca347e00011b/app-root/data/"
-                home_in_if = os.environ["HOME"]
-            home_after = os.environ["HOME"]
             from metapub import pubmedfetcher
 
             data = self.get_cleaned_data_for_step('0')
@@ -78,6 +75,9 @@ class ReferenceWizard(SessionWizardView):
             initial['issue'] = article.issue
             initial['pages'] = article.pages
             initial['url'] = article.url
+
+            os.environ["HOME"] = home_dir
+
         return initial
 
 
