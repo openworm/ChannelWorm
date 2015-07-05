@@ -5,12 +5,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
 
-import os
-home = os.environ["HOME"]
-if home == "/var/lib/openshift/55454af95973ca347e00011b/":
-    os.environ["HOME"] = "/var/lib/openshift/55454af95973ca347e00011b/app-root/data/"
-from metapub import pubmedfetcher
-
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from models import *
 from form import *
@@ -56,6 +50,14 @@ class ReferenceWizard(SessionWizardView):
     def get_form_initial(self, step):
         initial = {}
         if step == '1':
+
+            # Test to resolve problem with creating .cache in HOME dir in OpenShift
+            import os
+            home = os.environ["HOME"]
+            if home == "/var/lib/openshift/55454af95973ca347e00011b/":
+                os.environ["HOME"] = "/var/lib/openshift/55454af95973ca347e00011b/app-root/data/"
+            from metapub import pubmedfetcher
+
             data = self.get_cleaned_data_for_step('0')
             fetch = pubmedfetcher.PubMedFetcher()
             if data['DOI'] != '':
