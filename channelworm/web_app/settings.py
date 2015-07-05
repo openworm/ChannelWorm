@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     'digitizer',
     'ion_channel',
     'account',
-    'formtools',
 )
 
 MIDDLEWARE_CLASSES = (
