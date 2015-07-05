@@ -54,8 +54,10 @@ class ReferenceWizard(SessionWizardView):
             # Test to resolve problem with creating .cache in HOME dir in OpenShift
             import os
             home = os.environ["HOME"]
-            if home == "/var/lib/openshift/55454af95973ca347e00011b/":
+            if home == "/var/lib/openshift/55454af95973ca347e00011b":
                 os.environ["HOME"] = "/var/lib/openshift/55454af95973ca347e00011b/app-root/data/"
+                home_in_if = os.environ["HOME"]
+            home_after = os.environ["HOME"]
             from metapub import pubmedfetcher
 
             data = self.get_cleaned_data_for_step('0')
