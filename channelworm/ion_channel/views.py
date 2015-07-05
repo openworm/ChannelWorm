@@ -4,6 +4,11 @@ from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
+
+import os
+home = os.environ["HOME"]
+if home == "/var/lib/openshift/55454af95973ca347e00011b/":
+    os.environ["HOME"] = "/var/lib/openshift/55454af95973ca347e00011b/app-root/data/"
 from metapub import pubmedfetcher
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
