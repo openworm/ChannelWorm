@@ -16,15 +16,16 @@ Including another URLconf
 from django.conf.urls import url
 
 from views import *
+from form import *
 
 urlpatterns = [
     url(r'^$', index, name='index'),
 
     url(r'^reference/create/$', login_required(ReferenceCreate.as_view()), name='reference-create'),
-    url(r'^home$', login_required(ReferenceList.as_view()), name='home'),
     url(r'^reference$', login_required(ReferenceList.as_view()), name='reference-index'),
     url(r'^reference/update/(?P<pk>[0-9]+)$', login_required(ReferenceUpdate.as_view()), name='reference-update'),
     url(r'^reference/delete/(?P<pk>[0-9]+)$', login_required(ReferenceDelete.as_view()), name='reference-delete'),
+    url(r'^reference/auto_create/$', login_required(ReferenceWizard.as_view([PubForm, ReferenceForm])), name='reference-auto-create'),
 
     url(r'^experiment/create/$', login_required(ExperimentCreate.as_view()), name='experiment-create'),
     url(r'^home$', login_required(ExperimentList.as_view()), name='home'),

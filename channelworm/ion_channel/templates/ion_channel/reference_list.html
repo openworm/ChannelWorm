@@ -16,30 +16,54 @@
                 <div class="box-header">
                     <i class="fa fa-file-text-o"></i>
 
-                    <h3 class="box-title">{% trans 'Reference' %}</h3>
+                    <h3 class="box-title">{% trans 'References' %}</h3>
 
                     <div class="box-tools pull-right">
                         <a href="{% url 'ion_channel:reference-create' %}"
                            class="btn btn-success btn-sm">
                             <i class="fa fa-plus"></i>
-                            {% trans 'Add Reference' %}
+                            {% trans 'Add Reference Manually' %}
+                        </a>
+                        <a href="{% url 'ion_channel:reference-auto-create' %}"
+                           class="btn btn-success btn-sm">
+                            <i class="fa fa-plus"></i>
+                            {% trans 'Add Reference Using Auto-Search' %}
                         </a>
                     </div>
                 </div>
                 <div class="box-body">
-                    <table id="Reference_table" class="table table-bordered table-striped">
+                    <table id="reference_table" class="table table-bordered table-striped">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
+                            <th>{% trans 'Reference' %}</th>
                             <th>{% trans 'DOI' %}</th>
+                            <th>{% trans 'Ion Channels' %}</th>
+                            <th>{% trans 'Cells' %}</th>
+                            <th>{% trans 'Category' %}</th>
+                            <th>{% trans 'File Address' %}</th>
+                            <th>{% trans 'Created By' %}</th>
                             <th style="width: 200px">{% trans 'Action' %}</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for reference in references %}
-                            <tr>
                                 <td>{{forloop.counter}}</td>
-                                <td>{{ reference.doi }}</td>
+                                <td>{{ reference.citation }}</td>
+                                <td><a href="http://doi.org/{{ reference.doi }}">{{ reference.doi }}</a></td>
+                                <td>
+                                {% for channel in reference.ion_channels.all %}
+                                    {{ channel }};
+                                {% endfor %}
+                                </td>
+                                <td>
+                                {% for cell in reference.cells.all %}
+                                    {{ cell }};
+                                {% endfor %}
+                                </td>
+                                <td>{{ reference.subject }}</td>
+                                <td><a href={{ reference.file_url }}>{{ reference.file_url }}</a></td>
+                                <td>{{ reference.username }}</td>
                                 <td>
                                     <a href="{% url 'ion_channel:reference-update' reference.id %}"
                                        class="badge bg-light-blue">
@@ -65,6 +89,6 @@
 
 {% block inline-script %}
     <script type="text/javascript">
-        $("#references_table").dataTable();
+        $("#reference_table").dataTable();
     </script>
 {% endblock %}

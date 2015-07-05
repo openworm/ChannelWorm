@@ -1,8 +1,10 @@
 import json
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
+from formtools.wizard.views import SessionWizardView
+from metapub import pubmedfetcher
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from models import *
@@ -26,6 +28,49 @@ class ReferenceCreate(CreateView):
     def form_valid(self, form):
         form.instance.username = self.request.user
         return super(ReferenceCreate, self).form_valid(form)
+
+class ReferenceWizard(SessionWizardView):
+    template_name = 'ion_channel/reference_auto_create_form.html'
+    def done(self, form_list, **kwargs):
+        data = self.get_cleaned_data_for_step('1')
+        data['username'] = self.request.user
+        instance = Reference()
+
+        for field, value in data.iteritems():
+            if (field != 'ion_channels') and (field != 'cells'):
+                setattr(instance, field, value)
+        instance.save()
+        channels = data['ion_channels']
+        cells = data['cells']
+        for value in channels.iterator():
+            instance.ion_channels.add(value.id)
+        for value in cells.iterator():
+            instance.ion_channels.add(value.id)
+        return redirect('/ion_channel/reference')
+
+    def get_form_initial(self, step):
+        initial = {}
+        if step == '1':
+            data = self.get_cleaned_data_for_step('0')
+            fetch = pubmedfetcher.PubMedFetcher()
+            if data['DOI'] != '':
+                article = fetch.article_by_doi(data['DOI'])
+            elif data['PMID'] != '':
+                article = fetch.article_by_pmid(data['PMID'])
+
+            initial['doi'] = article.doi
+            initial['PMID'] = article.pmid
+            initial['title'] = article.title
+            initial['citation'] = article.__str__()
+            initial['year'] = article.year
+            initial['authors'] = article.authors_str
+            initial['journal'] = article.journal
+            initial['volume'] = article.volume
+            initial['issue'] = article.issue
+            initial['pages'] = article.pages
+            initial['url'] = article.url
+        return initial
+
 
 class ReferenceUpdate(UpdateView):
     model = Reference

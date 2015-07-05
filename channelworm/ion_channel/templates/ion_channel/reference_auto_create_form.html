@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block page_title %}{% trans 'Add New Reference' %}{% endblock %}
+{% block page_header %}{% trans 'Add New Reference' %}{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li><a href="{% url 'ion_channel:reference-index' %}">{% trans 'References' %}</a></li>
+    <li class="active">{% trans 'Create' %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">{% trans 'Reference Info' %}</h3>
+                    <p class="help-block">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+                </div>
+                <form action="" method="post" class="form">
+                    <div class="box-body">
+                        {% csrf_token %}
+                        {{ wizard.management_form }}
+                        {% if wizard.form.forms %}
+                            {{ wizard.form.management_form }}
+                            {% for form in wizard.form.forms %}
+                                {% for field in form%}
+                                    <div class="form-group-sm">
+                                        {{ field.errors }}
+                                        {{ field.label_tag }}
+                                        {{ field |addcss:"form-control" }}
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            {% for field in wizard.form%}
+                            <div class="form-group-sm">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field |addcss:"form-control" }}
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="box-footer">
+                        {% if wizard.steps.prev %}
+                        <!--<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>-->
+                        <button class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "Prev Step" %}</button>
+                        {% endif %}
+                        <input type="submit" value="Submit" class="btn btn-primary pull-right"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

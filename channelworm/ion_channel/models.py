@@ -52,15 +52,23 @@ class IonChannel(models.Model):
     def __unicode__(self):
         return self.channel_name
 
-
+Cell_Type_CHOICES = (
+    ('Muscle', 'Muscle'),
+    ('Neuron', 'Neuron'),
+    ('Motor Neuron', 'Motor Neuron'),
+    ('Xenopus Oocyte', 'Xenopus Oocyte'),
+    ('Generic', 'Generic'),
+)
 class Cell(models.Model):
-    cell_name = models.CharField(max_length=300)
-    cell_type = models.CharField(max_length=300,choices=Channel_Type_CHOICES)
-    channels = models.ManyToManyField(IonChannel)
+    cell_name = models.CharField(max_length=300,unique=True,default='Generic')
+    cell_type = models.CharField(max_length=300,choices=Cell_Type_CHOICES,default='Generic')
+    ion_channels = models.ManyToManyField(IonChannel,blank=True, null=True)
+    membrane_capacitance = models.FloatField(max_length=200,blank=True, null=True,verbose_name='Capacitance of the membrane (F)')
+    specific_capacitance = models.FloatField(default=0.01,blank=True, null=True,verbose_name='Specific capacitance of the membrane (F/m2)')
+    area = models.FloatField(default=6e-9, blank=True, null=True,verbose_name='Total area of the cell (m2)')
 
     def __unicode__(self):
-        return self.cell_name
-
+        return self.cell_type + " " + self.cell_name
 
 Reference_Type_CHOICES = (
     ('Genomics', 'Genomics'),
@@ -82,12 +90,24 @@ class Reference(models.Model):
     url = models.URLField(blank=True, null=True)
     create_date = models.DateTimeField(auto_now=True)
     username = models.ForeignKey(User,verbose_name='Contributer')
-    ion_channels = models.ManyToManyField(IonChannel)
+    ion_channels = models.ManyToManyField(IonChannel,blank=True, null=True)
+    cells = models.ManyToManyField(Cell,blank=True, null=True)
     subject = models.CharField(max_length=300,choices=Reference_Type_CHOICES)
     file_url = models.URLField(blank=True, null=True)
 
     def __unicode__(self):
         return self.doi
+
+
+class CellChannel(models.Model):
+    cell = models.ForeignKey(Cell)
+    ion_channel = models.ForeignKey(IonChannel)
+    channel_density = models.FloatField(blank=True, null=True,verbose_name='Density of the channel in cell (1/m2)')
+    reference = models.ForeignKey(Reference)
+
+    def __unicode__(self):
+        return self.cell + " " + self.ion_channel
+
 
 class Experiment(models.Model):
     reference = models.ForeignKey(Reference)
@@ -112,13 +132,14 @@ Patch_Type_CHOICES = (
 
 class PatchClamp(models.Model):
     experiment = models.ForeignKey(Experiment)
+    ion_channel = models.ForeignKey(IonChannel)
     type = models.CharField(max_length=200,choices=PatchClamp_Type_CHOICES)
     patch_type = models.CharField(max_length=200,choices=Patch_Type_CHOICES)
-    Ca_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='The initial molar concentration of Calcium')
-    Cl_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='The initial molar concentration of Chloride')
-    cell_type = models.CharField(max_length=200,blank=True,verbose_name='Type of the cell (e.g. muscle, ADAL, Xenopus oocyte)')
-    membrane_capacitance = models.FloatField(max_length=200,blank=True, null=True,verbose_name='The capacitance of the membrane (F)')
+    Ca_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Calcium')
+    Cl_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Chloride')
+    cell = models.ForeignKey(Cell, blank=True, null=True,verbose_name='Type of the cell (e.g. muscle, ADAL, Xenopus oocyte)')
     cell_age = models.FloatField(default=None, blank=True, null=True,verbose_name='Age of the cell (days)')
+    membrane_capacitance = models.FloatField(max_length=200,blank=True, null=True,verbose_name='Capacitance of the membrane (F)')
     temperature = models.FloatField(default=25, blank=True, null=True,verbose_name='Temperature (Celsius)')
     duration = models.FloatField(verbose_name='Patch-Clamp Duration (s)')
     deltat = models.FloatField(verbose_name='Time interval-Deltat (s)')
@@ -199,4 +220,4 @@ class IonChannelModel(models.Model):
     references = models.ManyToManyField(Reference)
 
     def __unicode__(self):
-        return self.channel_name + " " + self.date
+        return self.channel_name + " " + str(self.date)
