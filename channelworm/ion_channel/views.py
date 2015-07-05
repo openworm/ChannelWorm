@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
-from metapub import pubmedfetcher
+import metapub
 import os
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -54,7 +54,7 @@ class ReferenceWizard(SessionWizardView):
         if step == '1':
             data = self.get_cleaned_data_for_step('0')
             cwd=os.getcwd()
-            fetch = pubmedfetcher.PubMedFetcher(cachedir=cwd)
+            fetch = metapub.PubMedFetcher(cachedir=cwd)
             if data['DOI'] != '':
                 article = fetch.article_by_doi(data['DOI'])
             elif data['PMID'] != '':
