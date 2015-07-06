@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load widget_filters %}
 
-{% block page_title %}{% trans 'Delete Experiment' %}{% endblock %}
-{% block page_header %}{% trans 'Delete Experiment' %}{% endblock %}
+{% block page_title %}{% trans 'Delete Reference' %}{% endblock %}
+{% block page_header %}{% trans 'Delete Reference' %}{% endblock %}
 {% block breadcrumb %}
     <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
-    <li><a href="{% url 'ion_channel:experiment-index' %}">{% trans 'Experiments' %}</a></li>
+    <li><a href="{% url 'ion_channel:reference-index' %}">{% trans 'References' %}</a></li>
     <li class="active">{% trans 'Delete' %}</li>
 {% endblock %}
 
@@ -32,7 +32,7 @@
                     </div>
                     <div class="box-footer">
                         <input type="submit" value="{% trans 'Yes' %}" class="btn btn-success"/>
-                        <a href="{% url 'ion_channel:experiment-index' %}" class="btn btn-default">{% trans 'No' %}</a>
+                        <a href="{% url 'ion_channel:reference-index' %}" class="btn btn-default">{% trans 'No' %}</a>
                     </div>
                 </form>
             </div>

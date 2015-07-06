@@ -38,7 +38,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'digitizer',
-    'ion_channel'
+    'ion_channel',
+    'account',
+    'formtools',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -130,6 +132,7 @@ STATICFILES_DIRS = (
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'media')
 MEDIA_URL = '/media/'
 
+LOGIN_REDIRECT_URL = '/'
 # initialize as empty so we can do `settings.configure()`
 DEFAULT_INDEX_TABLESPACE = ''
 DEFAULT_TABLESPACE = ''

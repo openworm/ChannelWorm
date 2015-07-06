@@ -5,3 +5,5 @@
 # could be python, php, ruby, etc.
 
 # Activate VirtualEnv in order to use the correct libraries
+
+#export OPENSHIFT_HOMEDIR=$OPENSHIFT_HOMEDIR/app-root/repo/
