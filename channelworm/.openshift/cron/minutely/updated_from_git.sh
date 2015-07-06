@@ -7,6 +7,7 @@ rm -rf ChannelWorm
 git clone https://github.com/VahidGh/ChannelWorm.git
 
 rm ChannelWorm/channelworm/db.sqlite3
+rm -rf ChannelWorm/channelworm/web_app/media/*
 
 cp -r ChannelWorm/channelworm/* ~/app-root/runtime/repo
 cp -r ChannelWorm/channelworm/.openshift/* ~/app-root/runtime/repo/.openshift
