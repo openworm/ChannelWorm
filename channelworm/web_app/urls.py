@@ -18,6 +18,9 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
 
+# TODO: Check for conflicts in two accounts url pattern
+# login_required() from 'django.contrib.auth.urls' redirects to accounts/login/ by default!
+
 urlpatterns = [
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^accounts/', include('account.urls', namespace='account')),

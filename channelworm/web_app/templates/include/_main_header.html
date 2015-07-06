@@ -18,6 +18,7 @@
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+                {% if user.is_authenticated %}
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
                     <!-- Menu Toggle Button -->
@@ -66,6 +67,16 @@
                 <li>
                     <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
                 </li>-->
+                {% else %}
+                <div class="pull-right">
+                    <a href="{% url 'login' %}" class="navbar-brand" role="button">
+                        <i class='fa fa-sign-in'></i><span> {% trans 'Login' %}</span>
+                    </a>
+                    <a href="{% url 'account:register' %}" class="navbar-brand" role="button">
+                        <i class='fa fa-user-plus'></i><span> {% trans 'Register' %}</span>
+                    </a>
+                </div>
+                {% endif %}
             </ul>
         </div>
     </nav>
