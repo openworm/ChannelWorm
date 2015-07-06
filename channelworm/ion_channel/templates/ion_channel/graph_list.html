@@ -31,14 +31,16 @@
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
+                            <th>{% trans 'Ion channel' %}</th>
+                            <th>{% trans 'Patch Clamp Type' %}</th>
+                            <th>{% trans 'Experiment' %}</th>
+                            <th>{% trans 'Ref Address' %}</th>
+                            <th>{% trans 'Ref Cpation' %}</th>
                             <th>{% trans 'X Type' %}</th>
                             <th>{% trans 'X Unit' %}</th>
                             <th>{% trans 'Y Type' %}</th>
                             <th>{% trans 'Y Unit' %}</th>
-                            <th>{% trans 'Ref Address' %}</th>
-                            <th>{% trans 'Ref Cpation' %}</th>
-                            <th>{% trans 'Patch Clamp' %}</th>
-                            <th>{% trans 'Experiment' %}</th>
+                            <th>{% trans 'Figure' %}</th>
                             <th>{% trans 'Action' %}</th>
                         </tr>
                         </thead>
@@ -46,14 +48,19 @@
                         {% for graph in graphs %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
+                                <td>{{ graph.patch_clamp.ion_channel }}</td>
+                                <td>{{ graph.patch_clamp.type }}</td>
+                                <td>{{ graph.experiment }}</td>
+                                <td>{{ graph.figure_ref_address }}</td>
+                                <td>{{ graph.figure_ref_caption }}</td>
                                 <td>{{ graph.x_axis_type }}</td>
                                 <td>{{ graph.x_axis_unit }}</td>
                                 <td>{{ graph.y_axis_type }}</td>
                                 <td>{{ graph.y_axis_unit }}</td>
-                                <td>{{ graph.figure_ref_address }}</td>
-                                <td>{{ graph.figure_ref_caption }}</td>
-                                <td>{{ graph.patch_clamp }}</td>
-                                <td>{{ graph.experiment }}</td>
+                                <td>
+                                    <a href="{{ graph.file.url }}"/>
+                                    <img src="{{ graph.file.url }}" width="100" height="100" />
+                                </td>
                                 <td>
                                     <a href="{% url 'ion_channel:graph-update' graph.id %}"
                                        class="badge bg-light-blue">

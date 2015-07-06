@@ -116,7 +116,7 @@ class Experiment(models.Model):
     username = models.ForeignKey(User,verbose_name='Contributer')
 
     def __unicode__(self):
-        return `self.reference` + " " + str(self.create_date)
+        return `self.reference` + " " + self.reference.title
 
 
 PatchClamp_Type_CHOICES = (
@@ -135,12 +135,7 @@ class PatchClamp(models.Model):
     ion_channel = models.ForeignKey(IonChannel)
     type = models.CharField(max_length=200,choices=PatchClamp_Type_CHOICES)
     patch_type = models.CharField(max_length=200,choices=Patch_Type_CHOICES)
-    Ca_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Calcium')
-    Cl_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Chloride')
     cell = models.ForeignKey(Cell, blank=True, null=True,verbose_name='Type of the cell (e.g. muscle, ADAL, Xenopus oocyte)')
-    cell_age = models.FloatField(default=None, blank=True, null=True,verbose_name='Age of the cell (days)')
-    membrane_capacitance = models.FloatField(max_length=200,blank=True, null=True,verbose_name='Capacitance of the membrane (F)')
-    temperature = models.FloatField(default=25, blank=True, null=True,verbose_name='Temperature (Celsius)')
     duration = models.FloatField(verbose_name='Patch-Clamp Duration (s)')
     deltat = models.FloatField(verbose_name='Time interval-Deltat (s)')
     start_time = models.FloatField(verbose_name='Start time (s)')
@@ -148,12 +143,17 @@ class PatchClamp(models.Model):
     protocol_start = models.FloatField(verbose_name='Initial holding potential or stimulated current (V or A)')
     protocol_end = models.FloatField(verbose_name='End of Holding potential or stimulated current (V or A)')
     protocol_step = models.FloatField(verbose_name='Steps of Holding potential or stimulated current (V or A)')
+    cell_age = models.FloatField(default=None, blank=True, null=True,verbose_name='Age of the cell (days)')
+    membrane_capacitance = models.FloatField(max_length=200,blank=True, null=True,verbose_name='Capacitance of the membrane (F)')
+    temperature = models.FloatField(default=25, blank=True, null=True,verbose_name='Temperature (Celsius)')
     initial_voltage = models.FloatField(blank=True, null=True, verbose_name='Initial voltage for current-clamp (V)')
+    Ca_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Calcium')
+    Cl_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Chloride')
     mutants = models.TextField(blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582)')
     blockers = models.TextField(blank=True, null=True, verbose_name='Ion channel blockers (e.g. 500e-6 Cd2+,)')
 
     def __unicode__(self):
-        return self.type + " " + `self.experiment`
+        return `self.ion_channel` + " " + `self.experiment` + " " + self.type
 
 # TODO: consider multiple channels
 
@@ -188,7 +188,7 @@ class Graph(models.Model):
     file = models.ImageField(upload_to='ion_channel/graph/%Y/%m/%d')
 
     def __unicode__(self):
-        return self.experiment+ " " + self.figure_ref_address
+        return `self.experiment`+ " " + self.figure_ref_address
 
 
 class GraphData(models.Model):
