@@ -1,12 +1,12 @@
-    {% extends "base.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load widget_filters %}
 
-{% block page_title %}{% trans 'Change Password' %}{% endblock %}
-{% block page_header %}{% trans 'Change Password' %}{% endblock %}
+{% block page_title %}{% trans 'Edit Account' %}{% endblock %}
+{% block page_header %}{% trans 'Edit Account' %}{% endblock %}
 {% block breadcrumb %}
     <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
-    <li class="active">{% trans 'Change Password' %}</li>
+    <li class="active">{% trans 'Edit Account' %}</li>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
         <div class="col-sm-12">
             <div class="box box-primary">
                 <div class="box-header">
-                    <h3 class="box-title">{% trans 'Password Info' %}</h3>
+                    <h3 class="box-title">{% trans 'Account Info' %}</h3>
                 </div>
                 <form method="post" class="form">
                     <div class="box-body">
