@@ -1,11 +1,10 @@
 import json
-from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
 
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from models import *
 from form import *
 
@@ -120,28 +119,67 @@ class ExperimentDelete(DeleteView):
     success_url = reverse_lazy('ion_channel:experiment-index')
 
 
+class CellCreate(CreateView):
+    model = Cell
+    fields = '__all__'
+    template_name_suffix = '_create_form'
+    success_url = reverse_lazy('ion_channel:ion-channel-index')
+
+
 class IonChannelList(ListView):
-    model = IonChannelModel
-    context_object_name = 'ion_channel_models'
+    model = IonChannel
+    context_object_name = 'ion_channels'
+
+class IonChannelDetail(UpdateView):
+    model = IonChannel
+    template_name_suffix = '_detail'
+    fields = '__all__'
+
 
 
 class IonChannelCreate(CreateView):
-    model = IonChannelModel
+    model = IonChannel
     fields = '__all__'
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:ion-channel-index')
 
 
 class IonChannelUpdate(UpdateView):
-    model = IonChannelModel
+    model = IonChannel
     fields = '__all__'
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:ion-channel-index')
 
 
 class IonChannelDelete(DeleteView):
-    model = IonChannelModel
+    model = IonChannel
     success_url = reverse_lazy('ion_channel:ion-channel-index')
+
+
+
+
+class IonChannelModelList(ListView):
+    model = IonChannelModel
+    context_object_name = 'ion_channel_models'
+
+
+class IonChannelModelCreate(CreateView):
+    model = IonChannelModel
+    fields = '__all__'
+    template_name_suffix = '_create_form'
+    success_url = reverse_lazy('ion_channel:ion-channel-model-index')
+
+
+class IonChannelModelUpdate(UpdateView):
+    model = IonChannelModel
+    fields = '__all__'
+    template_name_suffix = '_update_form'
+    success_url = reverse_lazy('ion_channel:ion-channel-model-index')
+
+
+class IonChannelModelDelete(DeleteView):
+    model = IonChannelModel
+    success_url = reverse_lazy('ion_channel:ion-channel-model-index')
 
 
 class PatchClampList(ListView):

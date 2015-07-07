@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load widget_filters %}
 
-{% block page_title %}{% trans 'Graph List' %}{% endblock %}
-{% block page_header %}{% trans 'Graph List' %}{% endblock %}
+{% block page_title %}{% trans 'Figure List' %}{% endblock %}
+{% block page_header %}{% trans 'Figure List' %}{% endblock %}
 {% block breadcrumb %}
     <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
-    <li class="active">{% trans 'Graphs' %}</li>
+    <li class="active">{% trans 'Figures' %}</li>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
                 <div class="box-header">
                     <i class="fa fa-bar-chart"></i>
 
-                    <h3 class="box-title">{% trans 'Graph' %}</h3>
+                    <h3 class="box-title">{% trans 'Figures' %}</h3>
 
                     <div class="box-tools pull-right">
                         <a href="{% url 'ion_channel:graph-create' %}"
@@ -58,8 +58,9 @@
                                 <td>{{ graph.y_axis_type }}</td>
                                 <td>{{ graph.y_axis_unit }}</td>
                                 <td>
-                                    <a href="{{ graph.file.url }}"/>
-                                    <img src="{{ graph.file.url }}" width="100" height="100" />
+                                    <a href="{{ graph.file.url }}">
+                                        <img src="{{ graph.file.url }}" width="100" height="100" />
+                                    </a>
                                 </td>
                                 <td>
                                     <a href="{% url 'ion_channel:graph-update' graph.id %}"

@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load widget_filters %}
 
-{% block page_title %}{% trans 'Delete Figure Data' %}{% endblock %}
-{% block page_header %}{% trans 'Delete Figure Data' %}{% endblock %}
+{% block page_title %}{% trans 'Delete Ion Channels' %}{% endblock %}
+{% block page_header %}{% trans 'Delete Ion Channels' %}{% endblock %}
 {% block breadcrumb %}
     <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
-    <li><a href="{% url 'ion_channel:graph-index' %}">{% trans 'Figure Datas' %}</a></li>
+    <li><a href="{% url 'ion_channel:ion-channel-index' %}">{% trans 'Ion Channels' %}</a></li>
     <li class="active">{% trans 'Delete' %}</li>
 {% endblock %}
 
@@ -25,14 +25,14 @@
                         <div class="callout callout-warning">
                             <p>
                                 {% blocktrans %}
-                                    Are you sure you want to delete the Figure Data?
+                                    Are you sure you want to delete the <strong>"{{ object }}"</strong>
                                 {% endblocktrans %}
                             </p>
                         </div>
                     </div>
                     <div class="box-footer">
                         <input type="submit" value="{% trans 'Yes' %}" class="btn btn-success"/>
-                        <a href="{% url 'ion_channel:graph-index' %}" class="btn btn-default">{% trans 'No' %}</a>
+                        <a href="{% url 'ion_channel:ion-channel-index' %}" class="btn btn-default">{% trans 'No' %}</a>
                     </div>
                 </form>
             </div>

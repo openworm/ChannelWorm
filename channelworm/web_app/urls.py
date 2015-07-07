@@ -29,5 +29,6 @@ urlpatterns = [
     url(r'^ion_channel/', include('ion_channel.urls', namespace="ion_channel"), ),
     url(r'^index$', 'ion_channel.views.index' ),
     url(r'^$', 'ion_channel.views.index' ,name='home'),
+    url(r'^explorer/', include('explorer.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

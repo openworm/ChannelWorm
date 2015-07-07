@@ -32,6 +32,10 @@ class IonChannel(models.Model):
     channel_name = models.CharField(null=True, max_length=300)
     description = models.TextField(blank=True, null=True)
     description_evidences = models.TextField(blank=True, null=True,verbose_name='PMID for description evidence')
+    channel_type = models.CharField(blank=True, null=True, max_length=300,choices=Channel_Type_CHOICES)
+    channel_subtype = models.CharField(blank=True, null=True, max_length=300)
+    ion_type = models.CharField(blank=True, null=True, max_length=200,choices=Ion_Type_CHOICES)
+    ligand_type = models.CharField(blank=True, null=True, max_length=200,choices=Ligand_Type_CHOICES)
     gene_name = models.CharField(blank=True, null=True, max_length=300)
     gene_WB_ID = models.CharField(blank=True, null=True, max_length=300)
     gene_class = models.CharField(blank=True, null=True, max_length=300)
@@ -43,10 +47,6 @@ class IonChannel(models.Model):
     interpro_ID = models.CharField(blank=True, null=True, max_length=300)
     expression_pattern = models.TextField(blank=True, null=True)
     expression_evidences = models.TextField(blank=True, null=True,verbose_name='PMID for expression evidence')
-    channel_type = models.CharField(blank=True, null=True, max_length=300,choices=Channel_Type_CHOICES)
-    channel_subtype = models.CharField(blank=True, null=True, max_length=300)
-    ion_type = models.CharField(blank=True, null=True, max_length=200,choices=Ion_Type_CHOICES)
-    ligand_type = models.CharField(blank=True, null=True, max_length=200,choices=Ligand_Type_CHOICES)
     last_update = models.DateTimeField(auto_now=True, null=True)
 
     def __unicode__(self):
@@ -106,7 +106,7 @@ class CellChannel(models.Model):
     reference = models.ForeignKey(Reference)
 
     def __unicode__(self):
-        return self.cell + " " + self.ion_channel
+        return `self.cell` + " " + `self.ion_channel`
 
 
 class Experiment(models.Model):
@@ -114,6 +114,7 @@ class Experiment(models.Model):
     create_date = models.DateTimeField(auto_now=True)
     last_update = models.DateTimeField(auto_now=True)
     username = models.ForeignKey(User,verbose_name='Contributer')
+    comments = models.TextField(blank=True, null=True,)
 
     def __unicode__(self):
         return `self.reference` + " " + self.reference.title
@@ -220,4 +221,4 @@ class IonChannelModel(models.Model):
     references = models.ManyToManyField(Reference)
 
     def __unicode__(self):
-        return self.channel_name + " " + str(self.date)
+        return `self.channel_name` + " " + `self.experiment`

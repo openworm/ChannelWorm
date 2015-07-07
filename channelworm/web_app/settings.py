@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'ion_channel',
     'account',
     'formtools',
+    'explorer',
 )
 
 MIDDLEWARE_CLASSES = (

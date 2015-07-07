@@ -2,12 +2,12 @@
 {% load i18n %}
 {% load widget_filters %}
 
-{% block page_title %}{% trans 'Graph Data List' %}{% endblock %}
-{% block page_header %}{% trans 'Graph Data List' %}{% endblock %}
+{% block page_title %}{% trans 'Figure Data List' %}{% endblock %}
+{% block page_header %}{% trans 'Figure Data List' %}{% endblock %}
 {% block breadcrumb %}
     <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
-    <li><a href="{% url 'ion_channel:graph-index' %}"><i class="fa fa-bar-chart"></i> {% trans 'Graph' %}</a></li>
-    <li class="active">{% trans 'Graph Data' %}</li>
+    <li><a href="{% url 'ion_channel:graph-index' %}"><i class="fa fa-bar-chart"></i> {% trans 'Figure' %}</a></li>
+    <li class="active">{% trans 'Figure Data' %}</li>
 {% endblock %}
 
 {% block content %}
@@ -17,7 +17,7 @@
                 <div class="box-header">
                     <i class="fa fa-file-text-o"></i>
 
-                    <h3 class="box-title">{% trans 'Graph Data' %}</h3>
+                    <h3 class="box-title">{% trans 'Figure Data' %}</h3>
                 </div>
                 <div class="box-body">
                     <table id="result_table" class="table table-bordered table-striped">
@@ -26,7 +26,7 @@
                             <th style="width: 10px">#</th>
                             <th>{% trans 'Series Name' %}</th>
                             <th>{% trans 'Series Data' %}</th>
-                            <th>{% trans 'Graph' %}</th>
+                            <th>{% trans 'Figure' %}</th>
                             <th>{% trans 'Action' %}</th>
                         </tr>
                         </thead>
