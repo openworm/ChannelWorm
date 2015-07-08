@@ -1,12 +1,13 @@
 import json
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
 # Create your views here.
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from models import Experiment, IonChannelModel, PatchClamp, Graph, GraphData
+from web_app.views import AjaxResponseMixin, AjaxMixinListView, AjaxMixinCreateView
 
 
 def index(request):
@@ -61,16 +62,25 @@ class IonChannelDelete(DeleteView):
     success_url = reverse_lazy('ion_channel:ion-channel-index')
 
 
-class PatchClampList(ListView):
+class PatchClampList(AjaxMixinListView, ListView):
     model = PatchClamp
     context_object_name = 'patch_clamps'
 
 
-class PatchClampCreate(CreateView):
+class PatchClampCreate(AjaxMixinCreateView):
     model = PatchClamp
     fields = '__all__'
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:patch-clamp-index')
+    parentId_url_kwarg = 'experimentId'
+
+    def post_ajax(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            response_data = {'status': 'success', 'result': 'PatchClamp data has been saved.'}
+            return JsonResponse(response_data)
+        else:
+            return JsonResponse(form.errors, status=400)
 
 
 class PatchClampUpdate(UpdateView):
@@ -85,7 +95,7 @@ class PatchClampDelete(DeleteView):
     success_url = reverse_lazy('ion_channel:patch-clamp-index')
 
 
-class GraphList(ListView):
+class GraphList(AjaxMixinListView, ListView):
     model = Graph
     context_object_name = 'graphs'
 

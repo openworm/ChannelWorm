@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^channel_model/delete/(?P<pk>[0-9]+)$', IonChannelDelete.as_view(), name='ion-channel-delete'),
 
     url(r'^patch_clamp$', PatchClampList.as_view(), name='patch-clamp-index'),
-    url(r'^patch_clamp/create$', PatchClampCreate.as_view(), name='patch-clamp-create'),
+    url(r'^patch_clamp/create/(?P<experimentId>[0-9]+)*$', PatchClampCreate.as_view(), name='patch-clamp-create'),
     url(r'^patch_clamp/update/(?P<pk>[0-9]+)$', PatchClampUpdate.as_view(), name='patch-clamp-update'),
     url(r'^patch_clamp/delete/(?P<pk>[0-9]+)$', PatchClampDelete.as_view(), name='patch-clamp-delete'),
 
