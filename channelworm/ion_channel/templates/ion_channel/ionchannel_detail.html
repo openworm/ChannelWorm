@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block page_title %}{% trans 'Ion Channel Detail' %}{% endblock %}
+{% block page_header %}{% trans 'Ion Channel Detail' %}{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li><a href="{% url 'ion_channel:ion-channel-index' %}">{% trans 'Ion Channels' %}</a></li>
+    <li class="active">{% trans 'Detail' %}</li>
+{% endblock %}
+
+{% block content %}
+{% for field in form%}
+    {% if field.value != None %}
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h4 class="box-title">{{ field.label_tag }}</h4>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div><!-- /.box-tools -->
+        </div>
+        <div class="box-body">
+            {{ field.value }}
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+{% endblock %}

@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load i18n %}
 <header class="main-header">
     <!-- Logo -->
     <a href="/index" class="logo">
@@ -17,6 +18,7 @@
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+                {% if user.is_authenticated %}
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
                     <!-- Menu Toggle Button -->
@@ -25,26 +27,46 @@
                         <img src="{% static 'third_party/lte/dist/img/avatar5.png' %}" class="user-image"
                              alt="User Image"/>
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                        <span class="hidden-xs">Sample User</span>
+                        <span class="hidden-xs">
+                            {% if user.first_name  %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                {{ user.username }}
+                            {% endif %}
+                        </span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- The user image in the menu -->
                         <li class="user-header">
                             <img src="{% static 'third_party/lte/dist/img/avatar5.png' %}" class="img-circle"
                                  alt="User Image"/>
-
                             <p>
-                                Sample User - Job
-                                <small>Member since Nov. 2012</small>
+                                {% if user.first_name %}
+                                    {{ user.first_name }} {{ user.last_name }}
+                                {% else %}
+                                    {{ user.username }}
+                                {% endif %}
+                                <small>{{ user.email }}</small>
                             </p>
                         </li>
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                <a href="{% url 'account:account-edit' %}" class="btn btn-default btn-flat">
+                                    <i class="fa  fa-edit"></i><span> Edit Account</span>
+                                </a>
                             </div>
                             <div class="pull-right">
-                                <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                <a href="{% url 'password_change' %}" class="btn btn-default btn-flat">
+                                    <i class="fa  fa-key"></i><span> Change Pass</span>
+                                </a>
+                            </div>
+                        </li>
+                        <li class="user-footer">
+                            <div>
+                                <a href="{% url 'logout' %}" class="btn btn-default btn-flat center-block">
+                                    <i class='fa fa-sign-out'></i><span> {% trans 'Sign out' %}</span>
+                                </a>
                             </div>
                         </li>
                     </ul>
@@ -53,6 +75,16 @@
                 <li>
                     <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
                 </li>-->
+                {% else %}
+                <div class="pull-right">
+                    <a href="{% url 'login' %}" class="navbar-brand" role="button">
+                        <i class='fa fa-sign-in'></i><span> {% trans 'Login' %}</span>
+                    </a>
+                    <a href="{% url 'account:register' %}" class="navbar-brand" role="button">
+                        <i class='fa fa-user-plus'></i><span> {% trans 'Register' %}</span>
+                    </a>
+                </div>
+                {% endif %}
             </ul>
         </div>
     </nav>

@@ -2,16 +2,97 @@ import json
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from formtools.wizard.views import SessionWizardView
 
 # Create your views here.
 # Create your views here.
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from models import Experiment, IonChannelModel, PatchClamp, Graph, GraphData
 from web_app.views import AjaxResponseMixin, AjaxMixinListView, AjaxMixinCreateView
-
+from models import *
+from form import *
 
 def index(request):
     return render(request, 'ion_channel/index.html')
+
+
+class ReferenceList(ListView):
+    model = Reference
+    context_object_name = 'references'
+
+class ReferenceCreate(CreateView):
+    model = Reference
+    form_class = ReferenceForm
+    template_name_suffix = '_create_form'
+    success_url = reverse_lazy('ion_channel:reference-index')
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super(ReferenceCreate, self).form_valid(form)
+
+class ReferenceWizard(SessionWizardView):
+    template_name = 'ion_channel/reference_auto_create_form.html'
+    def done(self, form_list, **kwargs):
+        data = self.get_cleaned_data_for_step('1')
+        data['username'] = self.request.user
+        instance = Reference()
+
+        for field, value in data.iteritems():
+            if (field != 'ion_channels') and (field != 'cells'):
+                setattr(instance, field, value)
+        instance.save()
+        channels = data['ion_channels']
+        cells = data['cells']
+        for value in channels.iterator():
+            instance.ion_channels.add(value.id)
+        for value in cells.iterator():
+            instance.ion_channels.add(value.id)
+        return redirect('/ion_channel/reference')
+
+    def get_form_initial(self, step):
+        initial = {}
+        if step == '1':
+
+            # TODO: Better handle the problem with creating .cache in HOME dir in OpenShift
+            import os
+            home_dir = os.environ["HOME"]
+            if home_dir == "/var/lib/openshift/55454af95973ca347e00011b":
+                os.environ["HOME"] = "/var/lib/openshift/55454af95973ca347e00011b/app-root/data/"
+            from metapub import pubmedfetcher
+
+            data = self.get_cleaned_data_for_step('0')
+            fetch = pubmedfetcher.PubMedFetcher()
+            if data['DOI'] != '':
+                article = fetch.article_by_doi(data['DOI'])
+            elif data['PMID'] != '':
+                article = fetch.article_by_pmid(data['PMID'])
+
+            initial['doi'] = article.doi
+            initial['PMID'] = article.pmid
+            initial['title'] = article.title
+            initial['citation'] = article.__str__()
+            initial['year'] = article.year
+            initial['authors'] = article.authors_str
+            initial['journal'] = article.journal
+            initial['volume'] = article.volume
+            initial['issue'] = article.issue
+            initial['pages'] = article.pages
+            initial['url'] = article.url
+
+            os.environ["HOME"] = home_dir
+
+        return initial
+
+
+class ReferenceUpdate(UpdateView):
+    model = Reference
+    form_class = ReferenceForm
+    template_name_suffix = '_update_form'
+    success_url = reverse_lazy('ion_channel:reference-index')
+
+
+class ReferenceDelete(DeleteView):
+    model = Reference
+    success_url = reverse_lazy('ion_channel:reference-index')
 
 
 class ExperimentList(ListView):
@@ -21,14 +102,17 @@ class ExperimentList(ListView):
 
 class ExperimentCreate(CreateView):
     model = Experiment
-    fields = ['doi']
+    fields = ['reference']
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
 
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super(ExperimentCreate, self).form_valid(form)
 
 class ExperimentUpdate(UpdateView):
     model = Experiment
-    fields = ['doi']
+    fields = ['reference']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
 
@@ -38,28 +122,67 @@ class ExperimentDelete(DeleteView):
     success_url = reverse_lazy('ion_channel:experiment-index')
 
 
+class CellCreate(CreateView):
+    model = Cell
+    fields = '__all__'
+    template_name_suffix = '_create_form'
+    success_url = reverse_lazy('ion_channel:ion-channel-index')
+
+
 class IonChannelList(ListView):
-    model = IonChannelModel
-    context_object_name = 'ion_channel_models'
+    model = IonChannel
+    context_object_name = 'ion_channels'
+
+class IonChannelDetail(UpdateView):
+    model = IonChannel
+    template_name_suffix = '_detail'
+    fields = '__all__'
+
 
 
 class IonChannelCreate(CreateView):
-    model = IonChannelModel
+    model = IonChannel
     fields = '__all__'
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:ion-channel-index')
 
 
 class IonChannelUpdate(UpdateView):
-    model = IonChannelModel
+    model = IonChannel
     fields = '__all__'
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:ion-channel-index')
 
 
 class IonChannelDelete(DeleteView):
-    model = IonChannelModel
+    model = IonChannel
     success_url = reverse_lazy('ion_channel:ion-channel-index')
+
+
+
+
+class IonChannelModelList(ListView):
+    model = IonChannelModel
+    context_object_name = 'ion_channel_models'
+
+
+class IonChannelModelCreate(CreateView):
+    model = IonChannelModel
+    fields = '__all__'
+    template_name_suffix = '_create_form'
+    success_url = reverse_lazy('ion_channel:ion-channel-model-index')
+
+
+class IonChannelModelUpdate(UpdateView):
+    model = IonChannelModel
+    fields = '__all__'
+    template_name_suffix = '_update_form'
+    success_url = reverse_lazy('ion_channel:ion-channel-model-index')
+
+
+class IonChannelModelDelete(DeleteView):
+    model = IonChannelModel
+    success_url = reverse_lazy('ion_channel:ion-channel-model-index')
 
 
 class PatchClampList(AjaxMixinListView, ListView):
