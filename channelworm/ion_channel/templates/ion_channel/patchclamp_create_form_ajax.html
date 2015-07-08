@@ -1,0 +1,65 @@
+{% extends "base_ajax.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+        IS : {{ experimentId }}
+            <form method="post" class="form" id="frm_patchclamp" action="{% url 'ion_channel:patch-clamp-create'  %}">
+                <div class="box-body">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field |addcss:"form-control" }}
+                            {{ field.errors }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="box-footer">
+                    <input type="button" value="Submit" class="btn btn-primary" onclick="save()"/>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block inline-script %}
+    <script type="text/javascript">
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        function save(data) {
+            var form = $("#frm_patchclamp");
+            var csrftoken = $.cookie('csrftoken');
+
+            $.ajax({
+                type: "POST",
+                url: form.attr('action'),
+                data: form.serialize(),
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+                success: function (response) {
+                    console.log(response)
+                    if (response.status == 'success') {
+
+                        {#                        cwd.notify.success(response.result);#}
+                    } else {
+                        {#                        cwd.notify.error(response.result);#}
+                    }
+                    {#                    $("#save_data_graph_loading").css("display", "none");#}
+                },
+                error: function (response) {
+                    console.log(response)
+                    {#                    cwd.notify.error("System Error !!!");#}
+                }
+            });
+
+        }
+    </script>
+{% endblock %}
