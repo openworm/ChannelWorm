@@ -99,7 +99,7 @@ class ExperimentList(ListView):
 
 class ExperimentCreate(CreateView):
     model = Experiment
-    fields = ['reference']
+    fields = ['reference','comments']
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
 
@@ -109,7 +109,7 @@ class ExperimentCreate(CreateView):
 
 class ExperimentUpdate(UpdateView):
     model = Experiment
-    fields = ['reference']
+    fields = ['reference','comments']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
 

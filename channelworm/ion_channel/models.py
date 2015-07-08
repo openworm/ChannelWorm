@@ -14,7 +14,7 @@ class KeyVal(models.Model):
     value = models.CharField(max_length=240, db_index=True)
 
     def __unicode__(self):
-        return self.container
+        return self.container.name + "[" + self.key + "=" + self.value + "]"
 
 Channel_Type_CHOICES = (
     ('Ca', 'Calcium Channel'),
@@ -62,13 +62,13 @@ Cell_Type_CHOICES = (
 class Cell(models.Model):
     cell_name = models.CharField(max_length=300,unique=True,default='Generic')
     cell_type = models.CharField(max_length=300,choices=Cell_Type_CHOICES,default='Generic')
-    ion_channels = models.ManyToManyField(IonChannel,blank=True, null=True)
+    ion_channels = models.ManyToManyField(IonChannel,blank=True)
     membrane_capacitance = models.FloatField(max_length=200,blank=True, null=True,verbose_name='Capacitance of the membrane (F)')
     specific_capacitance = models.FloatField(default=0.01,blank=True, null=True,verbose_name='Specific capacitance of the membrane (F/m2)')
     area = models.FloatField(default=6e-9, blank=True, null=True,verbose_name='Total area of the cell (m2)')
 
     def __unicode__(self):
-        return self.cell_type + " " + self.cell_name
+        return self.cell_type + ", " + self.cell_name
 
 Reference_Type_CHOICES = (
     ('Genomics', 'Genomics'),
@@ -90,13 +90,13 @@ class Reference(models.Model):
     url = models.URLField(blank=True, null=True)
     create_date = models.DateTimeField(auto_now=True)
     username = models.ForeignKey(User,verbose_name='Contributer')
-    ion_channels = models.ManyToManyField(IonChannel,blank=True, null=True)
-    cells = models.ManyToManyField(Cell,blank=True, null=True)
+    ion_channels = models.ManyToManyField(IonChannel,blank=True)
+    cells = models.ManyToManyField(Cell,blank=True)
     subject = models.CharField(max_length=300,choices=Reference_Type_CHOICES)
     file_url = models.URLField(blank=True, null=True)
 
     def __unicode__(self):
-        return self.doi
+        return self.doi + ": " + self.citation
 
 
 class CellChannel(models.Model):
@@ -106,7 +106,7 @@ class CellChannel(models.Model):
     reference = models.ForeignKey(Reference)
 
     def __unicode__(self):
-        return `self.cell` + " " + `self.ion_channel`
+        return `self.cell` + ", " + `self.ion_channel`
 
 
 class Experiment(models.Model):
@@ -114,10 +114,10 @@ class Experiment(models.Model):
     create_date = models.DateTimeField(auto_now=True)
     last_update = models.DateTimeField(auto_now=True)
     username = models.ForeignKey(User,verbose_name='Contributer')
-    comments = models.TextField(blank=True, null=True,)
+    comments = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
-        return `self.reference` + " " + self.reference.title
+        return self.reference.doi + ": " + self.reference.citation
 
 
 PatchClamp_Type_CHOICES = (
@@ -136,7 +136,7 @@ class PatchClamp(models.Model):
     ion_channel = models.ForeignKey(IonChannel)
     type = models.CharField(max_length=200,choices=PatchClamp_Type_CHOICES)
     patch_type = models.CharField(max_length=200,choices=Patch_Type_CHOICES)
-    cell = models.ForeignKey(Cell, blank=True, null=True,verbose_name='Type of the cell (e.g. muscle, ADAL, Xenopus oocyte)')
+    cell = models.ForeignKey(Cell, blank=True, null=True,verbose_name='Type of the cell (e.g. muscle, ADAL, Xenopus Oocyte)')
     duration = models.FloatField(verbose_name='Patch-Clamp Duration (s)')
     deltat = models.FloatField(verbose_name='Time interval-Deltat (s)')
     start_time = models.FloatField(verbose_name='Start time (s)')
@@ -150,8 +150,8 @@ class PatchClamp(models.Model):
     initial_voltage = models.FloatField(blank=True, null=True, verbose_name='Initial voltage for current-clamp (V)')
     Ca_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Calcium')
     Cl_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Chloride')
-    mutants = models.TextField(blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582)')
-    blockers = models.TextField(blank=True, null=True, verbose_name='Ion channel blockers (e.g. 500e-6 Cd2+,)')
+    mutants = models.CharField(max_length=300, blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582)')
+    blockers = models.CharField(max_length=300, blank=True, null=True, verbose_name='Ion channel blockers (e.g. 500e-6 Cd2+,)')
 
     def __unicode__(self):
         return `self.ion_channel` + " " + `self.experiment` + " " + self.type
@@ -184,12 +184,12 @@ class Graph(models.Model):
     y_axis_toSI = models.FloatField(default=1,verbose_name='Multiply by this value to convert to SI (e.g. 1e-3)')
 
 
-    figure_ref_address = models.CharField(max_length=500,verbose_name='Figure number (e.g. 2A)')
+    figure_ref_address = models.CharField(max_length=50,verbose_name='Figure number (e.g. 2A)')
     figure_ref_caption = models.TextField(verbose_name='Figure caption')
     file = models.ImageField(upload_to='ion_channel/graph/%Y/%m/%d')
 
     def __unicode__(self):
-        return `self.experiment`+ " " + self.figure_ref_address
+        return `self.experiment`+ " Fig. " + self.figure_ref_address
 
 
 class GraphData(models.Model):
@@ -197,6 +197,8 @@ class GraphData(models.Model):
     series_name = models.CharField(max_length=200)
     series_data = models.TextField()
 
+    def __unicode__(self):
+        return `self.experiment`+ "Fig. " + self.figure_ref_address
 
 Modeling_Method_CHOICES = (
     ('Experimental', 'Experimental'),
