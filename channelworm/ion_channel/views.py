@@ -186,6 +186,10 @@ class PatchClampList(ListView):
     model = PatchClamp
     context_object_name = 'patch_clamps'
 
+class PatchClampDetail(UpdateView):
+    model = PatchClamp
+    template_name_suffix = '_detail'
+    fields = '__all__'
 
 class PatchClampCreate(CreateView):
     model = PatchClamp

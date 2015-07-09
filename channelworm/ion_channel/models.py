@@ -137,24 +137,44 @@ class PatchClamp(models.Model):
     type = models.CharField(max_length=200,choices=PatchClamp_Type_CHOICES)
     patch_type = models.CharField(max_length=200,choices=Patch_Type_CHOICES)
     cell = models.ForeignKey(Cell, blank=True, null=True,verbose_name='Type of the cell (e.g. muscle, ADAL, Xenopus Oocyte)')
-    duration = models.FloatField(verbose_name='Patch-Clamp Duration (s)')
-    deltat = models.FloatField(verbose_name='Time interval-Deltat (s)')
-    start_time = models.FloatField(verbose_name='Start time (s)')
-    end_time = models.FloatField(verbose_name='End time (s)')
-    protocol_start = models.FloatField(verbose_name='Initial holding potential or stimulated current (V or A)')
-    protocol_end = models.FloatField(verbose_name='End of Holding potential or stimulated current (V or A)')
-    protocol_step = models.FloatField(verbose_name='Steps of Holding potential or stimulated current (V or A)')
+    duration = models.FloatField(verbose_name='Patch-Clamp Duration (ms)')
+    deltat = models.FloatField(default=0.01, verbose_name='Time interval-Deltat (ms)')
+    start_time = models.FloatField(default=0,verbose_name='Start time (ms)')
+    end_time = models.FloatField(verbose_name='End time (ms) (default=duration)')
+    protocol_start = models.FloatField(verbose_name='Initial holding potential or stimulated current (mV or pA)')
+    protocol_end = models.FloatField(verbose_name='End of Holding potential or stimulated current (mV or pA)')
+    protocol_step = models.FloatField(verbose_name='Steps of Holding potential or stimulated current (mV or pA)')
     cell_age = models.FloatField(default=None, blank=True, null=True,verbose_name='Age of the cell (days)')
     membrane_capacitance = models.FloatField(max_length=200,blank=True, null=True,verbose_name='Capacitance of the membrane (F)')
     temperature = models.FloatField(default=25, blank=True, null=True,verbose_name='Temperature (Celsius)')
-    initial_voltage = models.FloatField(blank=True, null=True, verbose_name='Initial voltage for current-clamp (V)')
-    Ca_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Calcium')
-    Cl_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Chloride')
+    initial_voltage = models.FloatField(blank=True, null=True, verbose_name='Initial voltage for current-clamp (mV)')
+    Ca_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Calcium (uM)')
+    Cl_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Chloride (uM)')
     mutants = models.CharField(max_length=300, blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582)')
     blockers = models.CharField(max_length=300, blank=True, null=True, verbose_name='Ion channel blockers (e.g. 500e-6 Cd2+,)')
 
     def __unicode__(self):
         return `self.ion_channel` + " " + `self.experiment` + " " + self.type
+
+    def get_field_values(self):
+        return [field.value_to_string(self) for field in PatchClamp._meta.fields]
+
+    def field_value(field):
+        """
+        Returns the value for this BoundField, as rendered in widgets.
+        """
+        if not field.form.is_bound:
+            val = field.form.initial.get(field.name, field.field.initial)
+            if callable(val):
+                val = val()
+        else:
+            if isinstance(field.field, models.FileField) and field.data is None:
+                val = field.form.initial.get(field.name, field.field.initial)
+            else:
+                val = field.data
+        if val is None:
+            val = ''
+        return val
 
 # TODO: consider multiple channels
 

@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^ion_channel_model/delete/(?P<pk>[0-9]+)$', login_required(IonChannelModelDelete.as_view()), name='ion-channel-model-delete'),
 
     url(r'^patch_clamp$', PatchClampList.as_view(), name='patch-clamp-index'),
+    url(r'^patch_clamp/detail/(?P<pk>[0-9]+)$', PatchClampDetail.as_view(), name='patch-clamp-detail'),
     url(r'^patch_clamp/create$', login_required(PatchClampCreate.as_view()), name='patch-clamp-create'),
     url(r'^patch_clamp/update/(?P<pk>[0-9]+)$', login_required(PatchClampUpdate.as_view()), name='patch-clamp-update'),
     url(r'^patch_clamp/delete/(?P<pk>[0-9]+)$', login_required(PatchClampDelete.as_view()), name='patch-clamp-delete'),
