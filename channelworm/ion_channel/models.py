@@ -156,25 +156,6 @@ class PatchClamp(models.Model):
     def __unicode__(self):
         return `self.ion_channel` + " " + `self.experiment` + " " + self.type
 
-    def get_field_values(self):
-        return [field.value_to_string(self) for field in PatchClamp._meta.fields]
-
-    def field_value(field):
-        """
-        Returns the value for this BoundField, as rendered in widgets.
-        """
-        if not field.form.is_bound:
-            val = field.form.initial.get(field.name, field.field.initial)
-            if callable(val):
-                val = val()
-        else:
-            if isinstance(field.field, models.FileField) and field.data is None:
-                val = field.form.initial.get(field.name, field.field.initial)
-            else:
-                val = field.data
-        if val is None:
-            val = ''
-        return val
 
 # TODO: consider multiple channels
 
