@@ -21,9 +21,15 @@
             </div><!-- /.box-tools -->
         </div>
         <div class="box-body">
-            {% if fie
-            {{ form.instance.ion_channel }}
-            {{ field }}
+            {% if field.name == 'experiment' %}
+                {{ form.instance.experiment }}
+            {% elif field.name == 'ion_channel' %}
+                {{ form.instance.ion_channel }}
+            {% elif field.name == 'cell' %}
+                {{ form.instance.cell }}
+            {% else %}
+                {{ field.value }}
+            {% endif %}
         </div>
     </div>
     {% endif %}
