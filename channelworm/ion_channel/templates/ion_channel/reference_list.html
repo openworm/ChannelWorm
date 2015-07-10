@@ -38,6 +38,7 @@
                             <th style="width: 10px">#</th>
                             <th>{% trans 'Reference' %}</th>
                             <th>{% trans 'DOI' %}</th>
+                            <th>{% trans 'Year' %}</th>
                             <th>{% trans 'Ion Channels' %}</th>
                             <th>{% trans 'Cells' %}</th>
                             <th>{% trans 'Category' %}</th>
@@ -51,6 +52,7 @@
                                 <td>{{forloop.counter}}</td>
                                 <td>{{ reference.citation }}</td>
                                 <td><a href="http://doi.org/{{ reference.doi }}">{{ reference.doi }}</a></td>
+                                <td>{{ reference.year }}</td>
                                 <td>
                                 {% for channel in reference.ion_channels.all %}
                                     {{ channel }};

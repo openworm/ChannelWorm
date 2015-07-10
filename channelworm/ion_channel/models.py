@@ -99,7 +99,7 @@ class Reference(models.Model):
     file_url = models.URLField(blank=True, null=True)
 
     def __unicode__(self):
-        return self.doi + ": " + self.citation
+        return self.doi + ": " + self.citation + ", " + self.year
 
 
 class CellChannel(models.Model):
@@ -122,7 +122,7 @@ class Experiment(models.Model):
     comments = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
-        return self.reference.doi + ": " + self.reference.citation
+        return self.reference.doi + ": " + self.reference.citation + ", " + self.reference.year
 
 
 PatchClamp_Type_CHOICES = (
