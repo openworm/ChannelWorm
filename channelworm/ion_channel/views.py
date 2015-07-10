@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
+from datetime import datetime
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from models import *
@@ -105,6 +106,7 @@ class ExperimentCreate(CreateView):
 
     def form_valid(self, form):
         form.instance.username = self.request.user
+        form.instance.create_date = datetime.now()
         return super(ExperimentCreate, self).form_valid(form)
 
 class ExperimentUpdate(UpdateView):

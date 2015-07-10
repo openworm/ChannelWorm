@@ -52,7 +52,7 @@
                                 <td>{{ graph.patch_clamp.type }}</td>
                                 <td>{{ graph.experiment }}</td>
                                 <td>{{ graph.figure_ref_address }}</td>
-                                <td>{{ graph.figure_ref_caption }}</td>
+                                <td>{{ graph.figure_ref_caption|truncatechars:300 }}</td>
                                 <td>{{ graph.x_axis_type }}</td>
                                 <td>{{ graph.x_axis_unit }}</td>
                                 <td>{{ graph.y_axis_type }}</td>

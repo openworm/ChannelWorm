@@ -41,16 +41,19 @@ class IonChannel(models.Model):
     gene_class = models.CharField(blank=True, null=True, max_length=300)
     proteins = models.CharField(blank=True, null=True, max_length=300)
     protein_sequence = models.TextField(blank=True, null=True)
-    structure = models.TextField(blank=True, null=True)
     uniprot_ID = models.CharField(blank=True, null=True, max_length=300)
     pdb_ID = models.CharField(blank=True, null=True, max_length=300)
     interpro_ID = models.CharField(blank=True, null=True, max_length=300)
+    structure = models.TextField(blank=True, null=True)
+    structure_image = models.ImageField(blank=True, null=True, upload_to='ion_channel/structures/')
     expression_pattern = models.TextField(blank=True, null=True)
     expression_evidences = models.TextField(blank=True, null=True,verbose_name='PMID for expression evidence')
     last_update = models.DateTimeField(auto_now=True, null=True)
 
     def __unicode__(self):
         return self.channel_name
+
+# TODO: Get cells from PyOW
 
 Cell_Type_CHOICES = (
     ('Muscle', 'Muscle'),
@@ -109,9 +112,11 @@ class CellChannel(models.Model):
         return `self.cell` + ", " + `self.ion_channel`
 
 
+# TODO: Separate experiment conditions from patch clamp
+
 class Experiment(models.Model):
     reference = models.ForeignKey(Reference)
-    create_date = models.DateTimeField(auto_now=True)
+    create_date = models.DateTimeField()
     last_update = models.DateTimeField(auto_now=True)
     username = models.ForeignKey(User,verbose_name='Contributer')
     comments = models.TextField(blank=True, null=True)
@@ -129,7 +134,7 @@ Patch_Type_CHOICES = (
     ('Single-channel', 'Single-channel')
 )
 
-# TODO: Define cell types or get from other table
+# TODO: Consider measurement fields: https://pypi.python.org/pypi/django-measurement
 
 class PatchClamp(models.Model):
     experiment = models.ForeignKey(Experiment)
@@ -146,12 +151,14 @@ class PatchClamp(models.Model):
     protocol_step = models.FloatField(verbose_name='Steps of Holding potential or stimulated current (mV or pA)')
     cell_age = models.FloatField(default=None, blank=True, null=True,verbose_name='Age of the cell (days)')
     membrane_capacitance = models.FloatField(max_length=200,blank=True, null=True,verbose_name='Capacitance of the membrane (F)')
-    temperature = models.FloatField(default=25, blank=True, null=True,verbose_name='Temperature (Celsius)')
-    initial_voltage = models.FloatField(blank=True, null=True, verbose_name='Initial voltage for current-clamp (mV)')
+    temperature = models.FloatField(default=21, blank=True, null=True,verbose_name='Temperature (Celsius)')
+    initial_voltage = models.FloatField(blank=True, null=True, verbose_name='Initial holding potential (mV)')
     Ca_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Calcium (uM)')
-    Cl_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Chloride (uM)')
-    mutants = models.CharField(max_length=300, blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582)')
-    blockers = models.CharField(max_length=300, blank=True, null=True, verbose_name='Ion channel blockers (e.g. 500e-6 Cd2+,)')
+    Cl_concentration = models.FloatField(default=None, blank=True, null=True,verbose_name='Initial molar concentration of Chloride (mM)')
+    mutants = models.CharField(max_length=300, blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582,...)')
+    blockers = models.CharField(max_length=300, blank=True, null=True, verbose_name='Ion channel blockers (e.g. 500e-6 Cd2+,...)')
+    extra_solution = models.TextField(blank=True, null=True, verbose_name='Extracellular Solution (e.g. 140e-3 NaCl, 5e-3 KCl,...)')
+    pipette_solution = models.TextField(blank=True, null=True, verbose_name='Pipette Solution (e.g. 120e-3 KCl, 20e-3 KOH,...)')
 
     def __unicode__(self):
         return `self.ion_channel` + " " + `self.experiment` + " " + self.type
@@ -163,18 +170,23 @@ Axis_Type_CHOICES = (
     ('I', 'Current'),
     ('I_ss', 'Steady-state Current'),
     ('I_peak', 'Peak Current'),
+    ('I_norm', 'Normalized Current'),
     ('V', 'Voltage'),
     ('T', 'Time'),
     ('G', 'Conductance'),
     ('G/G_max', 'G/G_max'),
     ('Po', 'Open Probability'),
-    ('Concentration', 'Concentration'),
+    ('Ca_concentration', 'Calcium Concentration'),
+    ('Cl_concentration', 'Chloride Concentration'),
     ('Bar', 'Bar Chart'),
 )
 
 class Graph(models.Model):
     experiment = models.ForeignKey(Experiment, null=True, blank=True)
     patch_clamp = models.ForeignKey(PatchClamp, null=True, blank=True)
+
+    ion_channel = models.ManyToManyField(IonChannel)
+    mutants = models.CharField(max_length=300, blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582)')
 
     x_axis_type = models.CharField(max_length=50, choices=Axis_Type_CHOICES)
     x_axis_unit = models.CharField(max_length=50,verbose_name='Axis unit in the original figure (e.g. ms)')
@@ -183,7 +195,6 @@ class Graph(models.Model):
     y_axis_type = models.CharField(max_length=50, choices=Axis_Type_CHOICES)
     y_axis_unit = models.CharField(max_length=50,verbose_name='Axis unit in the original figure (e.g. mV)')
     y_axis_toSI = models.FloatField(default=1,verbose_name='Multiply by this value to convert to SI (e.g. 1e-3)')
-
 
     figure_ref_address = models.CharField(max_length=50,verbose_name='Figure number (e.g. 2A)')
     figure_ref_caption = models.TextField(verbose_name='Figure caption')

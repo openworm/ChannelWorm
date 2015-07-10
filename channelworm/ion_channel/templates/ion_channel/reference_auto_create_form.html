@@ -26,7 +26,7 @@
                             {{ wizard.form.management_form }}
                             {% for form in wizard.form.forms %}
                                 {% for field in form%}
-                                    <div class="form-group-sm">
+                                    <div class="form-group">
                                         {{ field.errors }}
                                         {{ field.label_tag }}
                                         {{ field |addcss:"form-control" }}
@@ -35,7 +35,7 @@
                             {% endfor %}
                         {% else %}
                             {% for field in wizard.form%}
-                            <div class="form-group-sm">
+                            <div class="form-group">
                                 {{ field.errors }}
                                 {{ field.label_tag }}
                                 {{ field |addcss:"form-control" }}

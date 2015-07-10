@@ -43,7 +43,7 @@
                             <th>{% trans 'Category' %}</th>
                             <th>{% trans 'File Address' %}</th>
                             <th>{% trans 'Created By' %}</th>
-                            <th style="width: 200px">{% trans 'Action' %}</th>
+                            <th>{% trans 'Action' %}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -62,9 +62,9 @@
                                 {% endfor %}
                                 </td>
                                 <td>{{ reference.subject }}</td>
-                                <td><a href={{ reference.file_url }}>{{ reference.file_url }}</a></td>
+                                <td><a href={{ reference.file_url }}>{{ reference.file_url|truncatechars:40 }}</a></td>
                                 <td>{{ reference.username }}</td>
-                                <td>
+                                <td style="width: 200px">
                                     <a href="{% url 'ion_channel:reference-update' reference.id %}"
                                        class="badge bg-light-blue">
                                         <i class="fa fa-edit"></i>
