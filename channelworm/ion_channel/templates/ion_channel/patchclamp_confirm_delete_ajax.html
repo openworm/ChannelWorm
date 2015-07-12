@@ -1,0 +1,26 @@
+{% extends "base_ajax.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <form id="frm_patch_clamp" method="post" class="form" action="{% url 'ion_channel:patch-clamp-delete' object.pk %}">
+                    {% csrf_token %}
+                    <div class="box-body">
+                        <div class="callout callout-warning">
+                            <p>
+                                {% blocktrans %}
+                                    Are you sure you want to delete the <strong>"{{ object }}"<strong>?
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <input type="submit" value="{% trans 'Yes' %}" class="btn btn-success" onclick="return cw.experiment.patchClamp.delete()"/>
+                        <a href="#" class="btn btn-default" onclick="cw.experiment.modal.close()">{% trans 'No' %}</a>
+                    </div>
+                </form>
+        </div>
+    </div>
+{% endblock %}

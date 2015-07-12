@@ -1,45 +1,45 @@
-{% extends "base.html" %}
+{% extends "base_ajax.html" %}
 {% load i18n %}
 {% load widget_filters %}
-
-{% block page_title %}{% trans 'Patch Clamp List' %}{% endblock %}
-{% block page_header %}{% trans 'Patch Clamp List' %}{% endblock %}
-{% block breadcrumb %}
-    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
-    <li class="active">{% trans 'Patch Clamps' %}</li>
-{% endblock %}
 
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
             <div class="box box-primary">
-                <div class="box-header">
+                <div class="box-header with-border">
                     <i class="fa fa-pinterest-p"></i>
 
                     <h3 class="box-title">{% trans 'Patch Clamp' %}</h3>
 
                     <div class="box-tools pull-right">
-                        <a href="{% url 'ion_channel:patch-clamp-create' %}"
-                           class="btn btn-success btn-sm">
-                            <i class="fa fa-plus"></i>
+                        <a href="#" onclick="cw.experiment.patchClamp.openCreateForm()"
+                           class="btn btn-box-tool" title="{% trans 'Add Patch Clamp' %}">
+                            <i class="fa fa-plus-circle"></i>
                             {% trans 'Add Patch Clamp' %}
                         </a>
+                        <button class="btn btn-box-tool" onclick="cw.experiment.patchClamp.refresh()" title="{% trans 'Refresh' %}">
+                            <li class="fa fa-refresh"></li>
+                        </button>
                     </div>
                 </div>
                 <div class="box-body table-responsive">
-                    <table id="result_table" class="table table-bordered table-striped">
+                    <table id="patch_clamp_result_table" class="table table-bordered table-striped">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
-                            <th>{% trans 'Ion Channel' %}</th>
                             <th>{% trans 'Patch-Clamp Type' %}</th>
                             <th>{% trans 'Patch Type' %}</th>
-                            <th>{% trans 'Cell' %}</th>
+                            <th>{% trans 'Ion Type' %}</th>
+                            <th>{% trans 'Type of the cell' %}</th>
+                            <th>{% trans 'Age of the cell (days)' %}</th>
                             <th>{% trans 'Temperature (Celsius)' %}</th>
-                            <th>{% trans 'Duration (ms)' %}</th>
-                            <th>{% trans 'From (mV or mA)' %}</th>
-                            <th>{% trans 'To (mV or mA)' %}</th>
-                            <th>{% trans 'Steps (mV or mA)' %}</th>
+                            <th>{% trans 'Duration (s)' %}</th>
+                            <th>{% trans 'Time interval-Deltat (s)' %}</th>
+                            <th>{% trans 'Start Time (s)' %}</th>
+                            <th>{% trans 'End Time (s)' %}</th>
+                            <th>{% trans 'From (V or A)' %}</th>
+                            <th>{% trans 'To (V or A)' %}</th>
+                            <th>{% trans 'Steps (V or A)' %}</th>
                             <th>{% trans 'Experiment' %}</th>
                             <th>{% trans 'Action' %}</th>
                         </tr>
@@ -47,29 +47,30 @@
                         <tbody>
                         {% for patch_clamp in patch_clamps %}
                             <tr>
-                                <td>{{forloop.counter}}</td>
-                                <td>{{ patch_clamp.ion_channel.channel_name }}</td>
+                                <td>{{ forloop.counter }}</td>
                                 <td>{{ patch_clamp.type }}</td>
                                 <td>{{ patch_clamp.patch_type }}</td>
-                                <td>{{ patch_clamp.cell }}</td>
+                                <td>{{ patch_clamp.ion_type }}</td>
+                                <td>{{ patch_clamp.cell_type }}</td>
+                                <td>{{ patch_clamp.cell_age }}</td>
                                 <td>{{ patch_clamp.temperature }}</td>
                                 <td>{{ patch_clamp.duration }}</td>
+                                <td>{{ patch_clamp.deltat }}</td>
+                                <td>{{ patch_clamp.start_time }}</td>
+                                <td>{{ patch_clamp.end_time }}</td>
                                 <td>{{ patch_clamp.protocol_start }}</td>
                                 <td>{{ patch_clamp.protocol_end }}</td>
                                 <td>{{ patch_clamp.protocol_step }}</td>
-                                <td>{{ patch_clamp.experiment }}</td>
+                                <td>{{ patch_clamp.experiment.doi }}</td>
                                 <td>
-                                    <a href="{% url 'ion_channel:patch-clamp-detail' patch_clamp.id %}"
-                                       class="badge bg-yellow">
-                                        <i class="fa fa-eye"></i>
-                                        {% trans 'View Detail' %}
-                                    </a>
-                                    <a href="{% url 'ion_channel:patch-clamp-update' patch_clamp.id %}"
+                                    <a href="#"
+                                       onclick="cw.experiment.patchClamp.openUpdateForm('{% url 'ion_channel:patch-clamp-update' patch_clamp.id %}')"
                                        class="badge bg-light-blue">
                                         <i class="fa fa-edit"></i>
                                         {% trans 'Edit' %}
                                     </a>
-                                    <a href="{% url 'ion_channel:patch-clamp-delete' patch_clamp.id %}"
+                                    <a href="#"
+                                       onclick="cw.experiment.patchClamp.confirmDelete('{% url 'ion_channel:patch-clamp-delete' patch_clamp.id %}')"
                                        class="badge bg-red">
                                         <i class="fa fa-remove"></i>
                                         {% trans 'Delete' %}
@@ -80,14 +81,17 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="overlay cw-loading" id="patch_clamp_loading" >
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
+
             </div>
         </div>
     </div>
-
 {% endblock %}
 
 {% block inline-script %}
     <script type="text/javascript">
-        $("#result_table").dataTable();
+        $("#patch_clamp_result_table").dataTable();
     </script>
 {% endblock %}

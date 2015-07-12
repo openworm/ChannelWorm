@@ -1,17 +1,21 @@
 import json
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
 from datetime import datetime
 
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+
+
+
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from web_app.views import AjaxMixinListView, AjaxMixinCreateView, AjaxMixinUpdateView, AjaxMixinDeleteView
 from models import *
 from form import *
 
 def index(request):
     return render(request, 'ion_channel/index.html')
-
 
 class ReferenceList(ListView):
     model = Reference
@@ -29,6 +33,7 @@ class ReferenceCreate(CreateView):
 
 class ReferenceWizard(SessionWizardView):
     template_name = 'ion_channel/reference_auto_create_form.html'
+
     def done(self, form_list, **kwargs):
         data = self.get_cleaned_data_for_step('1')
         data['username'] = self.request.user
@@ -92,28 +97,34 @@ class ReferenceDelete(DeleteView):
     model = Reference
     success_url = reverse_lazy('ion_channel:reference-index')
 
+@login_required
+def experiment_dashboard(request):
+    return render(request, 'ion_channel/experiment_dashboard.html')
 
 class ExperimentList(ListView):
     model = Experiment
     context_object_name = 'experiments'
 
 
-class ExperimentCreate(CreateView):
+class ExperimentCreate(AjaxMixinCreateView, CreateView):
     model = Experiment
     fields = ['reference','comments']
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
+    json_success_response = {'status': 'success', 'result': 'Experiment has been saved.'}
 
     def form_valid(self, form):
         form.instance.username = self.request.user
         form.instance.create_date = datetime.now()
         return super(ExperimentCreate, self).form_valid(form)
 
-class ExperimentUpdate(UpdateView):
+
+class ExperimentUpdate(AjaxMixinUpdateView, UpdateView):
     model = Experiment
     fields = ['reference','comments']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
+    json_success_response = {'status': 'success', 'result': 'Experiment has been saved.'}
 
 
 class ExperimentDelete(DeleteView):
@@ -138,7 +149,6 @@ class IonChannelDetail(UpdateView):
     fields = '__all__'
 
 
-
 class IonChannelCreate(CreateView):
     model = IonChannel
     fields = '__all__'
@@ -156,8 +166,6 @@ class IonChannelUpdate(UpdateView):
 class IonChannelDelete(DeleteView):
     model = IonChannel
     success_url = reverse_lazy('ion_channel:ion-channel-index')
-
-
 
 
 class IonChannelModelList(ListView):
@@ -184,56 +192,86 @@ class IonChannelModelDelete(DeleteView):
     success_url = reverse_lazy('ion_channel:ion-channel-model-index')
 
 
-class PatchClampList(ListView):
+class PatchClampList(AjaxMixinListView, ListView):
     model = PatchClamp
     context_object_name = 'patch_clamps'
+
+    def get_queryset(self):
+        if self.kwargs.get("experimentId"):
+            experiment = get_object_or_404(Experiment, id__exact=self.kwargs.get("experimentId"))
+            return PatchClamp.objects.filter(experiment=experiment)
+        return PatchClamp.objects.all()
 
 class PatchClampDetail(UpdateView):
     model = PatchClamp
     template_name_suffix = '_detail'
     fields = '__all__'
 
-class PatchClampCreate(CreateView):
+
+class PatchClampCreate(AjaxMixinCreateView, CreateView):
     model = PatchClamp
     fields = '__all__'
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:patch-clamp-index')
+    json_success_response = {'status': 'success', 'result': 'PatchClamp has been saved.'}
+
+    def get_initial(self):
+        if self.kwargs.get("experimentId"):
+            return {
+                "experiment": self.kwargs.get("experimentId")
+            }
 
 
-class PatchClampUpdate(UpdateView):
+class PatchClampUpdate(AjaxMixinUpdateView, UpdateView):
     model = PatchClamp
     fields = '__all__'
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:patch-clamp-index')
+    json_success_response = {'status': 'success', 'result': 'PatchClamp has been saved.'}
 
 
-class PatchClampDelete(DeleteView):
+class PatchClampDelete(AjaxMixinDeleteView, DeleteView):
     model = PatchClamp
     success_url = reverse_lazy('ion_channel:patch-clamp-index')
+    json_success_response = {'status': 'success', 'result': 'PatchClamp has been deleted.'}
 
 
-class GraphList(ListView):
+class GraphList(AjaxMixinListView, ListView):
     model = Graph
     context_object_name = 'graphs'
 
+    def get_queryset(self):
+        if self.kwargs.get("experimentId"):
+            experiment = get_object_or_404(Experiment, id__exact=self.kwargs.get("experimentId"))
+            return Graph.objects.filter(experiment=experiment)
+        return Graph.objects.all()
 
-class GraphCreate(CreateView):
+
+class GraphCreate(AjaxMixinCreateView, CreateView):
     model = Graph
     fields = '__all__'
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:graph-index')
+    json_success_response = {'status': 'success', 'result': 'Graph has been saved.'}
+
+    def get_initial(self):
+        if self.kwargs.get('experimentId'):
+            return {
+                "experiment": self.kwargs.get('experimentId')
+            }
 
 
-class GraphUpdate(UpdateView):
+class GraphUpdate(AjaxMixinUpdateView, UpdateView):
     model = Graph
     fields = '__all__'
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:graph-index')
+    json_success_response = {'status': 'success', 'result': 'Graph has been saved.'}
 
-
-class GraphDelete(DeleteView):
+class GraphDelete(AjaxMixinDeleteView, DeleteView):
     model = Graph
     success_url = reverse_lazy('ion_channel:graph-index')
+    json_success_response = {'status': 'success', 'result': 'Graph has been deleted.'}
 
 
 class GraphDataList(ListView):

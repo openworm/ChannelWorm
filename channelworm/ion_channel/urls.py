@@ -33,9 +33,10 @@ urlpatterns = [
     url(r'^reference/delete/(?P<pk>[0-9]+)$', login_required(ReferenceDelete.as_view()), name='reference-delete'),
     url(r'^reference/auto_create/$', login_required(ReferenceWizard.as_view([PubForm, ReferenceForm])), name='reference-auto-create'),
 
-    url(r'^experiment/create/$', login_required(ExperimentCreate.as_view()), name='experiment-create'),
     url(r'^home$', ExperimentList.as_view(), name='home'),
     url(r'^experiment$', ExperimentList.as_view(), name='experiment-index'),
+    url(r'^experiment/dashboard$', experiment_dashboard, name='experiment-dashboard'),
+    url(r'^experiment/create/$', login_required(ExperimentCreate.as_view()), name='experiment-create'),
     url(r'^experiment/update/(?P<pk>[0-9]+)$', login_required(ExperimentUpdate.as_view()), name='experiment-update'),
     url(r'^experiment/delete/(?P<pk>[0-9]+)$', login_required(ExperimentDelete.as_view()), name='experiment-delete'),
 
@@ -46,14 +47,14 @@ urlpatterns = [
     url(r'^ion_channel_model/update/(?P<pk>[0-9]+)$', login_required(IonChannelModelUpdate.as_view()), name='ion-channel-model-update'),
     url(r'^ion_channel_model/delete/(?P<pk>[0-9]+)$', login_required(IonChannelModelDelete.as_view()), name='ion-channel-model-delete'),
 
-    url(r'^patch_clamp$', PatchClampList.as_view(), name='patch-clamp-index'),
-    url(r'^patch_clamp/detail/(?P<pk>[0-9]+)$', PatchClampDetail.as_view(), name='patch-clamp-detail'),
-    url(r'^patch_clamp/create$', login_required(PatchClampCreate.as_view()), name='patch-clamp-create'),
+    url(r'^patch_clamp/(?P<experimentId>[0-9]+)*$', PatchClampList.as_view(), name='patch-clamp-index'),
+    url(r'^patch_clamp/create/(?P<experimentId>[0-9]+)*$', login_required(PatchClampCreate.as_view()), name='patch-clamp-create'),
     url(r'^patch_clamp/update/(?P<pk>[0-9]+)$', login_required(PatchClampUpdate.as_view()), name='patch-clamp-update'),
     url(r'^patch_clamp/delete/(?P<pk>[0-9]+)$', login_required(PatchClampDelete.as_view()), name='patch-clamp-delete'),
+    url(r'^patch_clamp/detail/(?P<pk>[0-9]+)$', PatchClampDetail.as_view(), name='patch-clamp-detail'),
 
-    url(r'^graph$', GraphList.as_view(), name='graph-index'),
-    url(r'^graph/create$', login_required(GraphCreate.as_view()), name='graph-create'),
+    url(r'^graph/(?P<experimentId>[0-9]+)*$', GraphList.as_view(), name='graph-index'),
+    url(r'^graph/create/(?P<experimentId>[0-9]+)*$', login_required(GraphCreate.as_view()), name='graph-create'),
     url(r'^graph/update/(?P<pk>[0-9]+)$', login_required(GraphUpdate.as_view()), name='graph-update'),
     url(r'^graph/delete/(?P<pk>[0-9]+)$', login_required(GraphDelete.as_view()), name='graph-delete'),
 

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+{% block page_title %}{% trans 'Expriment' %}{% endblock %}
+{% block page_header %}{% trans 'Expriment' %}<small>{% trans 'Create Dashboard'%}</small>{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li><a href="{% url 'ion_channel:experiment-index' %}">{% trans 'Experiments' %}</a></li>
+    <li class="active">{% trans 'Create Dashboard' %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div id="experiment_form" class="col-md-12"></div>
+    </div>
+    <div class="row">
+        <div id="patch_clamp" class="col-md-6"></div>
+        <div id="graph" class="col-md-6"></div>
+    </div>
+
+    <div class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Patch Clamp</h4>
+                </div>
+                <div class="modal-body" id="form-container"></div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+{% endblock %}
+
+{% block inline-script %}
+    <script src="{% static 'js/experiment.js' %}"></script>
+    <script type="text/javascript">
+        cw.experiment.init({
+            url: {
+                experimentUpdateURL: '{% url 'ion_channel:experiment-update' 0 %}',
+                experimentCreateURL: '{% url 'ion_channel:experiment-create' %}',
+                patchClampIndex: '{% url 'ion_channel:patch-clamp-index' %}',
+                patchClampCreate: '{% url 'ion_channel:patch-clamp-create' %}',
+
+                graphIndex: '{% url 'ion_channel:graph-index' %}',
+                graphCreate: '{% url 'ion_channel:graph-create' %}',
+                graphUpdate: '{% url 'ion_channel:graph-update' 0 %}',
+            }
+        });
+    </script>
+{% endblock %}
