@@ -7,20 +7,5 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
 
-    </div>
-    <div class="row">
-        <div id="patch-clamp" class="col-md-6"> </div>
-        <div id="graph" class="col-md-6"> </div>
-    </div>
-
-
-{% endblock %}
-
-{% block inline-script %}
-    <script type="text/javascript">
-        $( "#patch-clamp" ).load( '{% url 'ion_channel:patch-clamp-index' %}' );
-        $( "#graph" ).load( '{% url 'ion_channel:graph-index' %}' );
-    </script>
 {% endblock %}

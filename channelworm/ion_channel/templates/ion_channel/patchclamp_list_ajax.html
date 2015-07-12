@@ -6,21 +6,24 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="box box-primary">
-                <div class="box-header">
+                <div class="box-header with-border">
                     <i class="fa fa-pinterest-p"></i>
 
                     <h3 class="box-title">{% trans 'Patch Clamp' %}</h3>
 
                     <div class="box-tools pull-right">
-                        <a href="#" onclick="openForm()"
-                           class="btn btn-success btn-sm">
-                            <i class="fa fa-plus"></i>
+                        <a href="#" onclick="cw.experiment.patchClamp.openCreateForm()"
+                           class="btn btn-box-tool" title="{% trans 'Add Patch Clamp' %}">
+                            <i class="fa fa-plus-circle"></i>
                             {% trans 'Add Patch Clamp' %}
                         </a>
+                        <button class="btn btn-box-tool" onclick="cw.experiment.patchClamp.refresh()" title="{% trans 'Refresh' %}">
+                            <li class="fa fa-refresh"></li>
+                        </button>
                     </div>
                 </div>
                 <div class="box-body table-responsive">
-                    <table id="result_table" class="table table-bordered table-striped">
+                    <table id="patch_clamp_result_table" class="table table-bordered table-striped">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
@@ -60,12 +63,14 @@
                                 <td>{{ patch_clamp.protocol_step }}</td>
                                 <td>{{ patch_clamp.experiment.doi }}</td>
                                 <td>
-                                    <a href="{% url 'ion_channel:patch-clamp-update' patch_clamp.id %}"
+                                    <a href="#"
+                                       onclick="cw.experiment.patchClamp.openUpdateForm('{% url 'ion_channel:patch-clamp-update' patch_clamp.id %}')"
                                        class="badge bg-light-blue">
                                         <i class="fa fa-edit"></i>
                                         {% trans 'Edit' %}
                                     </a>
-                                    <a href="{% url 'ion_channel:patch-clamp-delete' patch_clamp.id %}"
+                                    <a href="#"
+                                       onclick="cw.experiment.patchClamp.confirmDelete('{% url 'ion_channel:patch-clamp-delete' patch_clamp.id %}')"
                                        class="badge bg-red">
                                         <i class="fa fa-remove"></i>
                                         {% trans 'Delete' %}
@@ -76,31 +81,17 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">×</span></button>
-                    <h4 class="modal-title">Patch Clamp</h4>
+                <div class="overlay cw-loading" id="patch_clamp_loading" >
+                    <i class="fa fa-refresh fa-spin"></i>
                 </div>
-                <div class="modal-body" id="form-container"></div>
+
             </div>
-            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-dialog -->
     </div>
 {% endblock %}
 
 {% block inline-script %}
     <script type="text/javascript">
-        $("#result_table").dataTable();
-        function openForm() {
-            $('.modal').modal('show');
-            $("#form-container").load('{% url 'ion_channel:patch-clamp-create' 10 %}')
-        }
+        $("#patch_clamp_result_table").dataTable();
     </script>
 {% endblock %}

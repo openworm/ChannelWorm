@@ -5,7 +5,7 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
-            <form method="post" class="form" id="frm_patch_clamp" action="{% url 'ion_channel:patch-clamp-create' %}">
+            <form id="frm_graph" enctype="multipart/form-data" method="post" class="form" action="{% url 'ion_channel:graph-update' object.pk %}">
                 <div class="box-body">
                     {% csrf_token %}
                     {% for field in form %}
@@ -18,10 +18,11 @@
                 </div>
                 <div class="box-footer">
                     <input type="button" value="{% trans 'Save' %}" class="btn btn-primary"
-                           onclick="return cw.experiment.patchClamp.save()"/>
+                           onclick="return cw.experiment.graph.save()"/>
                     <a href="#" class="btn btn-default" onclick="cw.experiment.modal.close()">{% trans 'Cancel' %}</a>
                 </div>
             </form>
+
         </div>
     </div>
 {% endblock %}

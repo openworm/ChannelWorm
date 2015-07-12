@@ -1,0 +1,26 @@
+{% extends "base_ajax.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <form id="frm_graph" method="post" class="form" action="{% url 'ion_channel:graph-delete' object.pk %}">
+            {% csrf_token %}
+            <div class="box-body">
+                <div class="callout callout-warning">
+                    <p>
+                        {% blocktrans %}
+                        Are you sure you want to delete the Figure?
+                        {% endblocktrans %}
+                    </p>
+                </div>
+            </div>
+            <div class="box-footer">
+                <input type="submit" value="{% trans 'Yes' %}" class="btn btn-success" onclick="return cw.experiment.graph.delete()"/>
+                <a href="#" class="btn btn-default" onclick="cw.experiment.modal.close()">{% trans 'No' %}</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

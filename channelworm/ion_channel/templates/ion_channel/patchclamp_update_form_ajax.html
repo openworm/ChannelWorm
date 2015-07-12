@@ -5,7 +5,7 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
-            <form method="post" class="form" id="frm_patch_clamp" action="{% url 'ion_channel:patch-clamp-create' %}">
+            <form method="post" class="form" id="frm_patch_clamp" action="{% url 'ion_channel:patch-clamp-update' object.pk %}">
                 <div class="box-body">
                     {% csrf_token %}
                     {% for field in form %}
