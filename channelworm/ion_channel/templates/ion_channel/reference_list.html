@@ -66,7 +66,7 @@
                                 <td>{{ reference.subject }}</td>
                                 <td><a href={{ reference.file_url }}>{{ reference.file_url|truncatechars:40 }}</a></td>
                                 <td>{{ reference.username }}</td>
-                                <td style="width: 200px">
+                                <td>
                                     <a href="{% url 'ion_channel:reference-update' reference.id %}"
                                        class="badge bg-light-blue">
                                         <i class="fa fa-edit"></i>
