@@ -48,7 +48,7 @@
                                 <td>{{ experiment.last_update }}</td>
                                 <td>{{ experiment.username }}</td>
                                 <td>{{ experiment.comments|truncatechars:300 }}</td>
-                                <td style="...">
+                                <td>
                                     <a href="{% url 'ion_channel:experiment-update' experiment.id %}"
                                        class="badge bg-light-blue">
                                         <i class="fa fa-edit"></i>
