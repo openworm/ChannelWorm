@@ -101,14 +101,12 @@ class AjaxMixinDeleteView(BaseAjaxAction):
         return super(AjaxMixinDeleteView, self).get_ajax(self, request, *args, **kwargs)
 
     def delete_ajax(self, request, *args, **kwargs):
-        print("delete_ajax")
         self.object = self.get_object()
         self.object.delete()
 
         return JsonResponse(self.create_success_ajax_response())
 
     def post_ajax(self, request, *args, **kwargs):
-        print("post_ajax")
         return self.delete_ajax(self, request, *args, **kwargs)
 
     def create_success_ajax_response(self):
