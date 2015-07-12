@@ -35,7 +35,8 @@
                             <th>{% trans 'Create date' %}</th>
                             <th>{% trans 'Last update' %}</th>
                             <th>{% trans 'Created By' %}</th>
-                            <th style="width: 200px">{% trans 'Action' %}</th>
+                            <th>{% trans 'Comments' %}</th>
+                            <th>{% trans 'Action' %}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -46,7 +47,8 @@
                                 <td>{{ experiment.create_date }}</td>
                                 <td>{{ experiment.last_update }}</td>
                                 <td>{{ experiment.username }}</td>
-                                <td>
+                                <td>{{ experiment.comments|truncatechars:300 }}</td>
+                                <td style="...">
                                     <a href="{% url 'ion_channel:experiment-update' experiment.id %}"
                                        class="badge bg-light-blue">
                                         <i class="fa fa-edit"></i>

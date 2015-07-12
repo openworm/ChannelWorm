@@ -1,30 +1,24 @@
 import json
-from datetime import datetime
-
-from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
+from datetime import datetime
 
 
 
-# Create your views here.
-# Create your views here.
+
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from web_app.views import AjaxMixinListView, AjaxMixinCreateView, AjaxMixinUpdateView, AjaxMixinDeleteView
 from models import *
 from form import *
 
-
 def index(request):
     return render(request, 'ion_channel/index.html')
-
 
 class ReferenceList(ListView):
     model = Reference
     context_object_name = 'references'
-
 
 class ReferenceCreate(CreateView):
     model = Reference
@@ -35,7 +29,6 @@ class ReferenceCreate(CreateView):
     def form_valid(self, form):
         form.instance.username = self.request.user
         return super(ReferenceCreate, self).form_valid(form)
-
 
 class ReferenceWizard(SessionWizardView):
     template_name = 'ion_channel/reference_auto_create_form.html'
@@ -63,7 +56,6 @@ class ReferenceWizard(SessionWizardView):
 
             # TODO: Better handle the problem with creating .cache in HOME dir in OpenShift
             import os
-
             home_dir = os.environ["HOME"]
             if home_dir == "/var/lib/openshift/55454af95973ca347e00011b":
                 os.environ["HOME"] = "/var/lib/openshift/55454af95973ca347e00011b/app-root/data/"
@@ -115,7 +107,7 @@ class ExperimentList(ListView):
 
 class ExperimentCreate(AjaxMixinCreateView, CreateView):
     model = Experiment
-    fields = ['reference']
+    fields = ['reference','comments']
     template_name_suffix = '_create_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
     json_success_response = {'status': 'success', 'result': 'Experiment has been saved.'}
@@ -128,7 +120,7 @@ class ExperimentCreate(AjaxMixinCreateView, CreateView):
 
 class ExperimentUpdate(AjaxMixinUpdateView, UpdateView):
     model = Experiment
-    fields = ['reference']
+    fields = ['reference','comments']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('ion_channel:experiment-index')
     json_success_response = {'status': 'success', 'result': 'Experiment has been saved.'}
@@ -208,6 +200,11 @@ class PatchClampList(AjaxMixinListView, ListView):
             experiment = get_object_or_404(Experiment, id__exact=self.kwargs.get("experimentId"))
             return PatchClamp.objects.filter(experiment=experiment)
         return PatchClamp.objects.all()
+
+class PatchClampDetail(UpdateView):
+    model = PatchClamp
+    template_name_suffix = '_detail'
+    fields = '__all__'
 
 
 class PatchClampCreate(AjaxMixinCreateView, CreateView):

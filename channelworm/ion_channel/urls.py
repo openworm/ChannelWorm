@@ -51,6 +51,7 @@ urlpatterns = [
     url(r'^patch_clamp/create/(?P<experimentId>[0-9]+)*$', login_required(PatchClampCreate.as_view()), name='patch-clamp-create'),
     url(r'^patch_clamp/update/(?P<pk>[0-9]+)$', login_required(PatchClampUpdate.as_view()), name='patch-clamp-update'),
     url(r'^patch_clamp/delete/(?P<pk>[0-9]+)$', login_required(PatchClampDelete.as_view()), name='patch-clamp-delete'),
+    url(r'^patch_clamp/detail/(?P<pk>[0-9]+)$', PatchClampDetail.as_view(), name='patch-clamp-detail'),
 
     url(r'^graph/(?P<experimentId>[0-9]+)*$', GraphList.as_view(), name='graph-index'),
     url(r'^graph/create/(?P<experimentId>[0-9]+)*$', login_required(GraphCreate.as_view()), name='graph-create'),

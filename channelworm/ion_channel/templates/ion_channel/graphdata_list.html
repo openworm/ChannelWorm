@@ -17,7 +17,7 @@
                 <div class="box-header">
                     <i class="fa fa-file-text-o"></i>
 
-                    <h3 class="box-title">{% trans 'Figure Data' %}</h3>
+                    <h3 class="box-title">{% trans 'Graph Data' %}</h3>
                 </div>
                 <div class="box-body">
                     <table id="result_table" class="table table-bordered table-striped">
@@ -26,7 +26,6 @@
                             <th style="width: 10px">#</th>
                             <th>{% trans 'Series Name' %}</th>
                             <th>{% trans 'Series Data' %}</th>
-                            <th>{% trans 'Figure' %}</th>
                             <th>{% trans 'Action' %}</th>
                         </tr>
                         </thead>
@@ -36,7 +35,6 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ data.series_name }}</td>
                                 <td>{{ data.series_data }}</td>
-                                <td>{{ data.graph }}</td>
                                 <td>
                                     <a href="{% url 'ion_channel:graph-data-delete' data.graph.id data.id %}"
                                        class="badge bg-red">
