@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import exp
+from scipy.optimize import curve_fit
 
 class Simulator(object):
 
@@ -215,3 +216,22 @@ class Simulator(object):
         else:
             return self.results
 
+
+    def optim_curve(self, params, best_candidate, target, curve_type='IV'):
+
+        self.target = target
+        X = np.asarray(target[0])
+        Y = np.asarray(target[1])
+
+        # in scipy leastsq, number of parameters must not exceed number of points.
+        diff = len(best_candidate) - len(X)
+        if diff > 0:
+            for i in range(0,diff):
+                X = np.append(X,X[-1])
+                Y = np.append(Y,Y[-1])
+
+        self.fit_params = params
+        if curve_type == 'IV':
+            popt,pcov = curve_fit(self.IV_act, X,Y,best_candidate)
+
+        return popt, self.zparams
