@@ -261,4 +261,3 @@ class Evaluator(object):
         self.analysis['T_a'] = [X[peak_i],Y[peak_i]]
         self.analysis['k_a'] = [X[peak_i],Y[peak_i]]
 
-
