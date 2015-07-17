@@ -15,6 +15,35 @@ import ion_channel.models
 import PyOpenWorm as P
 from django.forms.models import model_to_dict
 
+class ReferenceAdapter(object):
+    """
+    Map a channelworm Reference object to a PyOpenWorm Experiment.
+    """
+
+    def __init__(self, cw_obj):
+        # initialize PyOpenWorm connection so we can access its API
+        P.connect()
+
+        self.cw = cw_obj
+        self.pyow = P.Evidence(
+            author=self.cw.authors,
+            doi=self.cw.doi,
+            pmid=self.cw.PMID,
+            title=self.cw.title,
+            uri=self.cw.url,
+            year=self.cw.year
+        )
+
+        P.disconnect()
+
+    def get_pow(self):
+        """Return the PyOpenWorm representation of the object"""
+        return self.pyow
+
+    def get_cw(self):
+        """Return the ChannelWorm representation of the object"""
+        return self.cw
+
 
 class PatchClampAdapter(object):
     """
