@@ -1,5 +1,5 @@
 import sciunit
-import capabilities
+import SCU_Capabilities
 
 class IonChannelModel(sciunit.Model, capabilities.Generates_IV_Curve,
         capabilities.Receives_Current, capabilities.Generates_Membrane_Potential):
