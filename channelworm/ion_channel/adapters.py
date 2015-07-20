@@ -1,5 +1,7 @@
 # configure django to use default settings
 # note that this can also be done using an environment variable
+import sys
+sys.path.append('..')
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
@@ -11,7 +13,7 @@ else:
     from web_app import settings as defaults
     settings.configure(default_settings=defaults, DEBUG=True)
 
-import ion_channel.models
+import ion_channel.models as C
 import PyOpenWorm as P
 from django.forms.models import model_to_dict
 
@@ -52,7 +54,7 @@ class PatchClampAdapter(object):
     Example usage ::
 
         >>> import adapters
-        >>> cw_patch = ion_channel.models.PatchClamp.objects.all()[0]    # get some saved patch-clamp experiment from CW
+        >>> cw_patch = C.PatchClamp.objects.all()[0]    # get some saved patch-clamp experiment from CW
         >>> pca = adapters.PatchClampAdapter(cw_patch)    # create an adapter object with it
         >>> pca.get_pow()    # get back the corresponding PyOW model
         Experiment(reference=`Evidence(AssertsAllAbout(), year=`None', title=`SALAM', doi=`Salam')', Conditions())
@@ -86,7 +88,11 @@ class PatchClampAdapter(object):
         cw_evidence = C.Experiment.objects.get(id=experiment_id)
 
         # make a PyOW evidence object with it
-        pow_evidence = P.Evidence(doi=cw_evidence.doi)
+        pow_evidence = P.Evidence(doi=self.channelworm_object
+                .experiment
+                .reference
+                .doi
+            )
 
         # add it to the PyOW experiment model
         self.pyopenworm_object.reference(pow_evidence)

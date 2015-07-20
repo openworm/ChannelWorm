@@ -1,11 +1,19 @@
 from django.test import TestCase
-import adapters, ion_channel, PyOpenWorm
+import adapters, PyOpenWorm, unittest, random
+from ion_channel.models import *
+
+# TODO: Run object creation only once.
+#       This could be accomplished by having a create_SomeObject 
+#       function that creates an object, and returns the already-made 
+#       object if called a second time.
+#           Or: We could find a good way to "mock" objects and their
+#               attributes...
 
 class AdapterTestCase(TestCase):
 
     def setUp(self):
         """Run before each test method."""
-        self.u = ion_channel.models.User.objects.create(username='user')
+        self.u = User.objects.create(username='user')
 
     def tearDown(self):
         """Run after each test method."""
@@ -13,29 +21,25 @@ class AdapterTestCase(TestCase):
 
     def test_create_Reference(self):
         """Test that we can make a Reference object manually."""
-        try:
-            test_doi = 'test1212'
-            r = ion_channel.models.Reference.objects.create(
-                    doi=test_doi,
-                    username=self.u
-                )
-            assert True
-        except:
-            # throws an exception, so fail
-            assert False
+        test_doi = 'test1212'
+        r = Reference.objects.create(
+                doi=test_doi,
+                username=self.u
+        )
+        assert isinstance(r, Reference)
 
     def test_adapt_Reference(self):
         """Test that we can map a Reference object to a PyOpenWorm
         Experiment object."""
         
-        r = ion_channel.models.Reference.objects.create(
-                username=self.u,
-                authors='Einstein et al.',
-                doi='123abc',
-                PMID='000000',
-                title='Hello Worm',
-                url='http://example.co.uk',
-                year=2001
+        r = Reference.objects.create(
+            PMID='000000',
+            authors='Einstein et al.',
+            doi='123abc',
+            title='Hello Worm',
+            url='http://example.co.uk',
+            username=self.u,
+            year=2001
         )
 
         reference_adapter = adapters.ReferenceAdapter(r)
@@ -46,22 +50,81 @@ class AdapterTestCase(TestCase):
         PyOpenWorm.connect()
 
         pyow_dict = {
+            'authors': experiment.author(),
             'doi': experiment.doi(),
             'pmid': experiment.pmid(),
-            'authors': experiment.author(),
             'title': experiment.title(),
-            'year': experiment.year(),
-            'url': experiment.uri()
+            'url': experiment.uri(),
+            'year': experiment.year()
         }
 
         cw_dict = {
+            'authors': set([reference.authors]),
             'doi': reference.doi,
             'pmid': reference.PMID,
-            'authors': set([reference.authors]),
             'title': reference.title,
-            'year': reference.year,
-            'url': set([reference.url])
+            'url': set([reference.url]),
+            'year': reference.year
         }
 
         self.assertEqual(pyow_dict, cw_dict)
+
+    def test_create_PatchClamp(self):
+        """Test that we can create a PatchClamp object manually."""
+        ref = Reference.objects.create(
+            username=self.u,
+            doi='somedoi',
+        )
+
+        ex = Experiment.objects.create(
+            reference=ref,
+            username=self.u,
+        )
+
+        ic = IonChannel.objects.create(
+            channel_name='fake'
+        )
+
+        pc = PatchClamp.objects.create(
+            deltat=100, 
+            duration=200, 
+            end_time=200, 
+            experiment=ex,
+            ion_channel=ic,
+            protocol_end=200, 
+            protocol_start=0, 
+            protocol_step=100, 
+            start_time=0, 
+        )
+        assert isinstance(pc, PatchClamp)
+
+    def test_adapt_PatchClamp(self):
+        """Test that we can map a PatchClamp object to a PyOpenWorm
+        PatchClamp object."""
+        ref = Reference.objects.create(
+            username=self.u,
+            doi='somedoi',
+        )
+
+        ex = Experiment.objects.create(
+            reference=ref,
+            username=self.u,
+        )
+
+        ic = IonChannel.objects.create(
+            channel_name='fake'
+        )
+
+        pc = PatchClamp.objects.create(
+            deltat=100, 
+            duration=200, 
+            end_time=200, 
+            experiment=ex,
+            ion_channel=ic,
+            protocol_end=200, 
+            protocol_start=0, 
+            protocol_step=100, 
+            start_time=0, 
+        )
+        
 
