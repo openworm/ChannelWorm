@@ -216,7 +216,7 @@ class GraphData(models.Model):
         xy = self.series_data.splitlines()
         data = list()
         for row in xy:
-            data = [i.split(',') for i in row]
+            data += [map(float, row.split(','))]
 
         return data
 
