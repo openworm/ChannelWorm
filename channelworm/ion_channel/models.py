@@ -210,7 +210,16 @@ class GraphData(models.Model):
     series_data = models.TextField()
 
     def __unicode__(self):
-        return `self.experiment`+ "Fig. " + self.figure_ref_address
+        return self.series_name
+
+    def asarray(self):
+        xy = self.series_data.splitlines()
+        data = list()
+        for row in xy:
+            data = [i.split(',') for i in row]
+
+        return data
+
 
 Modeling_Method_CHOICES = (
     ('Experimental', 'Experimental'),

@@ -132,7 +132,7 @@ class Evaluator(object):
                 POVcost = self.cost([mySimulator['V_PO_max'],mySimulator['PO_max']],[self.sampleData['POV']['V'],self.sampleData['POV']['PO']])
                 N = len(self.sampleData['POV']['V'])
                 if N != 0:
-                    IVcost /= N
+                    POVcost /= N
                 samples += 1
 
             fitness = (Vcost + Icost + IVcost + POVcost) / samples
@@ -180,7 +180,6 @@ class Evaluator(object):
                     cost_val /= (((target_y - max)**2 + (target_y - min)**2)/2)
 
                 total_cost += cost_val
-
 
         return total_cost
 

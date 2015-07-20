@@ -140,7 +140,7 @@ class Simulator(object):
             Istim = -self.protocol_start
             for i in range(0,self.numtests):
                 for j in range(self.onset-1,self.offset):
-                    I_in[i][j] += self.Istim
+                    I_in[i][j] += Istim
                 Istim -= self.protocol_steps
 
         # Variable initialization
