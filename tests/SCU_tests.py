@@ -1,9 +1,9 @@
 from sciunit import Test
-from capabilities import *
+from SCU_Capabilities import *
 
 class IV_Curve_Test(Test):
     """Compares the IV curve produced by a model to an observed curve"""
-    
+
     def __init__(self, observation=None, name=None):
         Test.__init__(self, observation, name)
 
@@ -16,4 +16,3 @@ class IV_Curve_Test(Test):
 
     def compute_score(self, observation, prediction):
         pass        #related to above; compute the score
-
