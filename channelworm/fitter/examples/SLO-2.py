@@ -17,25 +17,25 @@ if __name__ == '__main__':
 
     cwd=os.getcwd()
 
-    csv_path_VC_1 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/1.csv'
-    csv_path_VC_2 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/2.csv'
-    csv_path_VC_3 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/3.csv'
-    csv_path_VC_4 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/4.csv'
-    x_var_VC = {'type':'Time','unit':'ms','toSI':1e-3}
-    y_var_VC = {'type':'Current','unit':'nA','toSI':1e-9}
-    traces_VC = [{'vol':None,'csv_path':csv_path_VC_1,'x_var':x_var_VC,'y_var':y_var_VC},
-                 {'vol':None,'csv_path':csv_path_VC_2,'x_var':x_var_VC,'y_var':y_var_VC},
-                 {'vol':None,'csv_path':csv_path_VC_3,'x_var':x_var_VC,'y_var':y_var_VC},
-                 {'vol':None,'csv_path':csv_path_VC_4,'x_var':x_var_VC,'y_var':y_var_VC}]
-    ref_VC = {'fig':'6a','doi':'10.1038/77670'}
-    VClamp = {'ref':ref_VC,'traces':traces_VC}
-
-    # csv_path_VC = os.path.dirname(cwd)+'/examples/slo-2/SLO-2-2000-VClamp.csv'
+    # csv_path_VC_1 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/1.csv'
+    # csv_path_VC_2 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/2.csv'
+    # csv_path_VC_3 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/3.csv'
+    # csv_path_VC_4 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/4.csv'
     # x_var_VC = {'type':'Time','unit':'ms','toSI':1e-3}
     # y_var_VC = {'type':'Current','unit':'nA','toSI':1e-9}
-    # traces_VC = [{'csv_path':csv_path_VC,'x_var':x_var_VC,'y_var':y_var_VC}]
+    # traces_VC = [{'vol':None,'csv_path':csv_path_VC_1,'x_var':x_var_VC,'y_var':y_var_VC},
+    #              {'vol':None,'csv_path':csv_path_VC_2,'x_var':x_var_VC,'y_var':y_var_VC},
+    #              {'vol':None,'csv_path':csv_path_VC_3,'x_var':x_var_VC,'y_var':y_var_VC},
+    #              {'vol':None,'csv_path':csv_path_VC_4,'x_var':x_var_VC,'y_var':y_var_VC}]
     # ref_VC = {'fig':'6a','doi':'10.1038/77670'}
     # VClamp = {'ref':ref_VC,'traces':traces_VC}
+
+    csv_path_VC = os.path.dirname(cwd)+'/examples/slo-2/SLO-2-2000-VClamp.csv'
+    x_var_VC = {'type':'Time','unit':'ms','toSI':1e-3}
+    y_var_VC = {'type':'Current','unit':'nA','toSI':1e-9}
+    traces_VC = [{'csv_path':csv_path_VC,'x_var':x_var_VC,'y_var':y_var_VC}]
+    ref_VC = {'fig':'6a','doi':'10.1038/77670'}
+    VClamp = {'ref':ref_VC,'traces':traces_VC}
 
     csv_path = os.path.dirname(cwd)+'/examples/slo-2/SLO-2-2000-IV.csv'
     ref = {'fig':'6a','doi':'10.1038/77670'}
@@ -61,8 +61,8 @@ if __name__ == '__main__':
     candidates = optimizers.CustomOptimizerA(bio_params['max_val_channel'],
                                              bio_params['min_val_channel'],
                                              myEvaluator,
-                                             population_size=3, #20 times larger than free parameters
-                                             max_evaluations=6,
+                                             population_size=300, #20 times larger than free parameters
+                                             max_evaluations=600,
                                              num_selected=2,
                                              num_offspring=15,
                                              num_elites=1,

@@ -115,9 +115,9 @@ class Initiator(object):
         self.sim_params['I_init'] = 0
         self.sim_params['pc_type'] = 'VClamp'
         self.sim_params['deltat'] = 1e-5
-        self.sim_params['duration'] = 0.050
-        self.sim_params['start_time'] = 0.002
-        self.sim_params['end_time'] = 0.050
+        self.sim_params['duration'] = 0.059
+        self.sim_params['start_time'] = 0.003
+        self.sim_params['end_time'] = 0.059
         self.sim_params['protocol_start'] = -140e-3
         self.sim_params['protocol_end'] = 110e-3
         self.sim_params['protocol_steps'] = 10e-3
@@ -132,9 +132,9 @@ class Initiator(object):
             self.sim_params['IV']['I_init'] = 0
             self.sim_params['IV']['pc_type'] = 'VClamp'
             self.sim_params['IV']['deltat'] = 1e-5
-            self.sim_params['IV']['duration'] = 0.050
-            self.sim_params['IV']['start_time'] = 0.002
-            self.sim_params['IV']['end_time'] = 0.050
+            self.sim_params['IV']['duration'] = 0.059
+            self.sim_params['IV']['start_time'] = 0.003
+            self.sim_params['IV']['end_time'] = 0.059
             self.sim_params['IV']['protocol_start'] = -140e-3
             self.sim_params['IV']['protocol_end'] = 110e-3
             self.sim_params['IV']['protocol_steps'] = 10e-3
