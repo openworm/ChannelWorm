@@ -30,8 +30,6 @@ class Modelator(object):
                 model_plot, = plt.plot(simData['t'],trace, label = '%i (V)'%voltage)
                 voltage -= self.sim_params['protocol_steps']
             plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
-            # plt.ylim(-80.0,80.0)
-            # plt.xlim(0.0,1000.0)
             plt.title("The Best Model fitted to data for voltage-clamp using GA")
             plt.xlabel("Time (s)")
             plt.ylabel("Current (A)")
@@ -56,8 +54,6 @@ class Modelator(object):
                 amp -= self.sim_params['protocol_steps']
 
             plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
-            # plt.ylim(-80.0,80.0)
-            # plt.xlim(0.0,1000.0)
             plt.title("The Best Model fitted to data for current-clamp using GA")
             plt.xlabel("Time (s)")
             plt.ylabel("Voltage (V)")
@@ -73,8 +69,6 @@ class Modelator(object):
             sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I'],'k')
             model_plot, = plt.plot([round(x*1e3) for x in simData['V_max']],simData['I_max'],'r')
             plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
-            # plt.ylim(-80.0,80.0)
-            # plt.xlim(0.0,1000.0)
             plt.title("The Best Model fitted to data for I/V curve using GA")
             plt.xlabel("Voltage (mV)")
             plt.ylabel("Current (A/F)")

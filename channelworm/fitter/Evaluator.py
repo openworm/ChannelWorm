@@ -1,8 +1,6 @@
 import numpy as np
-from math import exp
 from channelworm.fitter.Simulator import Simulator
-from scipy.spatial import cKDTree
-from scipy.spatial import distance
+from heapq import nsmallest
 import copy
 
 class Evaluator(object):
@@ -51,7 +49,7 @@ class Evaluator(object):
                 tempCost = 0
                 M = 0
                 N = 0
-                VClampSim_I_copy = copy.deepcopy(mySimulator['I'])
+                VClampSim_I_copy = list(copy.deepcopy(mySimulator['I']))
 
                 for trace in self.sampleData['VClamp']['traces']:
                     if 'vol' in trace:
@@ -76,16 +74,8 @@ class Evaluator(object):
                                 M += 1
                     else:
                         Vcost = self.cost_all_traces([mySimulator['t'],mySimulator['I']],[trace['t'],trace['I']])
-                        N += len(trace['t'])
-                        M += 1
-                    # else:
-                        # VC_Simulator.patch_clamp([trace['t'],trace['I']])
-                        # Vcost = VC_Simulator.cost
-                        # N = 1
-                        # M = 1
-                        # Vcost = self.cost_all_traces([vclampsim_t,VClampSim_I],[trace['t'],trace['I']])
-                        # N += len(trace['t'])
-                        # M += 1
+                        N = 1
+                        M = 1
 
                     if (N * M) != 0:
                         Vcost /= (N * M)
@@ -96,7 +86,6 @@ class Evaluator(object):
                 if 'IC' in self.sim_params:
                     mySimulator = Simulator(self.sim_params['IC'],cand_var,cell_var).patch_clamp()
 
-                tempCost = 0
                 M = 0
                 N = 0
 
@@ -110,8 +99,8 @@ class Evaluator(object):
                             M += 1
                     else:
                         Icost = self.cost_all_traces([mySimulator['t'],mySimulator['V']],[trace['t'],trace['V']])
-                        N += len(trace['t'])
-                        M += 1
+                        N = 1
+                        M = 1
 
                 if (N * M) != 0:
                     Icost  /= (N * M)
@@ -156,11 +145,12 @@ class Evaluator(object):
         """
         # TODO: a better way to calculate cost is to measure the area between two plots!!
 
-        sim_x = sim[0]
+        sim_x = np.asarray(sim[0])
         total_cost = 1e9
         mu = np.mean(target[1])
         max = np.max(target[1])
         min = np.min(target[1])
+        sigmasq = np.var(target[1])
         N=0
 
         for target_x in target[0]:
@@ -190,53 +180,52 @@ class Evaluator(object):
         :param: sim: Array of simulated experiment including all traces
         :param: terget: A 2D array of experimental/digitized data
         :param: scale: if True, then scales the cost value by dividing by the sigma squared of the Y-axis in the target dataset.
-        :return: cost_val: the cost value
-        :return:
+        :return: total_cost: the cost value
         """
 
         deltat = self.sim_params['deltat']
-        numtests = self.sim_params['numtests']
+        numtests = int(round((self.sim_params['protocol_end'] - self.sim_params['protocol_start']) / self.sim_params['protocol_steps']) + 1)
+        numpoints = int(round(self.sim_params['duration']/deltat))
 
-        I_sample = list()
-        t_sample = int(len(target[0])/numtests)
-
-        self.min_dist = []
-        self.min_dist_i = []
-        self.min_dist_val = []
-
-        total_cost = 1e9
-        cost_val = 0
-        mu = np.mean(target[1])
+        I = sim[1]
+        target_temp = copy.deepcopy(target)
+        min_dist = []
+        t_sample = int(len(target_temp[0])/numtests)
+        numsample = numpoints/t_sample
+        sigmasq = np.var(target[1])
         max = np.max(target[1])
         min = np.min(target[1])
-        target_x_y = np.dstack((target[0],target[1]))
 
-        for sim_y in sim[1]:
-            mdv = []
-            sim_x_y = np.dstack((sim[0],sim_y))
-            mytree = cKDTree(sim_x_y[0])
-            dist, index = mytree.query(target_x_y[0])
-            self.min_dist.append(dist)
-            self.min_dist_i.append(index*deltat)
-            for i in range(0,len(index)):
-                mdv.append(sim_y[index[i]])
+        for j in range(0,numtests):
+            for i in range(1,numpoints):
+                if i % int(numsample) == 0:
+                    knn = nsmallest(numtests, target_temp[0], key=lambda x:abs(x-(i*deltat))**2)
+                    knn_dist = list()
+                    knn_dist.extend([[target_temp[0].index(k),(target_temp[1][target_temp[0].index(k)]-I[j][i])**2] for k in knn])
+                    knn_dist = np.asarray(knn_dist)
+                    knn_sort = knn_dist[knn_dist[:,1].argsort()]
+                    knn_iy = int(knn_sort[0][0])
+                    min_dist.append(knn_sort[0][1])
 
-            self.min_dist_val.append(mdv)
-            cost_val = sum(dist)
-        cost_val /= len(sim[1])
-            # if scale:
-            #     cost_val /= sigmasq
+                    del target_temp[0][knn_iy]
+                    del target_temp[1][knn_iy]
 
-        return cost_val
+        total_cost = np.mean(min_dist)
+        if scale:
+            # total_cost /= sigmasq
+            total_cost /= (((total_cost - max)**2 + (total_cost - min)**2)/2)
+
+        return total_cost
 
 
     def patch_clamp_analysis(self,X,Y,type='VClamp'):
         """
+        Analysis of a voltage- or current- clamp curve (usually digitized from figures)
 
-        :param X:
-        :param Y:
-        :param type:
-        :return:
+        :param X: X axis, t
+        :param Y: Y axis, V or I
+        :param type: patch clamp type, VClamp, or IClamp
+        :return: self.analysis: analysis key-vals
         """
 
         self.analysis = dict()
@@ -260,3 +249,4 @@ class Evaluator(object):
         self.analysis['T_a'] = [X[peak_i],Y[peak_i]]
         self.analysis['k_a'] = [X[peak_i],Y[peak_i]]
 
+        return self.analysis

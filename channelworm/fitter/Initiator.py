@@ -58,8 +58,8 @@ class Initiator(object):
                                                'S',
                                                ' ']
 
-        self.bio_params['min_val_channel'] = [100 , -0.15, -0.15, 0.001, 0.01, 4]
-        self.bio_params['max_val_channel'] = [500 ,  0.15, 0.15,  0.1,   0.02, 4]
+        self.bio_params['min_val_channel'] = [100 , -0.15, -0.15, 0.001, 0.0001, 4]
+        self.bio_params['max_val_channel'] = [500 ,  0.15,  0.15,  0.1,   0.001, 4]
 
         # self.bio_params['channel_params'].extend(['v_half_i',
         #                                           'k_i',
@@ -201,7 +201,7 @@ class Initiator(object):
 
         """
 
-        #TODO: Get values from pyOW
+        # TODO: Get values from pyOW
 
         # For loop to extract all csv files from user's profile path
         #  1: csv files: IClamp, VClamp, IV, G/Gmax, mtau, minf, htau, hinf, etc
@@ -210,20 +210,28 @@ class Initiator(object):
         if 'VClamp' in self.sampleData:
             i = 0
             for trace in self.sampleData['VClamp']['traces']:
-                self.sampleData['VClamp']['traces'][i]['t'],self.sampleData['VClamp']['traces'][i]['I'] = self.csv_to_XY(trace['csv_path'], trace['x_var'], trace['y_var'], self.sampleData['VClamp']['ref'])
+                self.sampleData['VClamp']['traces'][i]['t'],self.sampleData['VClamp']['traces'][i]['I'] = \
+                    self.csv_to_XY(trace['csv_path'], trace['x_var'], trace['y_var'], self.sampleData['VClamp']['ref'])
                 i += 1
 
         if 'IClamp' in self.sampleData:
             i = 0
             for trace in self.sampleData['IClamp']['traces']:
-                self.sampleData['IClamp']['traces'][i]['t'],self.sampleData['IClamp']['traces'][i]['V'] = self.csv_to_XY(trace['csv_path'], trace['x_var'], trace['y_var'], self.sampleData['IClamp']['ref'])
+                self.sampleData['IClamp']['traces'][i]['t'],self.sampleData['IClamp']['traces'][i]['V'] = \
+                    self.csv_to_XY(trace['csv_path'], trace['x_var'], trace['y_var'], self.sampleData['IClamp']['ref'])
                 i += 1
 
         if 'IV' in self.sampleData:
-            self.sampleData['IV']['V'],self.sampleData['IV']['I'] = self.csv_to_XY(self.sampleData['IV']['csv_path'], self.sampleData['IV']['x_var'], self.sampleData['IV']['y_var'], self.sampleData['IV']['ref'])
+            self.sampleData['IV']['V'],self.sampleData['IV']['I'] = self.csv_to_XY(self.sampleData['IV']['csv_path'],
+                                                                                   self.sampleData['IV']['x_var'],
+                                                                                   self.sampleData['IV']['y_var'],
+                                                                                   self.sampleData['IV']['ref'])
 
         if 'POV' in self.sampleData:
-            self.sampleData['POV']['V'],self.sampleData['POV']['PO'] = self.csv_to_XY(self.sampleData['POV']['csv_path'], self.sampleData['POV']['x_var'], self.sampleData['POV']['y_var'], self.sampleData['POV']['ref'])
+            self.sampleData['POV']['V'],self.sampleData['POV']['PO'] = self.csv_to_XY(self.sampleData['POV']['csv_path'],
+                                                                                      self.sampleData['POV']['x_var'],
+                                                                                      self.sampleData['POV']['y_var'],
+                                                                                      self.sampleData['POV']['ref'])
 
         return self.sampleData
 
