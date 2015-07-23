@@ -31,19 +31,20 @@
                         </a>
                     </div>
                 </div>
-                <div class="box-body">
+                <div class="box-body table-responsive">
                     <table id="reference_table" class="table table-bordered table-striped">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
                             <th>{% trans 'Reference' %}</th>
                             <th>{% trans 'DOI' %}</th>
+                            <th>{% trans 'Year' %}</th>
                             <th>{% trans 'Ion Channels' %}</th>
                             <th>{% trans 'Cells' %}</th>
                             <th>{% trans 'Category' %}</th>
                             <th>{% trans 'File Address' %}</th>
                             <th>{% trans 'Created By' %}</th>
-                            <th style="width: 200px">{% trans 'Action' %}</th>
+                            <th>{% trans 'Action' %}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -51,6 +52,7 @@
                                 <td>{{forloop.counter}}</td>
                                 <td>{{ reference.citation }}</td>
                                 <td><a href="http://doi.org/{{ reference.doi }}">{{ reference.doi }}</a></td>
+                                <td>{{ reference.year }}</td>
                                 <td>
                                 {% for channel in reference.ion_channels.all %}
                                     {{ channel }};
@@ -62,7 +64,7 @@
                                 {% endfor %}
                                 </td>
                                 <td>{{ reference.subject }}</td>
-                                <td><a href={{ reference.file_url }}>{{ reference.file_url }}</a></td>
+                                <td><a href={{ reference.file_url }}>{{ reference.file_url|truncatechars:40 }}</a></td>
                                 <td>{{ reference.username }}</td>
                                 <td>
                                     <a href="{% url 'ion_channel:reference-update' reference.id %}"

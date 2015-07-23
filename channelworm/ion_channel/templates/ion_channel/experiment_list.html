@@ -19,27 +19,35 @@
                     <h3 class="box-title">{% trans 'Experiment' %}</h3>
 
                     <div class="box-tools pull-right">
-                        <a href="{% url 'ion_channel:experiment-create' %}"
+                        <a href="{% url 'ion_channel:experiment-dashboard' %}"
                            class="btn btn-success btn-sm">
                             <i class="fa fa-plus"></i>
                             {% trans 'Add Experiment' %}
                         </a>
                     </div>
                 </div>
-                <div class="box-body">
+                <div class="box-body table-responsive">
                     <table id="experiments_table" class="table table-bordered table-striped">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
                             <th>{% trans 'Reference' %}</th>
-                            <th style="width: 200px">{% trans 'Action' %}</th>
+                            <th>{% trans 'Create date' %}</th>
+                            <th>{% trans 'Last update' %}</th>
+                            <th>{% trans 'Created By' %}</th>
+                            <th>{% trans 'Comments' %}</th>
+                            <th>{% trans 'Action' %}</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for experiment in experiments %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
-                                <td>{{ experiment.reference }}</td>
+                                <td>{{ experiment }}</td>
+                                <td>{{ experiment.create_date }}</td>
+                                <td>{{ experiment.last_update }}</td>
+                                <td>{{ experiment.username }}</td>
+                                <td>{{ experiment.comments|truncatechars:300 }}</td>
                                 <td>
                                     <a href="{% url 'ion_channel:experiment-update' experiment.id %}"
                                        class="badge bg-light-blue">

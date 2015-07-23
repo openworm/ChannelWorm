@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_filters %}
+
+{% block page_title %}{% trans 'Ion Channel List' %}{% endblock %}
+{% block page_header %}{% trans 'Ion Channel List' %}{% endblock %}
+{% block breadcrumb %}
+    <li><a href="{% url 'ion_channel:home' %}"><i class="fa fa-home"></i> {% trans 'Home' %}</a></li>
+    <li class="active">{% trans 'Ion Channels' %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="fa fa-neuter"></i>
+
+                    <h3 class="box-title">{% trans 'Ion Channels' %}</h3>
+
+                    <div class="box-tools pull-right">
+                        <a href="{% url 'ion_channel:ion-channel-create' %}"
+                           class="btn btn-success btn-sm">
+                            <i class="fa fa-plus"></i>
+                            {% trans 'Add New Ion Channel' %}
+                        </a>
+                        <a href="{% url 'ion_channel:cell-create' %}"
+                           class="btn btn-success btn-sm">
+                            <i class="fa fa-plus"></i>
+                            {% trans 'Add New Cell' %}
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <table id="result_table" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>{% trans 'Channel Name' %}</th>
+                            <th>{% trans 'Description' %}</th>
+                            <th>{% trans 'Channel Type' %}</th>
+                            <th>{% trans 'Gene Name' %}</th>
+                            <th>{% trans 'Gene ID in WormBase' %}</th>
+                            <th style="width: 200px">{% trans 'Proteins' %}</th>
+                            <th>{% trans 'Protein ID in UniProt' %}</th>
+                            <th>{% trans 'Action' %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ion_channel in ion_channels %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{ ion_channel.channel_name }}</td>
+                                <td>{{ ion_channel.description }}</td>
+                                <td>{{ ion_channel.channel_type }}; {{ ion_channel.channel_subtype }}</td>
+                                <td>{{ ion_channel.gene_name }}</td>
+                                <td>
+                                    <a href="http://www.wormbase.org/species/c_elegans/gene/{{ ion_channel.gene_WB_ID }}">
+                                    {{ ion_channel.gene_WB_ID }}</a>
+                                </td>
+                                <td>{{ ion_channel.proteins }}</td>
+                                <td>{{ ion_channel.uniprot_ID }}</td>
+                                <td>
+                                    <a href="{% url 'ion_channel:ion-channel-detail' ion_channel.id %}"
+                                       class="badge bg-yellow">
+                                        <i class="fa fa-eye"></i>
+                                        {% trans 'View Detail' %}
+                                    </a>
+                                    <a href="{% url 'ion_channel:ion-channel-update' ion_channel.id %}"
+                                       class="badge bg-light-blue">
+                                        <i class="fa fa-edit"></i>
+                                        {% trans 'Edit' %}
+                                    </a>
+                                    <a href="{% url 'ion_channel:ion-channel-delete' ion_channel.id %}"
+                                       class="badge bg-red">
+                                        <i class="fa fa-remove"></i>
+                                        {% trans 'Delete' %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block inline-script %}
+    <script type="text/javascript">
+        $("#result_table").dataTable();
+    </script>
+{% endblock %}

@@ -1,15 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import exp
+from scipy.optimize import curve_fit
 
 class Simulator(object):
 
     def __init__(self, sim_params, channel_params, cell_params):
 
-        # Simulation Parameters
         self.sim_params = sim_params
-        self.ion_type = sim_params['ion_type']
-        self.v_init = sim_params['v_init']
+        self.channel_params = channel_params
+        self.cell_params = cell_params
+
+        # Simulation Parameters
+        self.pc_type = sim_params['pc_type']
+        self.v_hold = sim_params['v_hold']
+        self.I_init = sim_params['I_init']
         self.deltat = sim_params['deltat']
         self.duration = sim_params['duration']
         self.numpoints = int(round(self.duration/self.deltat))
@@ -20,273 +25,213 @@ class Simulator(object):
         self.xaxis = [float(x) for x in np.arange(self.deltat, self.duration + self.deltat, self.deltat)]
         self.onset = int(round(sim_params['start_time']/self.deltat))
         self.offset = int(round(sim_params['end_time']/self.deltat))
+        self.gates = sim_params['gates']
 
-        #Channel parameters
-        self.c_mem = cell_params['C_mem']
-        # if 'g_cap' in channel_params:
-        #     self.g = channel_params['g_cap'] * cell_params['C_mem']
-        # elif 'g_dens' in channel_params:
-        #     self.g = channel_params['g_dens'] * cell_params['C_mem'] / cell_params['spec_cap']
-        # else:
-        self.g = channel_params['g']
+        # Channel and cell parameters
+        if 'C_mem' in cell_params:
+            self.c_mem = cell_params['C_mem']
+            if 'g_cap' in channel_params:
+                self.g = channel_params['g_cap'] * self.c_mem
+            elif ('g_dens' in channel_params) and ('spec_cap' in cell_params):
+                self.g = channel_params['g_dens'] * self.c_mem / cell_params['spec_cap']
+        else:
+            self.g = channel_params['g']
+
         self.e_rev = channel_params['e_rev']
-        self.v_half_a = channel_params['v_half_a']
-        self.v_half_i = channel_params['v_half_i']
-        self.k_a = channel_params['k_a']
-        self.k_i = channel_params['k_i']
-        self.T_a = channel_params['T_a']
-        self.T_i = channel_params['T_i']
-        self.a_power = int(channel_params['a_power'])
-        self.i_power = int(channel_params['i_power'])
 
-        if self.ion_type == 'Ca':
-            self.Ca = list()
-            self.cdi = list()
+        # Gate parameters
+        if 'vda' in self.gates:
+            self.v_half_a = channel_params['v_half_a']
+            self.k_a = channel_params['k_a']
+            self.T_a = channel_params['T_a']
+            self.a_power = int(channel_params['a_power'])
+
+        if 'vdi' in self.gates:
+            self.v_half_i = channel_params['v_half_i']
+            self.k_i = channel_params['k_i']
+            self.T_i = channel_params['T_i']
+            self.i_power = int(channel_params['i_power'])
+
+        if 'cdi' in self.gates:
             self.ca_half_i = channel_params['ca_half_i']
             self.k_ca = channel_params['k_ca']
             self.T_ca = channel_params['T_ca']
             self.alpha_ca = channel_params['alpha_ca']
             self.cdi_power = int(channel_params['cdi_power'])
 
-            self.ca_con = cell_params['ca_con']
+            self.ca_con = sim_params['ca_con']
             self.thi_ca = self.ca_con/(self.T_ca * self.g)
 
-        #TODO: change declaration with np.zeros((n,numtests))
-        # Variable Declaration        
-        self.V = list()
-        self.I = list()
-        self.V_max = list()
-        self.I_max = list()
-        self.I_mem = list()
-        self.I_in = list()
-        self.act = list()
-        self.inact = list()
 
-
-    def boltzmannFit(self,V,Vhalf,k):
+    def boltzmannFit(self,x,mu,k):
 
         # Preventing exp() overflow error
-        #if -708 < (Vhalf - V)/k < 708:
+        # if -708 < (mu - x)/k < 708:
         try:
-            return 1/(1 + exp((Vhalf - V)/k))
+            return 1/(1 + exp((mu - x)/k))
         except:
-            if (Vhalf - V)/k > 0:
+            if (mu - x)/k > 0:
                 return 0
             else:
                 return 1
 
 
-    def VClamp(self):
+    def IV_act(self,V,*args):
+
+        self.zparams = dict(zip(self.fit_params,args))
+        I_act = self.zparams['g_cap']*self.c_mem * (1/(1 + np.exp((self.zparams['v_half_a'] - V)/self.zparams['k_a'])))**int(self.zparams['a_power']) * (V - self.zparams['e_rev'])
+        return I_act
+
+
+    def patch_clamp(self, t=[]):
         """
-        Simulates a voltage clamp experiment.
+        Simulates a patch clamp experiment.
 
-        :return: time vector and corresponding current values, also maximum values for I and V in each trace for plotting I/V
+        :return: Corresponding values in a dict
         """
 
+        self.results = dict()
 
-        # Input initialization
+        if len(t) > 0:
+            self.xaxis = t
+            self.onset = t[0]
+            self.offset = t[-1]
+
+
+        # Variable Declaration
+        V = np.zeros((self.numtests,self.numpoints))
+        I_mem = np.zeros((self.numtests,self.numpoints))
+        I_in = np.zeros((self.numtests,self.numpoints))
+        PO = np.zeros((self.numtests,self.numpoints))
+
+        I_max = np.zeros(self.numtests)
+        V_max = np.zeros(self.numtests)
+        PO_max = np.zeros(self.numtests)
+        V_PO_max = np.zeros(self.numtests)
+
+        if 'vda' in self.gates:
+            act = np.zeros((self.numtests,self.numpoints))
+            act_max = np.zeros(self.numtests)
+        if 'vdi' in self.gates:
+            inact = np.zeros((self.numtests,self.numpoints))
+            inact_max = np.zeros(self.numtests)
+        if 'cdi' in self.gates:
+            Ca = np.zeros((self.numtests,self.numpoints))
+            cdi = np.zeros((self.numtests,self.numpoints))
+            cdi_max = np.zeros(self.numtests)
+
+
         for i in range(0,self.numtests):
-            self.V.append(list())
-            self.I_mem.append(list())
-            self.I_in.append(list())
-            self.act.append(0)
-            self.inact.append(0)
-            self.I.append(0)
-            self.I_max.append(0)
-            self.V_max.append(0)
-            if self.ion_type == 'Ca':
-                self.Ca.append(list())
-                self.cdi.append(0)
             for j in range(0,self.numpoints):
-                self.V[i].append(0)
-                self.I_mem[i].append(0)
-                self.I_in[i].append(0)
-                if self.ion_type == 'Ca':
-                    self.Ca[i].append(0)
+                V[i][j] = self.v_hold
 
-        for i in range(0,self.numtests):
-            for j in range(0,self.numpoints):
-                self.V[i][j] = self.v_init
-
-        self.Vstim = self.protocol_end
+        Vstim = self.protocol_end
         for i in range(0,self.numtests):
             for j in range(self.onset-1,self.offset):
-                self.V[i][j] = self.Vstim
-            self.Vstim = self.Vstim - self.protocol_steps
+                V[i][j] = Vstim
+            Vstim -= self.protocol_steps
+
+
+        if self.pc_type == 'IClamp':
+            for i in range(0,self.numtests):
+                for j in range(0,self.numpoints):
+                    I_in[i][j] = self.I_init
+
+            Istim = -self.protocol_start
+            for i in range(0,self.numtests):
+                for j in range(self.onset-1,self.offset):
+                    I_in[i][j] += Istim
+                Istim -= self.protocol_steps
 
         # Variable initialization
         for j in range(0,self.numtests):
-            self.Ca[j][0] = 0
-            self.act[j] = self.boltzmannFit(self.V[j][0], self.v_half_a, self.k_a)
-            self.inact[j] = self.boltzmannFit(self.V[j][0], self.v_half_i, self.k_i)
-            self.cdi[j] = self.boltzmannFit(self.V[j][0], self.ca_half_i, self.k_ca)
+            if 'vda' in self.gates:
+                act[j][0] = self.boltzmannFit(V[j][0], self.v_half_a, self.k_a)
+            if 'vdi' in self.gates:
+                inact[j][0] = self.boltzmannFit(V[j][0], self.v_half_i, self.k_i)
 
         # Start of simulation
         for j in range(0,self.numtests):
             for i in range(1,self.numpoints):
-                da = (self.boltzmannFit(self.V[j][i-1], self.v_half_a, self.k_a) - self.act[j])/self.T_a
-                self.act[j] = self.act[j] + da*self.deltat
-                di = (self.boltzmannFit(self.V[j][i-1], self.v_half_i, self.k_i) - self.inact[j])/self.T_i
-                self.inact[j] = self.inact[j] + di*self.deltat
+                I = self.g * (V[j][i-1] - self.e_rev)
+                po = 1
 
-                self.I = self.g * self.act[j]**self.a_power * self.inact[j]**self.i_power * (self.V[j][i-1] - self.e_rev)
+                if 'vda' in self.gates:
+                    da = (self.boltzmannFit(V[j][i-1], self.v_half_a, self.k_a) - act[j][0])/self.T_a
+                    act[j][0] += da*self.deltat
+                    act[j][i] = act[j][0]**self.a_power
+                    po *= act[j][i]
 
-                if self.ion_type == 'Ca':
-                    self.cdi[j] = self.boltzmannFit(self.Ca[j][i-1], self.ca_half_i, self.k_ca)
-                    self.I *= (1 + (self.cdi[j] - 1) * self.alpha_ca)**self.cdi_power
+                if 'vdi' in self.gates:
+                    di = (self.boltzmannFit(V[j][i-1], self.v_half_i, self.k_i) - inact[j][0])/self.T_i
+                    inact[j][0] += di*self.deltat
+                    inact[j][i] = inact[j][0]**self.i_power
+                    po *= inact[j][i]
 
-                    self.dCa = -(self.Ca[j][i-1] / self.T_ca + self.thi_ca * self.I)
-                    self.Ca[j][i] = self.Ca[j][i-1] + self.dCa * self.deltat
+                if 'cdi' in self.gates:
+                    cdi_b = self.boltzmannFit(Ca[j][i-1], self.ca_half_i, self.k_ca)
+                    cdi[j][i] = (1 + (cdi_b - 1) * self.alpha_ca)**self.cdi_power
+                    po *= cdi[j][i]
 
-                self.I_mem[j][i] = self.I
+                    dCa = -(Ca[j][i-1] / self.T_ca + self.thi_ca * I)
+                    Ca[j][i] = Ca[j][i-1] + dCa * self.deltat
+
+                PO[j][i] = po
+                I_mem[j][i] = I * po
+
+                if self.pc_type == 'IClamp':
+                    dv = -(I_in[j][i] + I) / self.c_mem
+                    V[j][i] = V[j][i-1] + dv * self.deltat
 
                 if (self.onset < i < self.offset):
-                    if abs(self.I) > abs(self.I_max[j]):
-                        self.I_max[j] = self.I
-                        self.V_max[j] = self.V[j][i]
+                    if abs(I_mem[j][i]) > abs(I_max[j]):
+                        I_max[j] = I_mem[j][i]
+                        V_max[j] = V[j][i]
+                    if po > PO_max[j]:
+                        PO_max[j] = po
+                        V_PO_max[j] = V[j][i]
 
-        #     plt.plot(self.xaxis, [x * 1e9 for x in self.I_mem[j]])
-        #
-        # plt.ylabel('Imem (nA)')
-        # plt.xlabel('Time (ms)')
-        # plt.show()
-
-        return self.xaxis,self.I_mem,self.V_max,self.I_max
-
-
-    def IClamp(self):
-        """
-        Simulates a current clamp experiment.
-
-        :return: time vector and corresponding voltage values, also maximum values for I and V in each trace for plotting I/V
-        """
-
-        # Input initialization
-        ion_type = self.sim_params['ion_type_I']
-        v_init = self.sim_params['v_init_I']
-        deltat = self.sim_params['deltat_I']
-        duration = self.sim_params['duration_I']
-        numpoints = int(round(duration/deltat))
-        protocol_start = self.sim_params['protocol_start_I']
-        protocol_end = self.sim_params['protocol_end_I']
-        protocol_steps = self.sim_params['protocol_steps_I']
-        numtests = int(round((self.sim_params['protocol_end_I'] - self.sim_params['protocol_start_I']) / self.sim_params['protocol_steps_I']) + 1)
-        xaxis = [float(x) for x in np.arange(deltat, duration + deltat, deltat)]
-        onset = int(round(self.sim_params['start_time_I']/deltat))
-        offset = int(round(self.sim_params['end_time_I']/deltat))
-
-        for i in range(0,numtests):
-            self.V.append(list())
-            self.I_mem.append(list())
-            self.I_in.append(list())
-            self.act.append(0)
-            self.inact.append(0)
-            self.I.append(0)
-            self.I_max.append(0)
-            self.V_max.append(0)
-            if self.ion_type == 'Ca':
-                self.Ca.append(list())
-                self.cdi.append(0)
-            for j in range(0,self.numpoints):
-                self.V[i].append(0)
-                self.I_mem[i].append(0)
-                self.I_in[i].append(0)
-                if self.ion_type == 'Ca':
-                    self.Ca[i].append(0)
-
-        for i in range(0,numtests):
-            for j in range(0,numpoints):
-                self.I_in[i][j] = 0
-
-        self.Istim = -protocol_start
-        for i in range(0,numtests):
-            for j in range(onset-1,offset):
-                self.I_in[i][j] = self.I_in[i][j] + self.Istim
-            self.Istim = self.Istim - protocol_steps
-
-        # Variable initialization
-        for j in range(0,numtests):
-            self.V[j][0] = v_init
-            self.Ca[j][0] = 0
-            self.act[j] = self.boltzmannFit(self.V[j][0], self.v_half_a, self.k_a)
-            self.inact[j] = self.boltzmannFit(self.V[j][0], self.v_half_i, self.k_i)
-            self.cdi[j] = self.boltzmannFit(self.V[j][0], self.ca_half_i, self.k_ca)
-
-        # Start of simulation
-        for j in range(0,numtests):
-            for i in range(1,numpoints):
-                da = (self.boltzmannFit(self.V[j][i-1], self.v_half_a, self.k_a) - self.act[j])/self.T_a
-                self.act[j] = self.act[j] + da*deltat
-                di = (self.boltzmannFit(self.V[j][i-1], self.v_half_i, self.k_i) - self.inact[j])/self.T_i
-                self.inact[j] = self.inact[j] + di*deltat
-
-                self.I = self.g * self.act[j]**self.a_power * self.inact[j]**self.i_power * (self.V[j][i-1] - self.e_rev)
-
-                if ion_type == 'Ca':
-                    self.cdi[j] = self.boltzmannFit(self.Ca[j][i-1], self.ca_half_i, self.k_ca)
-                    self.I *= (1 + (self.cdi[j] - 1) * self.alpha_ca)**self.cdi_power
-
-                    self.dCa = -(self.Ca[j][i-1] / self.T_ca + self.thi_ca * self.I)
-                    self.Ca[j][i] = self.Ca[j][i-1] + self.dCa * deltat
+        self.results['t'] = self.xaxis
+        self.results['V'] = V
+        self.results['I'] = I_mem
+        self.results['V_max'] = V_max
+        self.results['I_max'] = I_max
+        self.results['PO'] = PO
+        self.results['PO_max'] = PO_max
+        self.results['V_PO_max'] = V_PO_max
+        if 'vda' in self.gates:
+            self.results['act'] = act
+        if 'vdi' in self.gates:
+            self.results['inact'] = inact
+        if 'cdi' in self.gates:
+            self.results['Ca'] = Ca
+            self.results['cdi'] = cdi
 
 
-                dv = -(self.I_in[j][i] + self.I)
-                self.V[j][i] = self.V[j][i-1] + dv * deltat
-
-                if (onset < i < offset):
-                    if abs(self.I) > abs(self.I_max[j]):
-                        self.I_max[j] = self.I
-                        self.V_max[j] = self.V[j][i]
-
-        #     plt.plot(self.xaxis, [x * 1 for x in self.V[j]])
-        #
-        # plt.ylabel('V (mv)')
-        # plt.xlabel('Time (ms)')
-        # plt.show()
-
-        return xaxis,self.V,self.V_max,self.I_max
+        if len(t) > 0:
+            if self.pc_type == 'IClamp':
+                return V
+            else:
+                return I_mem
+        else:
+            return self.results
 
 
-    def IV(self,v_range,ca_range=[],units={'I':'A','V':'V'},plot=False):
-        """
-        Calculates current for a given voltage.
+    def optim_curve(self, params, best_candidate, target, curve_type='IV'):
 
-        :param v_range: voltage vector including V points
-        :param ca_range: in case of Calcium ion channel, we would need the [Ca2+] range
-        :param units: dictionary of units for converting. current unit can be A, A/F, or pA, and voltage unit V, and mV
-        :param plot: if set to True, plot will be showed
-        :return: Current vector
-        """
+        self.target = target
+        X = np.asarray(target[0])
+        Y = np.asarray(target[1])
 
-        V = v_range
-        Ca = ca_range
+        # in scipy leastsq, number of parameters must not exceed number of points.
+        diff = len(best_candidate) - len(X)
+        if diff > 0:
+            for i in range(0,diff):
+                X = np.append(X,X[-1])
+                Y = np.append(Y,Y[-1])
 
-        numpoints = len(V)
-        I = np.zeros(numpoints)
+        self.fit_params = params
+        if curve_type == 'IV':
+            popt,pcov = curve_fit(self.IV_act, X,Y,best_candidate)
 
-        for i in range(0,numpoints):
-            I[i] = self.g * self.boltzmannFit(V[i], self.v_half_a, self.k_a)**self.a_power * self.boltzmannFit(V[i], self.v_half_i, self.k_i)**self.i_power * (V[i] - self.e_rev)
-
-            if len(Ca) > 0:
-                I[i] *= (1 + self.boltzmannFit(Ca[i], self.ca_half_i, self.k_ca) - 1) * self.alpha_ca**self.cdi_power
-
-
-        if plot == True:
-
-            if units['I'] == 'A/F':
-                for i in I: I[i] /= self.c_mem
-            elif units['I'] == 'pA':
-                for i in I: I[i] *= 1e12
-            if units['V'] == 'mV':
-                for i in V: V[i] *= 1e3
-
-
-            plt.plot(V,I, label='Current vs Voltage')
-            plt.ylabel('I (%s)'%(units['I']))
-            plt.xlabel('V (%s)'%(units['V']))
-            plt.grid('on')
-
-            plt.show()
-
-        return I
-
+        return popt, self.zparams

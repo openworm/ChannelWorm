@@ -1,10 +1,8 @@
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-
-# Create your views here.
-from django.views.generic import View
-from account.form import UserForm
+from django.views.generic import View,UpdateView
+from form import *
 
 
 def register():
@@ -12,7 +10,7 @@ def register():
 
 
 def index(request):
-    return render(request, 'digitizer/index.html')
+    return render(request, 'home')
 
 
 class RegisterView(View):
@@ -27,9 +25,22 @@ class RegisterView(View):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
-        print(form)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(self.success_url)
 
         return render(request, self.template_name, {'form': form})
+
+class AccountEditView(UpdateView):
+    form_class = AccountEditForm
+    template_name = 'account/account_edit.html'
+    success_url = reverse_lazy('home')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.success_url)
