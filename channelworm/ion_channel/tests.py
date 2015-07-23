@@ -50,20 +50,20 @@ class AdapterTestCase(TestCase):
         PyOpenWorm.connect()
 
         pyow_dict = {
-            'authors': experiment.author(),
-            'doi': experiment.doi(),
-            'pmid': experiment.pmid(),
-            'title': experiment.title(),
-            'url': experiment.uri(),
-            'year': experiment.year()
+            'authors': experiment.author,
+            'doi': experiment.doi,
+            'pmid': experiment.pmid,
+            'title': experiment.title,
+            'url': experiment.uri,
+            'year': experiment.year
         }
 
         cw_dict = {
-            'authors': set([reference.authors]),
+            'authors': reference.authors,
             'doi': reference.doi,
             'pmid': reference.PMID,
             'title': reference.title,
-            'url': set([reference.url]),
+            'url': reference.url,
             'year': reference.year
         }
 
@@ -115,16 +115,50 @@ class AdapterTestCase(TestCase):
             channel_name='fake'
         )
 
-        pc = PatchClamp.objects.create(
-            deltat=100, 
-            duration=200, 
-            end_time=200, 
-            experiment=ex,
-            ion_channel=ic,
-            protocol_end=200, 
-            protocol_start=0, 
-            protocol_step=100, 
-            start_time=0, 
-        )
-        
+        params = {
+            'deltat': 100, 
+            'duration': 200, 
+            'end_time': 200, 
+            'experiment': ex,
+            'ion_channel': ic,
+            'protocol_end': 200, 
+            'protocol_start': 0, 
+            'protocol_step': 100, 
+            'start_time': 0, 
+        }
 
+
+        pc = PatchClamp.objects.create(**params)
+        
+        pca = adapters.PatchClampAdapter(pc)
+
+        cw_obj = pca.get_cw()
+        pow_obj = pca.get_pow()
+
+        #import pdb; pdb.set_trace()
+
+        cw_dict = {
+            'deltat': cw_obj.deltat,
+            'duration': cw_obj.duration,
+            'end_time': cw_obj.end_time,
+            'experiment': cw_obj.experiment,
+            'ion_channel': cw_obj.ion_channel,
+            'protocol_end': cw_obj.protocol_end,
+            'protocol_start': cw_obj.protocol_start,
+            'protocol_step': cw_obj.protocol_step,
+            'start_time': cw_obj.start_time,
+        }
+
+        pow_dict = {
+            'deltat': cw_obj.deltat,
+            'duration': cw_obj.duration,
+            'end_time': cw_obj.end_time,
+            'experiment': cw_obj.experiment,
+            'ion_channel': cw_obj.ion_channel,
+            'protocol_end': cw_obj.protocol_end,
+            'protocol_start': cw_obj.protocol_start,
+            'protocol_step': cw_obj.protocol_step,
+            'start_time': cw_obj.start_time,
+        }
+
+        assert cw_dict == pow_dict
