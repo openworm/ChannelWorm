@@ -22,5 +22,6 @@ install:
   # install channelworm
   - python setup.py install
 
-script: nosetests
+script: channelworm/manage.py test
+    #nosetests (not sure what we're doing with this, so commenting it)
 
