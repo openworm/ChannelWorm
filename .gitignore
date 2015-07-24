@@ -75,3 +75,7 @@ tests/*.xml
 
 # some lingering egg files
 dist/*.egg
+
+# ignore build/ directory
+build/
+

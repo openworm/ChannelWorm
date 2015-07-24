@@ -2,6 +2,13 @@ from setuptools import setup
 
 setup(
     name='ChannelWorm',
+    packages=[
+        'channelworm',
+        'channelworm.ion_channel',
+        'channelworm.digitizer',
+        'channelworm.web_app',
+        'channelworm.fitter'
+    ],
     long_description=open('README.md').read(),
     install_requires=[
         'PyNeuroML',
@@ -11,6 +18,7 @@ setup(
         'django-formtools',
         'django-sql-explorer',
         'inspyred',
+        'neuronunit',
         'neurotune',
         'pillow',
         'pyelectro',
@@ -18,9 +26,9 @@ setup(
     ],
     dependency_links=[
         'git+https://github.com/scidash/sciunit.git#egg=sciunit',
-        'git+https://github.com/openworm/PyOpenWorm.git#egg=PyOpenWorm',
         'git+https://github.com/NeuroML/pyNeuroML.git#egg=PyNeuroML',
         'git+https://github.com/pgleeson/pyelectro.git#egg=pyelectro',
-        'git+https://github.com/pgleeson/neurotune.git#egg=neurotune'
+        'git+https://github.com/pgleeson/neurotune.git#egg=neurotune',
+        'git+https://github.com/rgerkin/neuronunit.git#egg=neuronunit'
     ]
 )
