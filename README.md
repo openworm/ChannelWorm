@@ -4,6 +4,10 @@
 
 The aim of the **ChannelWorm** is to integrate information and tools related to modeling ion channels in C. elegans for the [OpenWorm Project](https://github.com/openworm).
 
+## Installation
+
+To install this project, just clone it locally and do `pip install -r requirements.txt'
+
 ## Objectives
 * **Information Management**
   * Integrate and structure data related to ion channels in C. elegans, from genotype to phenotype
