@@ -13,7 +13,7 @@ setup(
     install_requires=[
         'Django<=1.8',
         'PyNeuroML',
-        'PyOpenWorm',
+        'PyOpenWorm>=0.5.3',
         'cypy',
         'django-formtools',
         'django-sql-explorer',
@@ -29,7 +29,7 @@ setup(
         'git+https://github.com/NeuroML/pyNeuroML.git#egg=PyNeuroML',
         'git+https://github.com/pgleeson/pyelectro.git#egg=pyelectro',
         'git+https://github.com/pgleeson/neurotune.git#egg=neurotune',
-        'git+https://github.com/openworm/PyOpenWorm.git#egg=PyOpenWorm@dev',
+        'git+https://github.com/openworm/PyOpenWorm.git@dev#egg=PyOpenWorm',
         'git+https://github.com/rgerkin/neuronunit.git#egg=neuronunit',
     ]
 )
