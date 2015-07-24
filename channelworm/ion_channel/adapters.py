@@ -101,7 +101,7 @@ class PatchClampAdapter(Adapter):
             'blockers': 'blockers',
             'cell': 'cell',
             'cell_age': 'cell_age',
-            'delta_t': 'delta_t',
+            'delta_t': 'deltat',
             'duration': 'duration',
             'end_time': 'end_time',
             'extra_solution': 'extra_solution',

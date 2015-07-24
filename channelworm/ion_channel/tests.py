@@ -1,5 +1,5 @@
 from django.test import TestCase
-import adapters, PyOpenWorm, unittest, random
+import adapters, PyOpenWorm, unittest, random, datetime
 from ion_channel.models import *
 
 # TODO: Run object creation only once.
@@ -32,14 +32,17 @@ class AdapterTestCase(TestCase):
         """Test that we can map a Reference object to a PyOpenWorm
         Experiment object."""
         
+        now = datetime.datetime.now()
+
         r = Reference.objects.create(
             PMID='000000',
             authors='Einstein et al.',
+            create_date=now,
             doi='123abc',
             title='Hello Worm',
             url='http://example.co.uk',
             username=self.u,
-            year=2001
+            year=2001,
         )
 
         reference_adapter = adapters.ReferenceAdapter(r)
@@ -71,6 +74,9 @@ class AdapterTestCase(TestCase):
 
     def test_create_PatchClamp(self):
         """Test that we can create a PatchClamp object manually."""
+ 
+        now = datetime.datetime.now()
+
         ref = Reference.objects.create(
             username=self.u,
             doi='somedoi',
@@ -79,6 +85,7 @@ class AdapterTestCase(TestCase):
         ex = Experiment.objects.create(
             reference=ref,
             username=self.u,
+            create_date=now
         )
 
         ic = IonChannel.objects.create(
@@ -101,6 +108,9 @@ class AdapterTestCase(TestCase):
     def test_adapt_PatchClamp(self):
         """Test that we can map a PatchClamp object to a PyOpenWorm
         PatchClamp object."""
+
+        now = datetime.datetime.now()
+
         ref = Reference.objects.create(
             username=self.u,
             doi='somedoi',
@@ -109,6 +119,7 @@ class AdapterTestCase(TestCase):
         ex = Experiment.objects.create(
             reference=ref,
             username=self.u,
+            create_date=now,
         )
 
         ic = IonChannel.objects.create(
@@ -137,23 +148,21 @@ class AdapterTestCase(TestCase):
 
         #import pdb; pdb.set_trace()
 
-        cw_dict = {
-            'deltat': cw_obj.deltat,
-            'duration': cw_obj.duration,
-            'end_time': cw_obj.end_time,
-            'experiment': cw_obj.experiment,
-            'ion_channel': cw_obj.ion_channel,
-            'protocol_end': cw_obj.protocol_end,
-            'protocol_start': cw_obj.protocol_start,
-            'protocol_step': cw_obj.protocol_step,
-            'start_time': cw_obj.start_time,
+        pow_dict = {
+            'delta_t': pow_obj.delta_t,
+            'duration': pow_obj.duration,
+            'end_time': pow_obj.end_time,
+            'ion_channel': pow_obj.ion_channel,
+            'protocol_end': pow_obj.protocol_end,
+            'protocol_start': pow_obj.protocol_start,
+            'protocol_step': pow_obj.protocol_step,
+            'start_time': pow_obj.start_time,
         }
 
-        pow_dict = {
-            'deltat': cw_obj.deltat,
+        cw_dict = {
+            'delta_t': cw_obj.deltat,
             'duration': cw_obj.duration,
             'end_time': cw_obj.end_time,
-            'experiment': cw_obj.experiment,
             'ion_channel': cw_obj.ion_channel,
             'protocol_end': cw_obj.protocol_end,
             'protocol_start': cw_obj.protocol_start,
