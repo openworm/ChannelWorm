@@ -20,7 +20,7 @@ install:
   # install deps
   - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose
   # install channelworm
-  - pip install -r requirements.txt
+  - pip install --allow-all-external -r requirements.txt
 
 script: channelworm/manage.py test
     #nosetests (not sure what we're doing with this, so commenting it)
