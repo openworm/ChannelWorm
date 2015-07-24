@@ -11,25 +11,11 @@ setup(
     ],
     long_description=open('README.md').read(),
     install_requires=[
-        'Django<=1.8',
-        'PyNeuroML',
-        'PyOpenWorm>=0.5.3',
         'cypy',
+        'Django<=1.8',
         'django-formtools',
         'django-sql-explorer',
         'inspyred',
-        'neuronunit',
-        'neurotune',
         'pillow',
-        'pyelectro',
-        'sciunit',
-    ],
-    dependency_links=[
-        'git+https://github.com/scidash/sciunit.git#egg=sciunit',
-        'git+https://github.com/NeuroML/pyNeuroML.git#egg=PyNeuroML',
-        'git+https://github.com/pgleeson/pyelectro.git#egg=pyelectro',
-        'git+https://github.com/pgleeson/neurotune.git#egg=neurotune',
-        'git+https://github.com/openworm/PyOpenWorm.git@dev#egg=PyOpenWorm',
-        'git+https://github.com/rgerkin/neuronunit.git#egg=neuronunit',
     ]
 )
