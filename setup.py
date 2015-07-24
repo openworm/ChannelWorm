@@ -4,15 +4,17 @@ setup(
     name='ChannelWorm',
     long_description=open('README.md').read(),
     install_requires=[
+        'PyNeuroML',
+        'PyOpenWorm',
         'cypy',
         'django',
+        'django-formtools',
+        'django-sql-explorer',
         'inspyred',
         'neurotune',
         'pillow',
         'pyelectro',
-        'PyNeuroML',
-        'PyOpenWorm',
-        'sciunit'
+        'sciunit',
     ],
     dependency_links=[
         'git+https://github.com/scidash/sciunit.git#egg=sciunit',
