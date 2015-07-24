@@ -11,10 +11,10 @@ setup(
     ],
     long_description=open('README.md').read(),
     install_requires=[
+        'Django<=1.8',
         'PyNeuroML',
         'PyOpenWorm',
         'cypy',
-        'django',
         'django-formtools',
         'django-sql-explorer',
         'inspyred',
