@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load widget_filters %}
+{% load staticfiles %}
 
 {% block page_title %}{% trans 'Update Ion Channel Model' %}{% endblock %}
 {% block page_header %}{% trans 'Update Ion Channel Model' %}{% endblock %}
@@ -35,4 +36,19 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block inline-css%}
+<link href="{% static 'third_party/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block inline-script %}
+<script src="{% static 'third_party/select2/js/select2.min.js' %}"></script>
+<script type="text/javascript">
+    $("#id_channel_name").select2();
+    $("#id_cell_type").select2();
+    $("#id_references").select2();
+    $("#id_experiment").select2();
+    $("#id_neuroML_file").select2();
+</script>
 {% endblock %}

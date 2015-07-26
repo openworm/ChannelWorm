@@ -1,6 +1,7 @@
 {% extends "base_ajax.html" %}
 {% load i18n %}
 {% load widget_filters %}
+{% load staticfiles %}
 
 {% block content %}
     <div class="row">
@@ -25,4 +26,19 @@
 
         </div>
     </div>
+{% endblock %}
+
+{% block inline-css%}
+<link href="{% static 'third_party/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block inline-script %}
+<script src="{% static 'third_party/select2/js/select2.min.js' %}"></script>
+<script type="text/javascript">
+    $("#id_experiment").select2();
+    $("#id_ion_channel").select2();
+    $("#id_patch_clamp").select2();
+    $("#id_x_axis_type").select2();
+    $("#id_y_axis_type").select2();
+</script>
 {% endblock %}
