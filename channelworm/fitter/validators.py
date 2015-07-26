@@ -1,4 +1,6 @@
-
+"""
+ChannelWorm fitter module for validating generated models.
+"""
 class Validator(object):
     """
     Validate new model and compare with existing ones

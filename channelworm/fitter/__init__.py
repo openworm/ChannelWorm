@@ -1,1 +1,1 @@
-__all__ = ["Initiator","Simulator","Evaluator","Modelator","Validator"]
+__all__ = ["initiators","simulators","evaluators","modelators","validators"]
