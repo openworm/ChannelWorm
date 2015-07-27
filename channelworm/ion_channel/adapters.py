@@ -126,3 +126,31 @@ class PatchClampAdapter(Adapter):
         # we no longer need PyOW API so we can kill the connection
         P.disconnect()
 
+
+class IonChannelAdapter(Adapter):
+    """
+    Map a channelworm ion channel model to a pyopenworm model.
+    """
+    
+    pass
+
+#    pyow_to_cw = {
+#        'name': 'channel_name' 
+#        'description': 'description'
+#        'type': 'channel_type'
+#        'subtype': 'channel_subtype' 
+#        'ion': 'ion_type' 
+#        'ligand': 'ligand_type' 
+#        'gene_name' 
+#        'gene_WB_ID' 
+#        'gene_class' 
+#        'proteins' 
+#        'protein_sequence' 
+#        'uniprot_ID' 
+#        'pdb_ID' 
+#        'interpro_ID' 
+#        'structure' 
+#        'structure_image' 
+#        'expression_pattern' 
+#        'expression_evidences'
+#    }
