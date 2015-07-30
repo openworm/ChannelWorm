@@ -1,5 +1,5 @@
 """
-Example of using cwFitter to generate a HH model for EGL-19 Ca2+ ion channel
+Example of using cwFitter to generate a HH model for SLO-2 ion channel
 Based on experimental data from doi:10.1083/jcb.200203055
 """
 
@@ -8,7 +8,6 @@ import sys
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from neurotune import optimizers
 from channelworm.fitter import *
 
 if __name__ == '__main__':
@@ -56,7 +55,7 @@ if __name__ == '__main__':
     myInitiator = initiators.Initiator(userData)
     sampleData = myInitiator.get_sample_params()
     bio_params = myInitiator.get_bio_params()
-    sim_params = myInitiator.get_sim_params(type='IV')
+    sim_params = myInitiator.get_sim_params()
     myEvaluator = evaluators.Evaluator(sampleData,sim_params,bio_params)
 
     # opt = '-pso'

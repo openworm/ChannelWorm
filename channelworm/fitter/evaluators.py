@@ -46,6 +46,11 @@ class Evaluator(object):
         else:
             self.V_dist = 1e-20
 
+        if 'weight' in args:
+            self.weight = args['weight']
+        else:
+            self.weight = {'start':10,'peak':50,'tail':30,'end':10}
+
     def ga_evaluate(self,min,max,args={}):
         """
         Optimization using Genetics algorithm (GA).
@@ -350,6 +355,18 @@ class Evaluator(object):
 
         sim_x = np.asarray(sim[0])
         total_cost = 1e9
+
+        if self.weight:
+            # TODO: consider IC, IV, etc for sim_params
+            x = np.asarray(target[0])
+            y = np.asarray(target[1])
+            on = self.sim_params['start_time']
+            off = self.sim_params['end_time']
+            onset = np.abs(x-on).argmin()
+            offset = np.abs(x-off).argmin()
+            peak = np.abs(y[onset+1:offset]).argmax() + onset+1
+            tail = offset-1
+
         # mu = np.mean(target[1])
         max = np.max(target[1])
         min = np.min(target[1])
@@ -366,9 +383,29 @@ class Evaluator(object):
 
                 if total_cost == 1e9: total_cost = 0
                 sim_y = sim[1][index]
-                target_y = target[1][target[0].index(target_x)]
+                target_i = target[0].index(target_x)
+                target_y = target[1][target_i]
                 cost_val = (target_y - sim_y)**2
                 N+=1
+
+                # considering weight
+                if self.weight:
+                    if target_y == target[1][0]:
+                        cost_val *= self.weight['start']
+                        N += self.weight['start']
+                    elif target_y == target[1][-1]:
+                        cost_val *= self.weight['end']
+                        N += self.weight['end']
+                    elif target_y ==  target[1][peak]:
+                        cost_val *= self.weight['peak']
+                        N += self.weight['peak']
+                    elif target_y ==  target[1][tail]:
+                        cost_val *= self.weight['tail']
+                        N += self.weight['tail']
+                    elif target_i in self.weight:
+                        cost_val *= self.weight[target_i]
+                        N += self.weight[target_i]
+
                 # scale distance
                 if self.scale:
                     # total_cost /= sigmasq

@@ -49,20 +49,20 @@ class Simulator(object):
             self.v_half_a = channel_params['v_half_a']
             self.k_a = channel_params['k_a']
             self.T_a = channel_params['T_a']
-            self.a_power = self.gates['vda']['a_power']
+            self.a_power = self.gates['vda']['power']
 
         if 'vdi' in self.gates:
             self.v_half_i = channel_params['v_half_i']
             self.k_i = channel_params['k_i']
             self.T_i = channel_params['T_i']
-            self.i_power = self.gates['vda']['i_power']
+            self.i_power = self.gates['vdi']['power']
 
         if 'cdi' in self.gates:
             self.ca_half_i = channel_params['ca_half_i']
             self.k_ca = channel_params['k_ca']
             self.T_ca = channel_params['T_ca']
             self.alpha_ca = channel_params['alpha_ca']
-            self.cdi_power = self.gates['vda']['cdi_power']
+            self.cdi_power = self.gates['cdi']['power']
 
             self.ca_con = sim_params['ca_con']
             self.thi_ca = self.ca_con/(self.T_ca * self.g)
@@ -180,7 +180,8 @@ class Simulator(object):
                     V_ss[j] = V[j][i]
 
                 if self.pc_type == 'IClamp':
-                    dv = -(I_in[j][i] + I) / self.c_mem
+                    # dv = -(I_in[j][i] + I) / self.c_mem
+                    dv = -(I_in[j][i] + I)
                     V[j][i] = V[j][i-1] + dv * self.deltat
 
                 if self.onset < i < self.offset:
@@ -196,14 +197,12 @@ class Simulator(object):
         self.results['I'] = I_mem
         self.results['V_max'] = V_max
         self.results['V_ss'] = V_ss
-        # self.results['V_max'] = V[:][0]
         # self.results['I_max'] = I_max
         self.results['I_max'] = self.iv_act(V_max)
         # self.results['I_ss'] = I_ss
         self.results['I_ss'] = self.iv_act(V_ss)
         self.results['PO'] = PO
         self.results['V_PO_max'] = V_PO_max
-        # self.results['V_PO_max'] = V[:][0]
         self.results['PO_max'] = self.pov_act(V_PO_max)
         self.results['PO_ss'] = self.pov_act(V_ss)
         if 'vda' in self.gates:
