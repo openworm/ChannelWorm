@@ -1,0 +1,88 @@
+@media (min-width: 768px) {
+    .toolbox {
+        position: fixed;
+        top: 51px;
+        bottom: 0;
+        right: 0;
+        display: block;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+
+        border-left: 1px solid #eee;
+    }
+}
+
+#zoom-settings-container {
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    z-index: 3;
+}
+
+#zoom-settings-button {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    padding: 0px;
+}
+
+.zoomLayers {
+    border: thin grey solid;
+    margin: 0;
+    padding: 0;
+}
+
+#zoomDiv {
+    margin: 0px;
+    margin-bottom: 5px;
+    padding: 0px;
+    width: 251px;
+    text-align: center;
+}
+
+#cursorPosition {
+    padding: 0px 0px;
+    margin: 0;
+    margin-top: -5px;
+    background: white;
+    width: 250px;
+    top: 0px;
+    font-size: 12px;
+    text-align: center;
+}
+
+#graphicsContainer {
+    overflow: auto;
+}
+
+#canvasDiv {
+    height: 400px; /* temporary */
+    width: 600px; /* temporary */
+    background: white;
+    padding: 0;
+    margin: 0;
+}
+
+#mainCanvas {
+    background: white;
+}
+
+#canvasDiv:hover {
+    cursor: crosshair;
+}
+
+.canvasLayers {
+    background: transparent;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.sidebar {
+    padding: 0px 0px;
+    margin: 0;
+    margin-left: 5px;
+    background: white;
+    font-size: 13px;
+}

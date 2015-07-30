@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load widget_filters %}
+{% load staticfiles %}
 
 {% block page_title %}{% trans 'Update Reference' %}{% endblock %}
 {% block page_header %}{% trans 'Update Reference' %}{% endblock %}
@@ -35,4 +36,18 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+
+{% block inline-css%}
+<link href="{% static 'third_party/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block inline-script %}
+<script src="{% static 'third_party/select2/js/select2.min.js' %}"></script>
+<script type="text/javascript">
+    $("#id_ion_channels").select2();
+    $("#id_cells").select2();
+    $("id_subject").select2();
+</script>
 {% endblock %}
