@@ -165,7 +165,6 @@ class IonChannelAdapter(Adapter):
         for pmid in pmids:
             e = P.Evidence()
             e.pmid(pmid)
-            print('Asserting by pmid {}'.format(e.pmid()))
             e.asserts(self.pyopenworm_object.expression_pattern)
             e.save()
 
