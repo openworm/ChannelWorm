@@ -3,6 +3,13 @@ language: python
 python:
   - "2.7"
 
+notifications:
+  webhooks:
+    urls:
+        - https://webhooks.gitter.im/e/a71c577e60af59700bb7
+    on_success: change  # options: [always|never|change]
+    on_failure: change  # options: [always|never|change]
+    on_start: false 
 
 # Setup anaconda
 before_install:
