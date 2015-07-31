@@ -22,6 +22,12 @@ class Adapter(object):
     An interface used to map between PyOpenWorm and ChannelWorm data
     objects.
 
+    Specific Adapters should override this class.
+
+    Subclasses must define a mapping between attributes called "pyow_to_cw",
+    as well as the two classes to be mapped between: "pyopenworm_class" and 
+    "channelworm_class".
+
     Attributes
     ----------
 
@@ -34,6 +40,21 @@ class Adapter(object):
     cw_obj : The input ChannelWorm object
     """
 
+    def __init__(self):
+        """Generic initialization for any adapter"""
+        # initialize PyOpenWorm connection so we can access its API
+        P.connect()
+
+        # initialize pyopenworm object
+        self.pyopenworm_object = self.pyopenworm_class()
+
+        for p, c in self.pyow_to_cw.items():
+            cw_value = getattr(self.channelworm_object, c)
+            pow_property = getattr(self.pyopenworm_object, p)
+            map(pow_property, [cw_value])
+
+        P.disconnect()
+
     def get_pow(self):
         """Return the PyOpenWorm representation of the object"""
         return self.pyopenworm_object
@@ -45,17 +66,17 @@ class Adapter(object):
 
 class ReferenceAdapter(Adapter):
     """
-    Map a channelworm Reference object to a PyOpenWorm Evidence.
+    Map a ChannelWorm Reference object to a PyOpenWorm Evidence.
     """
 
     def __init__(self, cw_obj):
-        # initialize PyOpenWorm connection so we can access its API
-        P.connect()
+
+        self.pyopenworm_class = P.Evidence
+        self.channelworm_class = C.Reference
 
         self.channelworm_object = cw_obj
-        self.pyopenworm_object = P.Evidence()
 
-        pyow_to_cw = {
+        self.pyow_to_cw = {
             'author': 'authors',
             'doi': 'doi',
             'pmid': 'PMID',
@@ -64,11 +85,7 @@ class ReferenceAdapter(Adapter):
             'year': 'year',
         }
 
-        for p, c in pyow_to_cw.items():
-            cw_attr = getattr(self.channelworm_object, c)
-            setattr(self.pyopenworm_object, p, cw_attr)
-
-        P.disconnect()
+        super(ReferenceAdapter, self).__init__()
 
 
 class PatchClampAdapter(Adapter):
@@ -87,15 +104,13 @@ class PatchClampAdapter(Adapter):
         """
 
     def __init__(self, cw_obj):
-        # initialize PyOpenWorm connection so we can access its API
-        P.connect()
 
-        self.pyopenworm_object = P.PatchClampExperiment()
+        self.pyopenworm_class = P.PatchClampExperiment
+        self.channelworm_class = C.PatchClamp
+
         self.channelworm_object = cw_obj
 
-        #this is just a 1:1 mapping of attributes, but let's spell it
-        # out for consistency
-        pyow_to_cw = {
+        self.pyow_to_cw = {
             'Ca_concentration': 'Ca_concentration',
             'Cl_concentration': 'Cl_concentration',
             'blockers': 'blockers',
@@ -119,10 +134,50 @@ class PatchClampAdapter(Adapter):
             'type': 'type',
         }
  
-        for p, c in pyow_to_cw.items():
-            cw_attr = getattr(self.channelworm_object, c)
-            setattr(self.pyopenworm_object, p, cw_attr)
+        super(PatchClampAdapter, self).__init__()
 
-        # we no longer need PyOW API so we can kill the connection
-        P.disconnect()
+class IonChannelAdapter(Adapter):
+    """
+    Map a ChannelWorm IonChannel to a PyOpenWorm Channel.
+    """
+
+    def __init__(self, cw_obj):
+
+        self.pyopenworm_class = P.Channel
+        self.channelworm_class = C.IonChannel
+
+        self.channelworm_object = cw_obj
+
+        self.pyow_to_cw = {
+            'name': 'channel_name',
+            'description': 'description',
+            'gene_name': 'gene_name',
+            'gene_WB_ID': 'gene_WB_ID',
+       #     'gene_class': 'gene_class',
+            'expression_pattern': 'expression_pattern',
+        }
+
+        super(IonChannelAdapter, self).__init__()
+
+        P.connect()
+        # mapping evidence to Assertions
+        pmids = cw_obj.expression_evidences.split(', ')
+        for pmid in pmids:
+            e = P.Evidence()
+            e.pmid(pmid)
+            e.asserts(self.pyopenworm_object.expression_pattern)
+            e.save()
+
+        pmids = cw_obj.description_evidences.split(', ')
+        for pmid in pmids:
+            e = P.Evidence()
+            e.pmid(pmid)
+            e.asserts(self.pyopenworm_object.description)
+            e.save()
+
+        # proteins in CW are ;-delimited, but should be 
+        #multiple values in PyOpenWorm
+        pros = cw_obj.proteins.split('; ')
+        for p in pros:
+            self.pyopenworm_object.proteins(p)
 
