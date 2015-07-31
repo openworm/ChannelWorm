@@ -1,6 +1,7 @@
 {% extends "base_ajax.html" %}
 {% load i18n %}
 {% load widget_filters %}
+{% load staticfiles %}
 
 {% block content %}
     <div id="experiment_form_wrapper">
@@ -41,4 +42,15 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block inline-css%}
+<link href="{% static 'third_party/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block inline-script %}
+<script src="{% static 'third_party/select2/js/select2.min.js' %}"></script>
+<script type="text/javascript">
+    $("#id_reference").select2();
+</script>
 {% endblock %}

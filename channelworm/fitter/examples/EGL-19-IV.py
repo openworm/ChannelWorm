@@ -8,7 +8,7 @@ from scipy.optimize import curve_fit
 import numpy as np
 import matplotlib.pyplot as plt
 from neurotune import optimizers
-from fitter import *
+from channelworm.fitter import *
 
 def IV_act(V,g,Vhalf,k,a_power,e_rev):
     return g * (1/(1 + np.exp((Vhalf - V)/k)))**int(a_power) * (V - e_rev)
@@ -39,13 +39,13 @@ if __name__ == '__main__':
     # IClamp = {'ref':ref_IC,'traces':traces_IC}
     # userData['samples'] = {'IClamp':IClamp,'IV':IV}
 
-    myInitiator = Initiator.Initiator(userData)
-    sampleData = myInitiator.getSampleParameters()
-    bio_params = myInitiator.getBioParameters()
-    # sim_params = myInitiator.getSimParameters(type='IClamp')
-    sim_params = myInitiator.getSimParameters()
+    myInitiator = initiators.Initiator(userData)
+    sampleData = myInitiator.get_sample_params()
+    bio_params = myInitiator.get_bio_params()
+    # sim_params = myInitiator.get_sim_params(type='IClamp')
+    sim_params = myInitiator.get_sim_params()
 
-    myEvaluator = Evaluator.Evaluator(sampleData,sim_params,bio_params)
+    myEvaluator = evaluators.Evaluator(sampleData,sim_params,bio_params)
 
     candidates = optimizers.CustomOptimizerA(bio_params['max_val_channel'],
                                              bio_params['min_val_channel'],
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     #                   0.014145060464901655, 1.0]
     best_candidate_params = dict(zip(bio_params['channel_params'],best_candidate))
     cell_var = dict(zip(bio_params['cell_params'],bio_params['val_cell_params']))
-    mySimulator = Simulator.Simulator(sim_params,best_candidate_params,cell_var)
+    mySimulator = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'])
     bestSim = dict()
 
     # The I/V plot could come from either VClamp or IClamp (VClamp is preferred as is more common)
@@ -79,7 +79,7 @@ if __name__ == '__main__':
         bestSim.update({'IClamp':{}})
         bestSim['IClamp']['t'],bestSim['IClamp']['V'],bestSim['IClamp']['V_max'],bestSim['IClamp']['I_max'] = mySimulator.IClamp()
 
-    myModelator = Modelator.Modelator(bio_params,sim_params).compare_plots(sampleData,bestSim,show=True)
+    myModelator = modelators.Modelator(bio_params,sim_params).compare_plots(sampleData,bestSim,show=True)
 
 
     # Fitting to the I/V curve and optimizing parameters
@@ -103,11 +103,11 @@ if __name__ == '__main__':
         model_plot, = plt.plot([x*1e3 for x in bestSim['IClamp']['V_max']],bestSim['IClamp']['I_max'])
     sample, = plt.plot([x*1e3 for x in sampleData['IV']['V']],sampleData['IV']['I'], 'y', label = 'sample data')
     # sim, =plt.plot(vData,I, label = 'simulated_curve')
-    opt, =plt.plot([x*1e3 for x in vData],Iopt, 'r', label = 'optimized with GA and curve_fit')
+    opt, =plt.plot([x*1e3 for x in vData],Iopt, 'r', label = 'optimized with GA and  minimization function')
     plt.legend([model_plot,sample,opt])
     # plt.legend([model_plot,sample,opt,sim])
     # plt.legend([sample,opt])
-    plt.title("The Best Model fitted to data using GA and SciPy curve_fit")
+    plt.title("The Best Model fitted to data using GA and  minimization function")
     plt.ylabel('I (A/F)')
     plt.xlabel('V (mV)')
     plt.show()
