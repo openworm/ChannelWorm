@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     cwd=os.getcwd()
 
-    csv_path_VC = os.path.dirname(cwd)+'/examples/chr2/10.1073pnas.0903570106-1A.csv'
+    csv_path_VC = os.path.dirname(cwd)+'/examples/chr2-data/10.1073pnas.0903570106-1A.csv'
     x_var_VC = {'type':'Time','unit':'ms','toSI':1e-3,'adjust':0}
     y_var_VC = {'type':'Current','unit':'nA','toSI':1e-9,'adjust':0}
     traces_VC = [{'vol':-80e-3,'csv_path':csv_path_VC,'x_var':x_var_VC,'y_var':y_var_VC}]
@@ -82,6 +82,6 @@ if __name__ == '__main__':
                                    'citation': 'Liu, Qiang, Gunther Hollopeter, and Erik M. Jorgensen.'
                                                '"Graded synaptic transmission at the Caenorhabditis elegans neuromuscular junction." '
                                                'Proceedings of the National Academy of Sciences 106.26 (2009): 10823-10828.'}]
-    model_params['file_name'] = cwd+'/chr2/chr-2.channel.nml'
+    model_params['file_name'] = cwd+'/chr2-data/chr-2.channel.nml'
 
     nml2_file = myModelator.generate_channel_nml2(bio_params,best_candidate_params,model_params)

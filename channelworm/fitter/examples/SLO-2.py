@@ -16,10 +16,10 @@ if __name__ == '__main__':
 
     cwd=os.getcwd()
 
-    csv_path_VC_1 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/1.csv'
-    csv_path_VC_2 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/2.csv'
-    csv_path_VC_3 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/3.csv'
-    csv_path_VC_4 = os.path.dirname(cwd)+'/examples/slo-2-VClamp/4.csv'
+    csv_path_VC_1 = os.path.dirname(cwd)+'/examples/slo-2-data/slo-2-VClamp/1.csv'
+    csv_path_VC_2 = os.path.dirname(cwd)+'/examples/slo-2-data/slo-2-VClamp/2.csv'
+    csv_path_VC_3 = os.path.dirname(cwd)+'/examples/slo-2-data/slo-2-VClamp/3.csv'
+    csv_path_VC_4 = os.path.dirname(cwd)+'/examples/slo-2-data/slo-2-VClamp/4.csv'
     x_var_VC = {'type':'Time','unit':'ms','toSI':1e-3}
     y_var_VC = {'type':'Current','unit':'nA','toSI':1e-9,'adjust':-0.82}
     traces_VC = [{'vol':110e-3,'csv_path':csv_path_VC_1,'x_var':x_var_VC,'y_var':y_var_VC},
@@ -29,20 +29,20 @@ if __name__ == '__main__':
     ref_VC = {'fig':'6a','doi':'10.1038/77670'}
     VClamp = {'ref':ref_VC,'traces':traces_VC}
     # #
-    # csv_path_VC = os.path.dirname(cwd)+'/examples/slo-2/SLO-2-2000-VClamp.csv'
+    # csv_path_VC = os.path.dirname(cwd)+'/examples/slo-2-data/SLO-2-2000-VClamp.csv'
     # x_var_VC = {'type':'Time','unit':'ms','toSI':1e-3}
     # y_var_VC = {'type':'Current','unit':'nA','toSI':1e-9,'adjust':-0.82}
     # traces_VC = [{'csv_path':csv_path_VC,'x_var':x_var_VC,'y_var':y_var_VC}]
     # ref_VC = {'fig':'6a','doi':'10.1038/77670'}
     # VClamp = {'ref':ref_VC,'traces':traces_VC}
     #
-    csv_path = os.path.dirname(cwd)+'/examples/slo-2/SLO-2-2000-IV.csv'
+    csv_path = os.path.dirname(cwd)+'/examples/slo-2-data/SLO-2-2000-IV.csv'
     ref = {'fig':'6a','doi':'10.1038/77670'}
     x_var = {'type':'Voltage','unit':'mV','toSI':1e-3}
     y_var = {'type':'Current','unit':'pA','toSI':1e-12}
     IV = {'ref':ref,'csv_path':csv_path,'x_var':x_var,'y_var':y_var}
 
-    csv_path_POV = os.path.dirname(cwd)+'/examples/slo-2/SLO-2-2000-GV.csv'
+    csv_path_POV = os.path.dirname(cwd)+'/examples/slo-2-data/SLO-2-2000-GV.csv'
     ref_POV = {'fig':'6b','doi':'10.1038/77670'}
     x_var_POV = {'type':'Voltage','unit':'mV','toSI':1e-3}
     y_var_POV = {'type':'G/Gmax','unit':'','toSI':1}
@@ -162,7 +162,22 @@ if __name__ == '__main__':
     mySimulator = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'])
     bestSim = mySimulator.patch_clamp()
 
-    myModelator = modelators.Modelator(bio_params,sim_params).compare_plots(sampleData,bestSim,show=True)
+    myModelator = modelators.Modelator(bio_params,sim_params)
+    myModelator.compare_plots(sampleData,bestSim,show=True)
 
     print 'best candidate after optimization:'
     print best_candidate_params
+
+    # Generate NeuroML2 file
+    model_params = {}
+    model_params['channel_name'] = 'SLO2'
+    model_params['channel_id'] = '4'
+    model_params['model_id'] = '1'
+    model_params['contributors'] = [{'name': 'Vahid Ghayoomi','email': 'vahidghayoomi@gmail.com'}]
+    model_params['references'] = [{'doi': '10.1038/77670',
+                                   'PMID': '10903569',
+                                   'citation': 'SLO-2, a K+ channel with an unusual Cl- dependence. '
+                                               '(Yuan A; Dourado M; Butler A; Walton N; Wei A; Salkoff L. Nat. Neurosci., 3(8):771-9)'}]
+    model_params['file_name'] = cwd+'/slo-2-data/SLO-2.channel.nml'
+
+    nml2_file = myModelator.generate_channel_nml2(bio_params,best_candidate_params,model_params)

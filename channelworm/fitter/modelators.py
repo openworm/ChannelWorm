@@ -25,17 +25,17 @@ class Modelator(object):
         """
 
         # TODO: Add path and GUID to save plots
-        
+
         if 'VClamp' in sampleData:
 
             ref = sampleData['VClamp']['ref']
             for trace in sampleData['VClamp']['traces']:
                 if 'vol' in trace and trace['vol']:
                     # sample_plot, = plt.plot(trace['t'],trace['I'], label = '%i (V)'%trace['vol'])
-                    sample_plot, = plt.plot(trace['t'],trace['I'], 'ko')
+                    sample_plot, = plt.plot(trace['t'],trace['I'], '--ko')
                 else:
                     # sample_plot, = plt.plot(trace['t'],trace['I'], marker = '.', linestyle='', color='k')
-                    sample_plot, = plt.plot(trace['t'],trace['I'], 'ko')
+                    sample_plot, = plt.plot(trace['t'],trace['I'], '--ko')
 
             voltage = self.sim_params['protocol_end']
             for trace in simData['I']:
@@ -57,10 +57,10 @@ class Modelator(object):
             for trace in sampleData['IClamp']['traces']:
                 if 'amp' in trace and trace['amp']:
                     # sample_plot, = plt.plot(trace['t'],trace['V'], label = '%i (A)'%trace['amp'])
-                    sample_plot, = plt.plot(trace['t'],trace['V'], 'ko')
+                    sample_plot, = plt.plot(trace['t'],trace['V'], '--ko')
                 else:
                     # sample_plot, = plt.plot(trace['t'],trace['V'], marker = '.', linestyle='', color='k')
-                    sample_plot, = plt.plot(trace['t'],trace['V'], 'ko')
+                    sample_plot, = plt.plot(trace['t'],trace['V'], '--ko')
 
             amp = self.sim_params['protocol_end']
             for trace in simData['V']:
@@ -81,10 +81,10 @@ class Modelator(object):
 
             ref = sampleData['IV']['ref']
             if 'I_peak' in sampleData['IV']:
-                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I_peak'],'ko')
+                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I_peak'],'--ko')
                 model_plot, = plt.plot([round(x*1e3) for x in simData['V_max']],simData['I_max'],'r')
             else:
-                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I'],'ko')
+                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I'],'--ko')
                 model_plot, = plt.plot([round(x*1e3) for x in simData['V_ss']],simData['I_ss'],'r')
             plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
             plt.title("The Best Model fitted to data for I/V curve using optimization")
@@ -99,10 +99,10 @@ class Modelator(object):
 
             ref = sampleData['POV']['ref']
             if 'PO_peak' in sampleData['POV']:
-                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO_peak'],'ko')
+                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO_peak'],'--ko')
                 model_plot, = plt.plot([round(x*1e3) for x in simData['V_PO_max']],simData['PO_max'],'r')
             else:
-                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO'],'ko')
+                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO'],'--ko')
                 model_plot, = plt.plot([round(x*1e3) for x in simData['V_ss']],simData['PO_ss'],'r')
             plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
             plt.title("The Best Model fitted to data for G/Gmax / V curve using optimization")
@@ -130,9 +130,9 @@ class Modelator(object):
         desc = osb.metadata.Description(channel_id)
         metadata.descriptions.append(desc)
 
-        osb.metadata.add_simple_qualifier(desc, \
-                                          'bqmodel', \
-                                          'isDerivedFrom', \
+        osb.metadata.add_simple_qualifier(desc,
+                                          'bqmodel',
+                                          'isDerivedFrom',
                                           "ChannelWorm channel Name: %s channel ID: %s, ModelID: %s"
                                           %(model_params['channel_name'],model_params['channel_id'],model_params['model_id']))
 
@@ -140,21 +140,21 @@ class Modelator(object):
             DOI = reference['doi']
             pmid = reference['PMID']
             ref_info = reference['citation']
-            osb.metadata.add_simple_qualifier(desc, \
-                                              'bqmodel', \
-                                              'isDescribedBy', \
-                                              osb.resources.PUBMED_URL_TEMPLATE % (pmid), \
-                                              ("DOI: %s, PubMed ID: %s \n"+\
+            osb.metadata.add_simple_qualifier(desc,
+                                              'bqmodel',
+                                              'isDescribedBy',
+                                              osb.resources.PUBMED_URL_TEMPLATE % (pmid),
+                                              ("DOI: %s, PubMed ID: %s \n"+
                                               "                                 %s") % (DOI, pmid, ref_info))
 
         species = 'caenorhabditis elegans'
 
         if osb.resources.KNOWN_SPECIES.has_key(species):
             known_id = osb.resources.KNOWN_SPECIES[species]
-            osb.metadata.add_simple_qualifier(desc, \
-                                              'bqbiol', \
-                                              'hasTaxon', \
-                                              osb.resources.NCBI_TAXONOMY_URL_TEMPLATE % known_id, \
+            osb.metadata.add_simple_qualifier(desc,
+                                              'bqbiol',
+                                              'hasTaxon',
+                                              osb.resources.NCBI_TAXONOMY_URL_TEMPLATE % known_id,
                                               "Known species: %s; taxonomy id: %s" % (species, known_id))
         else:
             print("Unknown species: %s"%species)
@@ -164,20 +164,20 @@ class Modelator(object):
 
         if osb.resources.KNOWN_CELL_TYPES.has_key(cell_type):
             known_id = osb.resources.KNOWN_CELL_TYPES[cell_type]
-            osb.metadata.add_simple_qualifier(desc, \
-                                              'bqbiol', \
-                                              'isPartOf', \
-                                              osb.resources.NEUROLEX_URL_TEMPLATE % known_id, \
+            osb.metadata.add_simple_qualifier(desc,
+                                              'bqbiol',
+                                              'isPartOf',
+                                              osb.resources.NEUROLEX_URL_TEMPLATE % known_id,
                                               "Known cell type: %s; taxonomy id: %s" % (cell_type, known_id))
         else:
             print("Unknown cell_type: %s"%cell_type)
             unknowns += "Unknown cell_type: %s\n"%cell_type
 
         for contributor in model_params['contributors']:
-            osb.metadata.add_simple_qualifier(desc, \
-                                              'bqmodel', \
-                                              'isCuratedBy', \
-                                              contributor['email'], \
+            osb.metadata.add_simple_qualifier(desc,
+                                              'bqmodel',
+                                              'isCuratedBy',
+                                              contributor['email'],
                                               ("Name: %s") % (contributor['name']))
 
         print("Currently unknown: <<<%s>>>"%unknowns)
