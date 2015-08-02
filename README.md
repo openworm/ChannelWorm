@@ -33,6 +33,15 @@ To install this project, just clone it locally and do `pip install -r requiremen
   * I want to simulate a patch clamp experiment with known mutations in genes encoding ion channels in C. elegans
   * I want to simulate ion channel diseases (channelopathies), and investigate defects in neuromuscular transmission, C. elegans movement, etc.
 
-**Note:** All the models are generated in [NeuroML2](https://github.com/NeuroML) format and all the simulations in [LEMS](https://github.com/LEMS), and the verified models can be run in the [Geppetto](https://github.com/openworm/org.geppetto) simulation platform.
+## Implementation
+
+As part of the OpenWorm's Muscle-Neuron-Channel [integration plan](http://docs.openworm.org/en/latest/Projects/muscle-neuron-integration/), ChannelWorm is developing based on the following components:
+
+   * The [PyOpenWorm](https://github.com/openworm/PyOpenWorm) is the main data layer API for the knowledge base.
+   * The [Django app](http://channelwormdjango-channelworm.rhcloud.com/) is being used as an interface for digitization, data representation and user interaction.
+   * Collected data fits to dynamic models using [cwFitter](https://github.com/openworm/ChannelWorm/tree/master/channelworm/fitter) optimization engine.
+   * Using the OpenWorm's unittesting framework, verification tests are applied, and models are validated by [SciUnit](https://github.com/scidash/sciunit).
+   * Final models are generated in [NeuroML2](https://github.com/NeuroML) format, in addition to [LEMS](https://github.com/LEMS) files for simulation environments.
+   * Verified models and simulations can be run in the [Geppetto](https://github.com/openworm/org.geppetto) simulation platform.
  
 
