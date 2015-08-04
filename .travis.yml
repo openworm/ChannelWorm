@@ -30,5 +30,5 @@ install:
   - pip install --allow-all-external -r requirements.txt
 
 script:
-  - py.test
+  - py.test .
 
