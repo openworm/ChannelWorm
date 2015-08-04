@@ -29,6 +29,6 @@ install:
   # install channelworm
   - pip install --allow-all-external -r requirements.txt
 
-script: channelworm/manage.py test
-    #nosetests (not sure what we're doing with this, so commenting it)
+script:
+  - py.test
 

@@ -17,5 +17,7 @@ setup(
         'django-sql-explorer',
         'inspyred',
         'pillow',
+        'pytest',
+        'pytest-django',
     ]
 )
