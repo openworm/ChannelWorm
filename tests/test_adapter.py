@@ -1,11 +1,12 @@
 from django.test import TestCase
 from django.utils import timezone
-import adapters, PyOpenWorm, unittest, random
+from ion_channel import adapters
+import PyOpenWorm, unittest, random
 from ion_channel.models import *
 
 # TODO: Run object creation only once.
-#       This could be accomplished by having a create_SomeObject 
-#       function that creates an object, and returns the already-made 
+#       This could be accomplished by having a create_SomeObject
+#       function that creates an object, and returns the already-made
 #       object if called a second time.
 #           Or: We could find a good way to "mock" objects and their
 #               attributes...
@@ -32,7 +33,7 @@ class AdapterTestCase(TestCase):
     def test_adapt_Reference(self):
         """Test that we can map a Reference object to a PyOpenWorm
         Experiment object."""
-        
+
         now = timezone.now()
 
         r = Reference.objects.create(
@@ -77,7 +78,7 @@ class AdapterTestCase(TestCase):
 
     def test_create_PatchClamp(self):
         """Test that we can create a PatchClamp object manually."""
- 
+
         now = timezone.now()
 
         ref = Reference.objects.create(
@@ -96,15 +97,15 @@ class AdapterTestCase(TestCase):
         )
 
         pc = PatchClamp.objects.create(
-            deltat=100, 
-            duration=200, 
-            end_time=200, 
+            deltat=100,
+            duration=200,
+            end_time=200,
             experiment=ex,
             ion_channel=ic,
-            protocol_end=200, 
-            protocol_start=0, 
-            protocol_step=100, 
-            start_time=0, 
+            protocol_end=200,
+            protocol_start=0,
+            protocol_step=100,
+            start_time=0,
         )
         assert isinstance(pc, PatchClamp)
 
@@ -132,20 +133,20 @@ class AdapterTestCase(TestCase):
         )
 
         params = {
-            'deltat': 100, 
-            'duration': 200, 
-            'end_time': 200, 
+            'deltat': 100,
+            'duration': 200,
+            'end_time': 200,
             'experiment': ex,
             'ion_channel': ic,
-            'protocol_end': 200, 
-            'protocol_start': 0, 
-            'protocol_step': 100, 
-            'start_time': 0, 
+            'protocol_end': 200,
+            'protocol_start': 0,
+            'protocol_step': 100,
+            'start_time': 0,
         }
 
 
         pc = PatchClamp.objects.create(**params)
-        
+
         pca = adapters.PatchClampAdapter(pc)
 
         cw_obj = pca.get_cw()
@@ -221,7 +222,7 @@ class AdapterTestCase(TestCase):
         cw_obj = ica.get_cw()
         pow_obj = ica.get_pow()
 
-        # parse PMIDs for expression_patterns, 
+        # parse PMIDs for expression_patterns,
         # then for descriptions
         # and finally proteins
         exp_strings = cw_obj.expression_evidences.split(', ')
@@ -244,7 +245,7 @@ class AdapterTestCase(TestCase):
             'expression_evidences': cw_obj.expression_evidences,#coerce to set
         }
 
-        # retrieve PMIDs for expression_patterns, 
+        # retrieve PMIDs for expression_patterns,
         # then for descriptions
         ev = PyOpenWorm.Evidence()
         ev.asserts(pow_obj.expression_pattern)
