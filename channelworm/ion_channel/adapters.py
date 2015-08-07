@@ -28,6 +28,11 @@ class Adapter(object):
     as well as the two classes to be mapped between: "pyopenworm_class" and 
     "channelworm_class".
 
+    The Adapter superclass takes care of mapping between the values, but 
+    anything else that needs to be done should be written in the __init__
+    method for the subclass. See the IonChannelAdapter subclass for an
+    example of this.
+
     Attributes
     ----------
 
@@ -38,10 +43,39 @@ class Adapter(object):
     ----------
 
     cw_obj : The input ChannelWorm object
+
+    Example usage ::
+
+        >>> from adapters import Adapter
+        >>> from ion_channel.models import PatchClamp 
+        # get some saved patch-clamp experiment from CW
+        >>> cw_patch = PatchClamp.objects.all()[0]
+        # create an adapter object with it
+        >>> pca = Adapter.create(cw_patch)
+        # get back the corresponding PyOW model
+        >>> pca.get_pow()
+        Experiment(reference=`Evidence(AssertsAllAbout(), year=`None', title=`SALAM', doi=`Salam')', Conditions())
+        # assign the PyOW to a variable and use it elsewhere
+        >>> pyow_patch = pca.get_pow()
+ 
     """
 
-    def __init__(self):
-        """Generic initialization for any adapter"""
+    @classmethod
+    def create(cls, input_object):
+        """
+        Create an object using the correct Adapter subclass,
+        based on the type of the input object.
+        """
+        input_type = type(input_object)
+        for subclass in cls.__subclasses__():
+            if subclass.channelworm_class == input_type:
+                return subclass(input_object)
+
+    def map_properties(self):
+        """
+        Map between the properties defined in the subclass.
+        """
+
         # initialize PyOpenWorm connection so we can access its API
         P.connect()
 
@@ -68,96 +102,78 @@ class ReferenceAdapter(Adapter):
     """
     Map a ChannelWorm Reference object to a PyOpenWorm Evidence.
     """
+    pyopenworm_class = P.Evidence
+    channelworm_class = C.Reference
+
+    pyow_to_cw = {
+        'author': 'authors',
+        'doi': 'doi',
+        'pmid': 'PMID',
+        'title': 'title',
+        'uri': 'url',
+        'year': 'year',
+    }
 
     def __init__(self, cw_obj):
-
-        self.pyopenworm_class = P.Evidence
-        self.channelworm_class = C.Reference
-
         self.channelworm_object = cw_obj
-
-        self.pyow_to_cw = {
-            'author': 'authors',
-            'doi': 'doi',
-            'pmid': 'PMID',
-            'title': 'title',
-            'uri': 'url',
-            'year': 'year',
-        }
-
-        super(ReferenceAdapter, self).__init__()
+        self.map_properties()
 
 
 class PatchClampAdapter(Adapter):
     """
     Map a channelworm patch clamp model to a pyopenworm model.
 
-    Example usage ::
+    """
+    pyopenworm_class = P.PatchClampExperiment
+    channelworm_class = C.PatchClamp
 
-        >>> import adapters
-        >>> cw_patch = C.PatchClamp.objects.all()[0]    # get some saved patch-clamp experiment from CW
-        >>> pca = adapters.PatchClampAdapter(cw_patch)    # create an adapter object with it
-        >>> pca.get_pow()    # get back the corresponding PyOW model
-        Experiment(reference=`Evidence(AssertsAllAbout(), year=`None', title=`SALAM', doi=`Salam')', Conditions())
-        >>> pyow_patch = pca.get_pow()    # assign the PyOW to a variable and use it elsewhere
-    
-        """
+    pyow_to_cw = {
+        'Ca_concentration': 'Ca_concentration',
+        'Cl_concentration': 'Cl_concentration',
+        'blockers': 'blockers',
+        'cell': 'cell',
+        'cell_age': 'cell_age',
+        'delta_t': 'deltat',
+        'duration': 'duration',
+        'end_time': 'end_time',
+        'extra_solution': 'extra_solution',
+        'initial_voltage': 'initial_voltage',
+        'ion_channel': 'ion_channel',
+        'membrane_capacitance': 'membrane_capacitance',
+        'mutants': 'mutants',
+        'patch_type': 'patch_type',
+        'pipette_solution': 'pipette_solution',
+        'protocol_end': 'protocol_end',
+        'protocol_start': 'protocol_start',
+        'protocol_step': 'protocol_step',
+        'start_time': 'start_time',
+        'temperature': 'temperature',
+        'type': 'type',
+    }
 
     def __init__(self, cw_obj):
-
-        self.pyopenworm_class = P.PatchClampExperiment
-        self.channelworm_class = C.PatchClamp
-
         self.channelworm_object = cw_obj
-
-        self.pyow_to_cw = {
-            'Ca_concentration': 'Ca_concentration',
-            'Cl_concentration': 'Cl_concentration',
-            'blockers': 'blockers',
-            'cell': 'cell',
-            'cell_age': 'cell_age',
-            'delta_t': 'deltat',
-            'duration': 'duration',
-            'end_time': 'end_time',
-            'extra_solution': 'extra_solution',
-            'initial_voltage': 'initial_voltage',
-            'ion_channel': 'ion_channel',
-            'membrane_capacitance': 'membrane_capacitance',
-            'mutants': 'mutants',
-            'patch_type': 'patch_type',
-            'pipette_solution': 'pipette_solution',
-            'protocol_end': 'protocol_end',
-            'protocol_start': 'protocol_start',
-            'protocol_step': 'protocol_step',
-            'start_time': 'start_time',
-            'temperature': 'temperature',
-            'type': 'type',
-        }
- 
-        super(PatchClampAdapter, self).__init__()
+        self.map_properties()
 
 class IonChannelAdapter(Adapter):
     """
     Map a ChannelWorm IonChannel to a PyOpenWorm Channel.
     """
+    pyopenworm_class = P.Channel
+    channelworm_class = C.IonChannel
+
+    pyow_to_cw = {
+        'name': 'channel_name',
+        'description': 'description',
+        'gene_name': 'gene_name',
+        'gene_WB_ID': 'gene_WB_ID',
+   #     'gene_class': 'gene_class',
+        'expression_pattern': 'expression_pattern',
+    }
 
     def __init__(self, cw_obj):
-
-        self.pyopenworm_class = P.Channel
-        self.channelworm_class = C.IonChannel
-
         self.channelworm_object = cw_obj
-
-        self.pyow_to_cw = {
-            'name': 'channel_name',
-            'description': 'description',
-            'gene_name': 'gene_name',
-            'gene_WB_ID': 'gene_WB_ID',
-       #     'gene_class': 'gene_class',
-            'expression_pattern': 'expression_pattern',
-        }
-
-        super(IonChannelAdapter, self).__init__()
+        self.map_properties()
 
         P.connect()
         # mapping evidence to Assertions
