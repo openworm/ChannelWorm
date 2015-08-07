@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.utils import timezone
-from ion_channel import adapters
+from ion_channel.adapters import Adapter
 import PyOpenWorm, pytest, unittest, random
 from ion_channel.models import *
 
@@ -95,7 +95,7 @@ class AdapterTestCase(TestCase):
         Experiment object."""
         r = self.get_reference()
 
-        reference_adapter = adapters.ReferenceAdapter(r)
+        reference_adapter = Adapter.create(r)
 
         experiment = reference_adapter.get_pow()
         reference = reference_adapter.get_cw()
@@ -136,7 +136,7 @@ class AdapterTestCase(TestCase):
         """
         pc = self.get_patch_clamp()
 
-        pca = adapters.PatchClampAdapter(pc)
+        pca = Adapter.create(pc)
 
         cw_obj = pca.get_cw()
         pow_obj = pca.get_pow()
@@ -183,7 +183,7 @@ class AdapterTestCase(TestCase):
         Channel object.
         """
         ic = self.get_ion_channel()
-        ica = adapters.IonChannelAdapter(ic)
+        ica = Adapter.create(ic)
 
         cw_obj = ica.get_cw()
         pow_obj = ica.get_pow()
