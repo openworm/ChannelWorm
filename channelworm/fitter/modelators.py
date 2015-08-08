@@ -42,7 +42,9 @@ class Modelator(object):
                 # model_plot, = plt.plot(simData['t'],trace, label = '%i (V)'%voltage)
                 model_plot, = plt.plot(simData['t'],trace, color='r')
                 voltage -= self.sim_params['protocol_steps']
-            plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
+            plt.legend([sample_plot,model_plot],
+                       ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"],
+                       loc=9, bbox_to_anchor=(0.9, 0.1))
             plt.title("The Best Model fitted to data for voltage-clamp using optimization")
             plt.xlabel("Time (s)")
             plt.ylabel("Current (A)")
@@ -145,7 +147,7 @@ class Modelator(object):
                                               'isDescribedBy',
                                               osb.resources.PUBMED_URL_TEMPLATE % (pmid),
                                               ("DOI: %s, PubMed ID: %s \n"+
-                                              "                                 %s") % (DOI, pmid, ref_info))
+                                               "                                 %s") % (DOI, pmid, ref_info))
 
         species = 'caenorhabditis elegans'
 
@@ -174,29 +176,26 @@ class Modelator(object):
             unknowns += "Unknown cell_type: %s\n"%cell_type
 
         for contributor in model_params['contributors']:
-            osb.metadata.add_simple_qualifier(desc,
-                                              'bqmodel',
-                                              'isCuratedBy',
-                                              contributor['email'],
-                                              ("Name: %s") % (contributor['name']))
+            osb.metadata.RDF('Curator: %s (%s)'%(contributor['name'],contributor['email']))
 
         print("Currently unknown: <<<%s>>>"%unknowns)
 
         ion = bio_params['ion_type']
         unit = dict(zip(bio_params['channel_params'],bio_params['unit_chan_params']))
         chan = neuroml.IonChannelHH(id=channel_id,
-                              conductance='10pS',
-                              species=ion)
+                                    conductance='10pS',
+                                    species=ion)
 
         chan.annotation = neuroml.Annotation()
+        target = chan.gate_hh_tau_infs
 
         for gate in bio_params['gate_params']:
 
             gate_name = gate
-            target = chan.gates
+            instances = bio_params['gate_params'][gate_name]['power']
             g_type='HHSigmoidVariable'
 
-            g = neuroml.GateHHUndetermined(id=gate_name, type='gateHHtauInf', instances=int(bio_params['gate_params'][gate_name]['power']))
+            g = neuroml.GateHHTauInf(id=gate_name, instances=instances)
 
             if gate_name == 'vda':
                 v_half = str(channel_params['v_half_a']) + ' ' + str(unit['v_half_a'])
@@ -239,8 +238,15 @@ class Modelator(object):
 
         return nml2_file
 
-    def run_nml2(self):
+    def run_nml2(self,nml2_file):
         """
 
         :return:
         """
+
+        # TODO: check if it is possible to call NML2ChannelAnalysis.main([nml2_file])
+        # from pyneuroml.analysis import NML2ChannelAnalysis
+        # NML2ChannelAnalysis.main([nml2_file])
+
+        from subprocess import call
+        return call(["pynml-channelanalysis", nml2_file])
