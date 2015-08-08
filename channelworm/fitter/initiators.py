@@ -28,15 +28,13 @@ class Initiator(object):
         # TODO: Get values from pyOW
 
         self.bio_params['cell_type'] = 'ADAL'
-        self.bio_params['channel_type'] = 'SLO-2'
+        self.bio_params['channel_type'] = 'EGL-19'
         self.bio_params['ion_type'] = 'Ca'
+        self.bio_params['I_leak'] = False
 
-        # Standard spec_cap = 0.01 F/m2
-        # From Boyle & Cohen 2008
-
-        self.bio_params['cell_params'] =      ['C_mem',     'area',     'spec_cap', 'I_leak']
-        self.bio_params['unit_cell_params'] = ['F',         'm2',       'F/m2',     'A']
-        self.bio_params['val_cell_params'] =  [7.23653e-11, 7.23653e-9, 0.01,       0]
+        self.bio_params['cell_params'] =      ['C_mem', 'area', 'spec_cap']
+        self.bio_params['unit_cell_params'] = ['F',     'm2',   'F/m2']
+        self.bio_params['val_cell_params'] =  [7.5e-11, 7.5e-9, 0.01]
 
         # self.bio_params['cell_channel_params'] = ['channel_density']
         # self.bio_params['unit_cell_channel_params'] = ['1/m2']
@@ -44,35 +42,29 @@ class Initiator(object):
 
         # g (S) = (g_dens (S/m2) / spec_cap (F/m2)) * C_mem (F)
 
-        self.bio_params['gate_params'] = {'vda': {'power': 1}}
-        # self.bio_params['gate_params'] = {'vda': {'power': 1},'vdi': {'power': 1}}
+        self.bio_params['gate_params'] = {'vda': {'power': 1},'vdi': {'power': 1},'cdi': {'power': 1}}
 
-        self.bio_params['channel_params'] = ['g','e_rev']
-        # self.bio_params['channel_params'] = ['g_dens','e_rev'] # slo-2
-        # self.bio_params['channel_params'] = ['g_dens','e_rev'] # slo-2
+        self.bio_params['channel_params'] = ['g_dens','e_rev']
+        self.bio_params['unit_chan_params'] = ['S/m2','V']
 
-        self.bio_params['unit_chan_params'] = ['S','V']
-        # self.bio_params['unit_chan_params'] = ['S/m2','V']
+        self.bio_params['min_val_channel'] = [1, -150e-3]
+        self.bio_params['max_val_channel'] = [10, 150e-3]
 
-        # self.bio_params['min_val_channel'] = [1e-9, -0.15] # slo-2
-        self.bio_params['min_val_channel'] = [1e-2, -5e-3] # chr2
-        # self.bio_params['min_val_channel'] = [2.67e-8, -0.0042]
-        # self.bio_params['max_val_channel'] = [1e-5, 0.15] # slo-2
-        self.bio_params['max_val_channel'] = [10, 5e-3] # chr2
-        # self.bio_params['max_val_channel'] = [2.67e-8, -0.0042]
+        if self.bio_params['I_leak']:
+
+            self.bio_params['channel_params'].extend(['gL',   'VL'])
+            self.bio_params['unit_chan_params'].extend(['S/m2','V'])
+
+            self.bio_params['min_val_channel'].extend([5e-2,-2e-2]) # chr2
+            self.bio_params['max_val_channel'].extend([5e-1, 4e-2]) # chr2
 
         if 'vda' in self.bio_params['gate_params']:
 
             self.bio_params['channel_params'].extend(['v_half_a','k_a','T_a'])
-
             self.bio_params['unit_chan_params'].extend(['V','V','s'])
 
-            # self.bio_params['min_val_channel'].extend([-0.15, 0.001, 0.0001]) # slo-2-2
-            self.bio_params['min_val_channel'].extend([-0.15, 0.0001, 0.001]) # chr2
-            # self.bio_params['min_val_channel'].extend([-0.1514, 0.0445, 0.0001])
-            # self.bio_params['max_val_channel'].extend([ 0.15,   0.1,  0.001]) # slo-2
-            self.bio_params['max_val_channel'].extend([ 0.15,   0.1,  0.1]) # chr2
-            # self.bio_params['max_val_channel'].extend([-0.1514, 0.0445, 0.001])
+            self.bio_params['min_val_channel'].extend([-0.15, 0.0001, 0.0001])
+            self.bio_params['max_val_channel'].extend([ 0.15,   0.1,  0.01])
 
         if 'vdi' in self.bio_params['gate_params']:
 
@@ -80,8 +72,8 @@ class Initiator(object):
 
             self.bio_params['unit_chan_params'].extend(['V','V','s'])
 
-            self.bio_params['min_val_channel'].extend([-0.15, -0.1,  0.001]) #chr2
-            self.bio_params['max_val_channel'].extend([ 0.15, -0.0001, 0.1]) #chr2
+            self.bio_params['min_val_channel'].extend([-150e-3, -0.1,  0.0001])
+            self.bio_params['max_val_channel'].extend([ 150e-3, -0.0001, 0.01])
 
         if 'cdi' in self.bio_params['gate_params']:
 
@@ -121,8 +113,8 @@ class Initiator(object):
         if type == 'PSO':
             self.opt_params['swarmsize'] = 100
             self.opt_params['maxiter'] = 100
-            self.opt_params['minstep'] = 1e-30
-            self.opt_params['minfunc'] = 1e-30
+            self.opt_params['minstep'] = 1e-22
+            self.opt_params['minfunc'] = 1e-22
             self.opt_params['debug'] = True
             self.opt_params['I_dist'] = 1e-8
             self.opt_params['V_dist'] = 1e-22
@@ -152,65 +144,19 @@ class Initiator(object):
             self.sim_params['protocol_steps'] = 10e-3
             self.sim_params['ion_type'] = 'Ca'
 
-        if self.bio_params['channel_type'] == 'SLO-2':
-
-            # for IV -- SLO-2-2000
-            self.sim_params['v_hold'] = -110e-3
-            self.sim_params['I_init'] = 0
-            self.sim_params['pc_type'] = 'VClamp'
-            self.sim_params['deltat'] = 1e-5
-            self.sim_params['duration'] = 0.059
-            self.sim_params['start_time'] = 0.0029
-            self.sim_params['end_time'] = 0.059
-            self.sim_params['protocol_start'] = -140e-3
-            self.sim_params['protocol_end'] = 110e-3
-            self.sim_params['protocol_steps'] = 10e-3
-
-        if self.bio_params['channel_type'] == 'ChR2':
-
-            # VClamp -- chr2
-            self.sim_params['v_hold'] = 0
-            self.sim_params['I_init'] = 0
-            self.sim_params['pc_type'] = 'VClamp'
-            self.sim_params['deltat'] = 1e-4
-            self.sim_params['duration'] = 1.2
-            self.sim_params['start_time'] = 0.006
-            self.sim_params['end_time'] = 0.98
-            self.sim_params['protocol_start'] = -80e-3
-            self.sim_params['protocol_end'] = -80e-3
-            self.sim_params['protocol_steps'] = 10e-3
-            self.sim_params['ca_con'] = 6e-6
-
         if 'IV' in type:
 
-            if self.bio_params['channel_type'] == 'SLO-2':
-
-                # for IV -- SLO-2-2000
-                self.sim_params.update({'IV':{}})
-                self.sim_params['IV']['v_hold'] = -110e-3
-                self.sim_params['IV']['I_init'] = 0
-                self.sim_params['IV']['pc_type'] = 'VClamp'
-                self.sim_params['IV']['deltat'] = 1e-5
-                self.sim_params['IV']['duration'] = 0.059
-                self.sim_params['IV']['start_time'] = 0.0029
-                self.sim_params['IV']['end_time'] = 0.059
-                self.sim_params['IV']['protocol_start'] = -140e-3
-                self.sim_params['IV']['protocol_end'] = 100e-3
-                self.sim_params['IV']['protocol_steps'] = 10e-3
-
-            if self.bio_params['channel_type'] == 'EGL-19':
-
-                # # for IV -- Boyle & Cohen 2008
-                self.sim_params.update({'IV':{}})
-                self.sim_params['IV']['v_init'] = -70e-3
-                self.sim_params['IV']['deltat'] = 1e-5
-                self.sim_params['IV']['duration'] = 0.03
-                self.sim_params['IV']['start_time'] = 0.002
-                self.sim_params['IV']['end_time'] = 0.022
-                self.sim_params['IV']['protocol_start'] = -40e-3
-                self.sim_params['IV']['protocol_end'] = 80e-3
-                self.sim_params['IV']['protocol_steps'] = 10e-3
-                self.sim_params['IV']['ion_type'] = 'Ca'
+            # # for IV -- Boyle & Cohen 2008
+            self.sim_params.update({'IV':{}})
+            self.sim_params['IV']['v_init'] = -70e-3
+            self.sim_params['IV']['deltat'] = 1e-5
+            self.sim_params['IV']['duration'] = 0.03
+            self.sim_params['IV']['start_time'] = 0.002
+            self.sim_params['IV']['end_time'] = 0.022
+            self.sim_params['IV']['protocol_start'] = -40e-3
+            self.sim_params['IV']['protocol_end'] = 80e-3
+            self.sim_params['IV']['protocol_steps'] = 10e-3
+            self.sim_params['IV']['ion_type'] = 'Ca'
 
         if 'IClamp' in type:
 

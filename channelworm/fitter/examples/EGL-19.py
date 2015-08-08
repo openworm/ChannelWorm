@@ -4,10 +4,13 @@ Based on experimental data from doi:10.1083/jcb.200203055
 """
 
 import os.path
+import sys
 from scipy.optimize import curve_fit
 import numpy as np
 import matplotlib.pyplot as plt
 from neurotune import optimizers
+
+sys.path.append('../../..')
 from channelworm.fitter import *
 
 def IV_act(V,g,Vhalf,k,a_power,e_rev):

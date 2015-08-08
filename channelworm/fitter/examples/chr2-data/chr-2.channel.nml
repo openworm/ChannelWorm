@@ -1,5 +1,5 @@
 <neuroml xmlns="http://www.neuroml.org/schema/neuroml2"  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta4.xsd" id="ChannelWorm_ChR2_ChR2_ChR2">
-    <ionChannelHH id="ChannelWorm_ChR2_ChR2_ChR2" conductance="10pS" species="K">
+    <ionChannelHH id="ChannelWorm_ChR2_ChR2_ChR2" conductance="10pS" species="Ca">
         
         <annotation>
             <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
@@ -23,23 +23,17 @@
                             <rdf:li rdf:resource="http://identifiers.org/taxonomy/6239"/>
                         </rdf:Bag>
                     </bqbiol:hasTaxon>
-                    <bqmodel:isCuratedBy>
-                        <rdf:Bag>
-                            <!-- Name: Vahid Ghayoomi -->
-                            <rdf:li rdf:resource="vahidghayoomi@gmail.com"/>
-                        </rdf:Bag>
-                    </bqmodel:isCuratedBy>
                 </rdf:Description>
             </rdf:RDF>
         </annotation>
 
-        <gate id="vda" type="gateHHtauInf">
-            <timeCourse type="fixedTimeCourse" tau="0.028670359 s"/>
-            <steadyState midpoint="0.0896801324 V" rate="1" scale="0.0472151006 V" type="HHSigmoidVariable"/>
-        </gate>
-        <gate id="vdi" type="gateHHtauInf">
-            <timeCourse type="fixedTimeCourse" tau="0.00569842043 s"/>
-            <steadyState midpoint="-0.0592876444 V" rate="1" scale="-0.0056402768 V" type="HHSigmoidVariable"/>
-        </gate>
+        <gateHHtauInf id="vda" instances="1">
+            <timeCourse type="fixedTimeCourse" tau="0.03444286 s"/>
+            <steadyState midpoint="-0.01707861 V" rate="1" scale="0.03200137 V" type="HHSigmoidVariable"/>
+        </gateHHtauInf>
+        <gateHHtauInf id="vdi" instances="1">
+            <timeCourse type="fixedTimeCourse" tau="0.01502828 s"/>
+            <steadyState midpoint="-0.09601821 V" rate="1" scale="-0.00484456 V" type="HHSigmoidVariable"/>
+        </gateHHtauInf>
     </ionChannelHH>
 </neuroml>
