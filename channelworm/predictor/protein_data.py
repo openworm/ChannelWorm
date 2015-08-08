@@ -7,7 +7,6 @@ import os, sys
 import time
 import django
 from Bio import Entrez, SeqIO
-Entrez.email = 'vahidghayoomi@gmail.com'
 import requests
 import operator
 
@@ -92,7 +91,7 @@ for channel,gene in chan_gene:
                                              fasta = fasta,
                                              gi = records["IdList"][0],
                                              wb_ID=prot_id)
-                        prot_model.save()
+                        # prot_model.save()
                         print prot_model
 
                     else:
@@ -101,7 +100,7 @@ for channel,gene in chan_gene:
 
                 else:
                     print('Could not find entry for protein:%s'%prot_name)
-                    Protein.objects.filter(name=prot_name).update(wb_ID=prot_id)
+                    # Protein.objects.filter(name=prot_name).update(wb_ID=prot_id)
 
                 time.sleep(2)
 
@@ -116,4 +115,4 @@ for channel,gene in chan_gene:
             for key,val in prots[gene]:
                 chan_prots += val+'; '
             print chan_prots
-            IonChannel.objects.filter(gene_name=gene).update(channel_name=gene.upper(),proteins=chan_prots)
+            # IonChannel.objects.filter(gene_name=gene).update(channel_name=gene.upper(),proteins=chan_prots)
