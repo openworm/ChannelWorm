@@ -1,50 +1,99 @@
 from django.test import TestCase
 from django.utils import timezone
-import adapters, PyOpenWorm, unittest, random
+from ion_channel import adapters
+import PyOpenWorm, pytest, unittest, random
 from ion_channel.models import *
 
-# TODO: Run object creation only once.
-#       This could be accomplished by having a create_SomeObject 
-#       function that creates an object, and returns the already-made 
-#       object if called a second time.
-#           Or: We could find a good way to "mock" objects and their
-#               attributes...
 
 class AdapterTestCase(TestCase):
+    def get_user(self):
+        """
+        Fixture for getting a User object.
+        If we already created one, we can just get it
+        rather than making another.
+        """
+        if not hasattr(self, 'user'):
+            self.user = User.objects.create(username='user')
 
-    def setUp(self):
-        """Run before each test method."""
-        self.u = User.objects.create(username='user')
+        return self.user
 
-    def tearDown(self):
-        """Run after each test method."""
-        self.u.delete()
+    def get_reference(self):
+        """
+        Fixture for getting a Reference object.
+        """
+        if not hasattr(self, 'reference'):
+            self.reference = Reference.objects.create(
+                PMID='000000',
+                authors='Einstein et al.',
+                create_date=timezone.now(),
+                doi='123abc',
+                title='Hello Worm',
+                url='http://example.co.uk',
+                username=self.get_user(),
+                year=2001,
+            )
 
-    def test_create_Reference(self):
+        return self.reference
+
+    def get_experiment(self):
+        """
+        Fixture for getting an Experiment object.
+        """
+        if not hasattr(self, 'experiment'):
+            self.experiment = Experiment.objects.create(
+                reference=self.get_reference(),
+                username=self.get_user(),
+                create_date=timezone.now(),
+            )
+
+        return self.experiment
+
+    def get_ion_channel(self):
+        """
+        Fixture for getting an IonChannel object.
+        """
+        if not hasattr(self, 'ion_channel'):
+            self.ion_channel = IonChannel.objects.create(
+                channel_name='CNN',
+                description='Yup, it is a channel.',
+                description_evidences='0000000, 000001',
+                gene_name='Gene Clark',
+                gene_WB_ID='Wbbt:123456',
+                gene_class='Working Class',
+                proteins='BRD-5, isoform a; BRD-5, isoform b',
+                expression_pattern='Have you seen the Silver Raven?',
+                expression_evidences='000000, 000002',
+            )
+
+        return self.ion_channel
+
+    def get_patch_clamp(self):
+        """
+        Fixture for getting a PatchClamp object.
+        """
+        if not hasattr(self, 'patch_clamp'):
+            self.patch_clamp = PatchClamp.objects.create(
+                deltat=100,
+                duration=200,
+                end_time=200,
+                experiment=self.get_experiment(),
+                ion_channel=self.get_ion_channel(),
+                protocol_end=200,
+                protocol_start=0,
+                protocol_step=100,
+                start_time=0,
+            )
+
+        return self.patch_clamp
+
+    def test_create_reference(self):
         """Test that we can make a Reference object manually."""
-        test_doi = 'test1212'
-        r = Reference.objects.create(
-                doi=test_doi,
-                username=self.u
-        )
-        assert isinstance(r, Reference)
+        assert isinstance(self.get_reference(), Reference)
 
-    def test_adapt_Reference(self):
+    def test_adapt_reference(self):
         """Test that we can map a Reference object to a PyOpenWorm
         Experiment object."""
-        
-        now = timezone.now()
-
-        r = Reference.objects.create(
-            PMID='000000',
-            authors='Einstein et al.',
-            create_date=now,
-            doi='123abc',
-            title='Hello Worm',
-            url='http://example.co.uk',
-            username=self.u,
-            year=2001,
-        )
+        r = self.get_reference()
 
         reference_adapter = adapters.ReferenceAdapter(r)
 
@@ -77,35 +126,7 @@ class AdapterTestCase(TestCase):
 
     def test_create_PatchClamp(self):
         """Test that we can create a PatchClamp object manually."""
- 
-        now = timezone.now()
-
-        ref = Reference.objects.create(
-            username=self.u,
-            doi='somedoi',
-        )
-
-        ex = Experiment.objects.create(
-            reference=ref,
-            username=self.u,
-            create_date=now
-        )
-
-        ic = IonChannel.objects.create(
-            channel_name='fake'
-        )
-
-        pc = PatchClamp.objects.create(
-            deltat=100, 
-            duration=200, 
-            end_time=200, 
-            experiment=ex,
-            ion_channel=ic,
-            protocol_end=200, 
-            protocol_start=0, 
-            protocol_step=100, 
-            start_time=0, 
-        )
+        pc = self.get_patch_clamp()
         assert isinstance(pc, PatchClamp)
 
     def test_adapt_PatchClamp(self):
@@ -113,39 +134,8 @@ class AdapterTestCase(TestCase):
         Test that we can map a PatchClamp object to a PyOpenWorm
         PatchClamp object.
         """
+        pc = self.get_patch_clamp()
 
-        now = timezone.now()
-
-        ref = Reference.objects.create(
-            username=self.u,
-            doi='somedoi',
-        )
-
-        ex = Experiment.objects.create(
-            reference=ref,
-            username=self.u,
-            create_date=now,
-        )
-
-        ic = IonChannel.objects.create(
-            channel_name='fake'
-        )
-
-        params = {
-            'deltat': 100, 
-            'duration': 200, 
-            'end_time': 200, 
-            'experiment': ex,
-            'ion_channel': ic,
-            'protocol_end': 200, 
-            'protocol_start': 0, 
-            'protocol_step': 100, 
-            'start_time': 0, 
-        }
-
-
-        pc = PatchClamp.objects.create(**params)
-        
         pca = adapters.PatchClampAdapter(pc)
 
         cw_obj = pca.get_cw()
@@ -183,18 +173,7 @@ class AdapterTestCase(TestCase):
         """
         Can we create an IonChannel manually?
         """
-        ic = IonChannel.objects.create(
-            channel_name='CNN',
-            description='Yup, it is a channel.',
-            description_evidences='0000000, 000001',
-            gene_name='Gene Clark',
-            gene_WB_ID='Wbbt:123456',
-            gene_class='Working Class',
-            proteins='BRD-5, isoform a; BRD-5, isoform b',
-            expression_pattern='Have you seen the Silver Raven?',
-            expression_evidences='000000, 000002',
-        )
-
+        ic = self.get_ion_channel()
         assert isinstance(ic, IonChannel)
 
     @unittest.expectedFailure
@@ -203,25 +182,13 @@ class AdapterTestCase(TestCase):
         Test that we can map a IonChannel object to a PyOpenWorm
         Channel object.
         """
-
-        ic = IonChannel.objects.create(
-            channel_name='CNN',
-            description=u'Yup, it is a channel.',
-            description_evidences='000003, 000001',
-            gene_name='Gene Clark',
-            gene_WB_ID='Wbbt:123456',
-            gene_class='Working Class',
-            proteins='BRD-5, isoform a; BRD-5, isoform b',
-            expression_pattern=u'Have you seen the Silver Raven?',
-            expression_evidences='000005, 000002',
-        )
-
+        ic = self.get_ion_channel()
         ica = adapters.IonChannelAdapter(ic)
 
         cw_obj = ica.get_cw()
         pow_obj = ica.get_pow()
 
-        # parse PMIDs for expression_patterns, 
+        # parse PMIDs for expression_patterns,
         # then for descriptions
         # and finally proteins
         exp_strings = cw_obj.expression_evidences.split(', ')
@@ -235,16 +202,16 @@ class AdapterTestCase(TestCase):
         cw_dict = {
             'channel_name': cw_obj.channel_name,
             'description': cw_obj.description,
-            'description_evidences': cw_obj.description_evidences,#coerce to set
+            'description_evidences': cw_obj.description_evidences,
             'gene_name': cw_obj.gene_name,
             'gene_WB_ID': cw_obj.gene_WB_ID,
             'gene_class': cw_obj.gene_class,
             'proteins': cw_proteins,
             'expression_pattern': cw_obj.expression_pattern,
-            'expression_evidences': cw_obj.expression_evidences,#coerce to set
+            'expression_evidences': cw_obj.expression_evidences,
         }
 
-        # retrieve PMIDs for expression_patterns, 
+        # retrieve PMIDs for expression_patterns,
         # then for descriptions
         ev = PyOpenWorm.Evidence()
         ev.asserts(pow_obj.expression_pattern)
@@ -266,5 +233,4 @@ class AdapterTestCase(TestCase):
             'expression_evidences': pow_expression_pmids,
         }
 
-        self.maxDiff = None
         self.assertEqual( pow_dict , cw_dict)

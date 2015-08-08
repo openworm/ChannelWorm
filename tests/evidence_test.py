@@ -9,4 +9,4 @@ class EvidenceTest(unittest.TestCase):
     def test_valid_PMID(self):
         """Check that all PMID's in ChannelWorm are valid"""
         pass
-        
+
