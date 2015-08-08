@@ -42,7 +42,6 @@
                             <th>{% trans 'Gene Name' %}</th>
                             <th>{% trans 'Gene ID in WormBase' %}</th>
                             <th style="width: 200px">{% trans 'Proteins' %}</th>
-                            <th>{% trans 'Protein ID in UniProt' %}</th>
                             <th>{% trans 'Action' %}</th>
                         </tr>
                         </thead>
@@ -59,7 +58,6 @@
                                     {{ ion_channel.gene_WB_ID }}</a>
                                 </td>
                                 <td>{{ ion_channel.proteins }}</td>
-                                <td>{{ ion_channel.uniprot_ID }}</td>
                                 <td>
                                     <a href="{% url 'ion_channel:ion-channel-detail' ion_channel.id %}"
                                        class="badge bg-yellow">

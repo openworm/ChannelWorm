@@ -6,9 +6,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from formtools.wizard.views import SessionWizardView
 from datetime import datetime
 
-
-
-
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from web_app.views import AjaxMixinListView, AjaxMixinCreateView, AjaxMixinUpdateView, AjaxMixinDeleteView
 from models import *
@@ -147,6 +144,13 @@ class IonChannelDetail(UpdateView):
     model = IonChannel
     template_name_suffix = '_detail'
     fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        context = super(IonChannelDetail, self).get_context_data(**kwargs)
+        context['proteins'] = Protein.objects.filter(ion_channel_id=int(self.kwargs['pk']))
+        return context
+
+# {{ building.name }}
 
 
 class IonChannelCreate(CreateView):
