@@ -40,12 +40,6 @@ class IonChannel(models.Model):
     gene_WB_ID = models.CharField(blank=True, null=True, max_length=300)
     gene_class = models.CharField(blank=True, null=True, max_length=300)
     proteins = models.CharField(blank=True, null=True, max_length=300)
-    protein_sequence = models.TextField(blank=True, null=True)
-    uniprot_ID = models.CharField(blank=True, null=True, max_length=300)
-    pdb_ID = models.CharField(blank=True, null=True, max_length=300)
-    interpro_ID = models.CharField(blank=True, null=True, max_length=300)
-    structure = models.TextField(blank=True, null=True)
-    structure_image = models.ImageField(blank=True, null=True, upload_to='ion_channel/structures/')
     expression_pattern = models.TextField(blank=True, null=True)
     expression_evidences = models.TextField(blank=True, null=True,verbose_name='PMID for expression evidence')
     last_update = models.DateTimeField(auto_now=True, null=True)
@@ -92,7 +86,7 @@ class Reference(models.Model):
     pages = models.CharField(max_length=300,blank=True, null=True)
     url = models.URLField(blank=True, null=True)
     create_date = models.DateTimeField(auto_now=True)
-    username = models.ForeignKey(User,verbose_name='Contributer')
+    username = models.ForeignKey(User,verbose_name='Contributor')
     ion_channels = models.ManyToManyField(IonChannel,blank=True)
     cells = models.ManyToManyField(Cell,blank=True)
     subject = models.CharField(max_length=300,choices=Reference_Type_CHOICES)
@@ -185,9 +179,6 @@ class Graph(models.Model):
     experiment = models.ForeignKey(Experiment, null=True, blank=True)
     patch_clamp = models.ForeignKey(PatchClamp, null=True, blank=True)
 
-    ion_channel = models.ManyToManyField(IonChannel)
-    mutants = models.CharField(max_length=300, blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582)')
-
     x_axis_type = models.CharField(max_length=50, choices=Axis_Type_CHOICES)
     x_axis_unit = models.CharField(max_length=50,verbose_name='Axis unit in the original figure (e.g. ms)')
     x_axis_toSI = models.FloatField(default=1,verbose_name='Multiply by this value to convert to SI (e.g. 1e-3)')
@@ -195,6 +186,9 @@ class Graph(models.Model):
     y_axis_type = models.CharField(max_length=50, choices=Axis_Type_CHOICES)
     y_axis_unit = models.CharField(max_length=50,verbose_name='Axis unit in the original figure (e.g. mV)')
     y_axis_toSI = models.FloatField(default=1,verbose_name='Multiply by this value to convert to SI (e.g. 1e-3)')
+
+    ion_channel = models.ManyToManyField(IonChannel)
+    mutants = models.CharField(max_length=300, blank=True, null=True, verbose_name='Additional ion channel mutants (e.g. nf100,n582)')
 
     figure_ref_address = models.CharField(max_length=50,verbose_name='Figure number (e.g. 2A)')
     figure_ref_caption = models.TextField(verbose_name='Figure caption')
@@ -232,11 +226,12 @@ Model_Type_CHOICES = (
 )
 class IonChannelModel(models.Model):
     channel_name = models.ForeignKey(IonChannel)
+    cell_name = models.ForeignKey(Cell, blank=True, null=True)
     model_type = models.CharField(max_length=300,choices=Model_Type_CHOICES, default='HH')
     modeling_type = models.CharField(max_length=300,choices=Modeling_Method_CHOICES,default='Experimental')
     experiment = models.ForeignKey(Experiment)
-    graph = models.ForeignKey(Graph)
-    username = models.ForeignKey(User,verbose_name='Contributer')
+    main_graph = models.ForeignKey(Graph)
+    username = models.ManyToManyField(User,verbose_name='Curator(s)')
     date = models.DateTimeField(auto_now=True)
     parameters = models.ForeignKey(ParamDict, blank=True, null=True)
     score = models.FloatField(default=None, blank=True, null=True,verbose_name='Evaluated Score')
@@ -245,3 +240,19 @@ class IonChannelModel(models.Model):
 
     def __unicode__(self):
         return `self.channel_name` + " " + `self.experiment`
+
+class Protein(models.Model):
+    name = models.CharField(max_length=300, unique=True)
+    ion_channel = models.ForeignKey(IonChannel)
+    sequence = models.TextField(blank=True, null=True)
+    fasta = models.TextField(blank=True, null=True)
+    gi = models.CharField(max_length=300,blank=True, null=True,verbose_name='GI number')
+    uniprot_ID = models.CharField(blank=True, null=True, max_length=300)
+    wb_ID = models.CharField(blank=True, null=True, max_length=300)
+    pdb_ID = models.CharField(blank=True, null=True, max_length=300)
+    interpro_ID = models.CharField(blank=True, null=True, max_length=300)
+    structure = models.TextField(blank=True, null=True)
+    structure_image = models.ImageField(blank=True, null=True, upload_to='ion_channel/structures/')
+
+    def __unicode__(self):
+        return self.name
