@@ -5,5 +5,8 @@
 -e git+https://github.com/openworm/PyOpenWorm.git@dd29a935f3095d8a693ff3831070a42159df0597#egg=PyOpenWorm
 -e git+https://github.com/rgerkin/neuronunit.git#egg=neuronunit
 
+# installs the channelworm web app
+-e channelworm
+
 # runs setup.py
 -e .

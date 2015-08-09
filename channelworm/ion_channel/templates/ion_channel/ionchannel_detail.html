@@ -26,4 +26,34 @@
     </div>
     {% endif %}
 {% endfor %}
+<h3 class="box-title">{% trans 'Proteins' %}</h3>
+{% for protein in proteins%}
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h2 class="box-title">
+                <a href="https://www.wormbase.org/species/c_elegans/protein/{{ protein.wb_ID }}">
+                                    {{ protein.name }}</a>
+            </h2>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div><!-- /.box-tools -->
+        </div>
+        <div class="box-header with-border">
+            <h2 class="box-title">
+                {% trans 'GI number:' %}
+            </h2>
+        </div>
+        <div class="box-body">
+            {{ protein.gi }}
+        </div>
+        <div class="box-header with-border">
+            <h2 class="box-title">
+                {% trans 'Sequence in FASTA:' %}
+            </h2>
+        </div>
+        <div class="box-body">
+            <pre>{{ protein.fasta }}</pre>
+        </div>
+    </div>
+{% endfor %}
 {% endblock %}

@@ -26,4 +26,3 @@ class Validator(object):
         """
 
         return validate_neuroml2(nml2_file)
-

@@ -32,7 +32,7 @@ class Simulator(object):
         self.offset = int(round(sim_params['end_time']/self.deltat))
 
         # Channel and cell parameters
-        self.I_leak = cell_params['I_leak']
+        # self.I_leak = cell_params['I_leak']
         if 'C_mem' in cell_params:
             self.c_mem = cell_params['C_mem']
         if 'g_cap' in channel_params:
@@ -43,6 +43,16 @@ class Simulator(object):
             self.g = channel_params['g']
 
         self.e_rev = channel_params['e_rev']
+
+        if 'gL' in channel_params:
+            self.gL = channel_params['gL']
+
+            if 'g_cap' in channel_params:
+                self.gL *= self.c_mem
+            elif ('g_dens' in channel_params) and ('spec_cap' in cell_params):
+                self.gL *= (self.c_mem / cell_params['spec_cap'])
+
+            self.VL = channel_params['VL']
 
         # Gate parameters
         if 'vda' in self.gates:
@@ -67,7 +77,6 @@ class Simulator(object):
             self.ca_con = sim_params['ca_con']
             self.thi_ca = self.ca_con/(self.T_ca * self.g)
 
-
     def boltzmannFit(self,x,mu,k):
 
         # Preventing exp() overflow error
@@ -89,16 +98,15 @@ class Simulator(object):
 
         self.results = dict()
 
-        if len(t) > 0:
-            self.xaxis = t
-            self.onset = t[0]
-            self.offset = t[-1]
+        if len(args)>0:
+            self.channel_params = dict(zip(self.fit_params,args))
+            self.zparams = self.channel_params
+            self.__init__(self.sim_params, self.channel_params, self.cell_params, self.gates)
 
         # Variable Declaration
         V = np.zeros((self.numtests,self.numpoints))
         V.fill(self.v_hold)
         I_mem = np.zeros((self.numtests,self.numpoints))
-        I_mem.fill(self.I_leak)
         I_in = np.zeros((self.numtests,self.numpoints))
         PO = np.zeros((self.numtests,self.numpoints))
 
@@ -129,7 +137,10 @@ class Simulator(object):
         if self.pc_type == 'IClamp':
             for i in range(0,self.numtests):
                 for j in range(0,self.numpoints):
-                    I_in[i][j] = self.I_init
+                    if hasattr(self,'gL'):
+                        I_in[i][j] = -self.gL*(self.v_hold - self.VL)
+                    else:
+                        I_in[i][j] = self.I_init
 
             Istim = -self.protocol_start
             for i in range(0,self.numtests):
@@ -171,7 +182,11 @@ class Simulator(object):
                     Ca[j][i] = Ca[j][i-1] + dCa * self.deltat
 
                 PO[j][i] = po
-                I_mem[j][i] = (I * po) + self.I_leak
+                I_mem[j][i] = I * po
+
+                if hasattr(self,'gL'):
+                    IL = self.gL*(V[j][i-1] - self.VL)
+                    I_mem[j][i] += IL
 
                 if i == 1:
                     I_mem[j][0] = I_mem[j][1]
@@ -181,17 +196,20 @@ class Simulator(object):
 
                 if self.pc_type == 'IClamp':
                     # dv = -(I_in[j][i] + I) / self.c_mem
-                    dv = -(I_in[j][i] + I)
+                    if hasattr(self,'gL'):
+                        dv = -(I_in[j][i] + I + IL)
+                    else:
+                        dv = -(I_in[j][i] + I)
                     V[j][i] = V[j][i-1] + dv * self.deltat
 
-                if self.onset < i < self.offset:
-                    if abs(I_mem[j][i]) > abs(I_max[j]):
-                        I_max[j] = I_mem[j][i]
-                        V_max[j] = V[j][i]
-                    if po > PO_max[j]:
-                        PO_max[j] = po
-                        V_PO_max[j] = V[j][i]
-
+                # if self.onset < i < self.offset:
+                #     if abs(I_mem[j][i]) > abs(I_max[j]):
+                #         I_max[j] = I_mem[j][i]
+                #         V_max[j] = V[j][i]
+                #     if po > PO_max[j]:
+                #         PO_max[j] = po
+                #         V_PO_max[j] = V[j][i]
+        #
         self.results['t'] = self.xaxis
         self.results['V'] = V
         self.results['I'] = I_mem
@@ -215,9 +233,13 @@ class Simulator(object):
 
         if len(t) > 0:
             if self.pc_type == 'IClamp':
-                return V
+                index = [np.abs(np.asarray(self.xaxis) - target_x).argmin() for target_x in t]
+                V_t = [V[0][i] for i in index]
+                return V_t
             else:
-                return I_mem
+                index = [np.abs(np.asarray(self.xaxis) - target_x).argmin() for target_x in t]
+                I_t = [I_mem[0][i] for i in index]
+                return I_t
         else:
             return self.results
 
@@ -230,12 +252,23 @@ class Simulator(object):
 
         if 'g_cap' in self.zparams:
             g = self.zparams['g_cap'] * self.c_mem
-        elif ('g_dens' in self.zparams) and ('spec_cap' in self.cell_params):
+        elif ('g_dens' in self.zparams):
             g = self.zparams['g_dens'] * self.c_mem / self.cell_params['spec_cap']
         else:
             g = self.zparams['g']
 
+        if 'gL' in self.zparams:
+            if 'g_cap' in self.zparams:
+                self.gL *= self.c_mem
+            elif ('g_dens' in self.zparams):
+                self.gL *= (self.c_mem / self.cell_params['spec_cap'])
+            else:
+                self.gL = self.zparams['gL']
+            self.VL = self.zparams['VL']
+
         I_act = g * (1/(1 + np.exp((self.zparams['v_half_a'] - V)/self.zparams['k_a'])))**self.a_power * (V - self.zparams['e_rev'])
+        if 'gL' in self.zparams:
+            I_act += self.gL*(V - self.VL)
 
         return I_act
 
@@ -269,5 +302,7 @@ class Simulator(object):
             popt,pcov = curve_fit(self.iv_act, X,Y,best_candidate)
         elif curve_type == 'POV':
             popt,pcov = curve_fit(self.pov_act, X,Y,best_candidate)
+        elif curve_type == 'VClamp':
+            popt,pcov = curve_fit(self.patch_clamp, X,Y,best_candidate)
 
         return popt, self.zparams
