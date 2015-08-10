@@ -1,0 +1,34 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ns1: <http://openworm.org/entities/Channel/> .
+@prefix ns2: <http://openworm.org/entities/SimpleProperty/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/people/Bob> a foaf:Person ;
+    foaf:knows [ a foaf:Person ;
+            foaf:name "Linda" ] ;
+    foaf:name "Bob" .
+
+ns1:a2435a45b85628172c5a47122144a7c67 a <http://openworm.org/entities/Channel> ;
+    ns1:description <http://openworm.org/entities/Channel_description/a45d3682f613511cb7f5933cc596bb8c8> ;
+    ns1:expression_pattern <http://openworm.org/entities/Channel_expression_pattern/a8423ea724f2948e6f68f617b93c90e3e> ;
+    ns1:gene_WB_ID <http://openworm.org/entities/Channel_gene_WB_ID/a9574ce1471c7cb83f203c8b76c44078b> ;
+    ns1:gene_name <http://openworm.org/entities/Channel_gene_name/ac2a817e5c7dab1c5b791063fa24e9fb6> ;
+    ns1:name <http://openworm.org/entities/Channel_name/a0bed6d9a5ab8d508f3cbeacc102505f9> ;
+    ns1:proteins <http://openworm.org/entities/Channel_proteins/a879f3dc76a85c7a9eb01bc834ae7b740> .
+
+<http://openworm.org/entities/Channel_description/a45d3682f613511cb7f5933cc596bb8c8> ns2:value "Yup, it is a channel." .
+
+<http://openworm.org/entities/Channel_expression_pattern/a8423ea724f2948e6f68f617b93c90e3e> ns2:value "Have you seen the Silver Raven?" .
+
+<http://openworm.org/entities/Channel_gene_WB_ID/a9574ce1471c7cb83f203c8b76c44078b> ns2:value "Wbbt:123456" .
+
+<http://openworm.org/entities/Channel_gene_name/ac2a817e5c7dab1c5b791063fa24e9fb6> ns2:value "Gene Clark" .
+
+<http://openworm.org/entities/Channel_name/a0bed6d9a5ab8d508f3cbeacc102505f9> ns2:value "CNN" .
+
+<http://openworm.org/entities/Channel_proteins/a879f3dc76a85c7a9eb01bc834ae7b740> ns2:value "BRD-5, isoform a",
+        "BRD-5, isoform b" .
+
