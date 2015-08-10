@@ -10,6 +10,13 @@ def data_pool():
     return DataPool()
 
 class DataPool(object):
+    """
+    Session-level pytest fixture (see 'data_pool()' above)
+    which can create a data object of several types, or return
+    one if it has been created previously.
+
+    Implementation of the 'Object Pool' design pattern.
+    """
     def get_user(self):
         """
         Fixture for getting a User object.

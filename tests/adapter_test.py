@@ -1,9 +1,9 @@
-import PyOpenWorm, pytest, unittest, random
-from django.test import TestCase
+import PyOpenWorm, pytest, unittest
 from ion_channel.adapters import Adapter
 from ion_channel.models import (
     IonChannel, Reference, Experiment, PatchClamp, User
 )
+
 
 pytestmark = [pytest.mark.django_db]
 
