@@ -166,7 +166,7 @@ class IonChannelAdapter(Adapter):
         'name': 'channel_name',
         'description': 'description',
         'gene_name': 'gene_name',
-        'gene_WB_ID': 'gene_WB_ID',
+        'gene_WBID': 'gene_WB_ID',
    #     'gene_class': 'gene_class',
         'expression_pattern': 'expression_pattern',
     }

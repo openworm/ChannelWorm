@@ -53,18 +53,18 @@ def test_load_parse_and_export(data_pool):
     """
     Can we load and parse data, then export it?
     Test passes if we can load, parse and export without
-    error, and the resulting graph is the same as one
-    previously created with RDFLib.
+    error, and the exported graph is the same as the one
+    stored in the Exporter object.
     """
+    import pdb;pdb.set_trace()
     fname = tempfile.mktemp()
     expo = Exporter()
-    ic = data_pool.get_ion_channel()
+    ref = data_pool.get_reference()
     expo.parse(SAMPLE_LOCATION)
-    expo.load(ic)
+    expo.load(ref)
     expo.export(filename=fname)
 
     current_graph = rdflib.Graph().parse(fname, format='n3')
-    known_graph = rdflib.Graph().parse(EXPORT_LOCATION, format='n3')
 
-    assert current_graph.isomorphic(known_graph)
+    assert current_graph.isomorphic(expo.graph)
 
