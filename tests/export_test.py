@@ -56,7 +56,6 @@ def test_load_parse_and_export(data_pool):
     error, and the exported graph is the same as the one
     stored in the Exporter object.
     """
-    import pdb;pdb.set_trace()
     fname = tempfile.mktemp()
     expo = Exporter()
     ref = data_pool.get_reference()
