@@ -150,8 +150,6 @@ class IonChannelDetail(UpdateView):
         context['proteins'] = Protein.objects.filter(ion_channel_id=int(self.kwargs['pk']))
         return context
 
-# {{ building.name }}
-
 
 class IonChannelCreate(CreateView):
     model = IonChannel
