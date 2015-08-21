@@ -9,10 +9,12 @@
 import os,sys
 import numpy as np
 
-CW_HOME = os.path.pardir # Location of your ChannelWorm repo
+TEST_DIR = os.path.dirname(os.path.realpath(__file__))#os.path.pardir # Location of your ChannelWorm repo
+CW_HOME = os.path.dirname(TEST_DIR)
+print(CW_HOME)
 sys.path.insert(1,CW_HOME)
 
-from channelworm.fitter import Initiator
+from channelworm.fitter import initiators
 
 
 
@@ -28,7 +30,8 @@ from neuronunit.models.channel import ChannelModel
 # In[4]:
 
 # Instantiate the model
-channel_model_name = 'Cav1.channel'
+# Instantiate the model
+channel_model_name = 'EGL-19.channel'
 channel_id = 'ca_boyle'
 channel_file_path = os.path.join(CW_HOME,'models','%s.nml' % channel_model_name)
 
@@ -39,14 +42,14 @@ model = ChannelModel(channel_file_path,channel_index=0,name=channel_model_name)
 
 # Get the experiment data and instantiate the test
 data_name = 'egl-19-IClamp-IV'
-csv_path = os.path.join(CW_HOME,'channelworm','fitter','examples','%s.csv' % data_name)
+csv_path = os.path.join(CW_HOME,'channelworm','fitter','examples','egl-19-data','%s.csv' % data_name)
 ref = {'fig':'2B','doi':'10.1083/jcb.200203055'}
 x_var = {'type':'Voltage','unit':'V','toSI':1}
 y_var = {'type':'Current','unit':'A/F','toSI':1}
 IV = {'ref':ref,'csv_path':csv_path,'x_var':x_var,'y_var':y_var}
 user_data = {'samples': {'IV': IV}}
-myInitiator = Initiator.Initiator(user_data)
-sample_data = myInitiator.getSampleParameters()
+myInitiator = initiators.Initiator(user_data)
+sample_data = myInitiator.get_sample_params()
 i_obs,v_obs = [np.array(sample_data['IV'][_]) for _ in ('I','V')] # Current in pA and membrane potential in V.  
 observation = {'i':i_obs, 'v':v_obs}
 
