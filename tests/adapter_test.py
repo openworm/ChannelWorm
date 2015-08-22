@@ -156,3 +156,16 @@ def test_adapt_IonChannel(data_pool):
 
     assert pow_dict == cw_dict
 
+def test_adapt_GraphData(data_pool):
+    """
+    Test that we can map some GraphData to a PyOpenWorm 
+    data object.
+    """
+    graph_data = data_pool.get_graph_data()
+    gda = Adapter.create(graph_data)
+
+    cw_obj = gda.get_cw()
+    pow_obj = ica.get_pow()
+
+    assert cw_obj.series_data == pow_obj._data_string
+    assert cw_obj.asarray == pow_obj.data
