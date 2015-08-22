@@ -155,6 +155,7 @@ class PatchClampAdapter(Adapter):
         self.channelworm_object = cw_obj
         self.map_properties()
 
+
 class IonChannelAdapter(Adapter):
     """
     Map a ChannelWorm IonChannel to a PyOpenWorm Channel.
@@ -196,4 +197,21 @@ class IonChannelAdapter(Adapter):
         pros = cw_obj.proteins.split('; ')
         for p in pros:
             self.pyopenworm_object.proteins(p)
+
+
+class GraphDataAdapter(Adapter):
+    """
+    Map ChannelWorm GraphData to a PyOpenWorm Plot object.
+    """
+    pyopenworm_class = P.Plot
+    channelworm_class = C.GraphData
+
+    pyow_to_cw = {
+        'series_data': '_data_string'
+    }
+
+    def __init__(self, cw_obj):
+        self.channelworm_object = cw_obj
+        self.map_properties()
+
 
