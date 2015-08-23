@@ -45,12 +45,12 @@ In such a case, there are a few approaches you could take. The one we recommend 
 
 *Figure 1:*
 
-<img src="../static/calibrate-axis-step-1.png" width=600px>
+<img src="static/calibrate-axis-step-1.png" width=600px>
 
 
 *Figure 2:*
 
-<img src="../static/calibrate-axis-step-2.png" width=600px>
+<img src="static/calibrate-axis-step-2.png" width=600px>
 
 ## Digitizing multiple lines from one figure
 
@@ -70,4 +70,4 @@ This may require reading the figure's caption. In the case of figure 3, the capt
 
 *Figure 3:*
 
-<img src="../static/current-time-plot-1.png" width=600px>
+<img src="static/current-time-plot-1.png" width=600px>
