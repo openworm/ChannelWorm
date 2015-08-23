@@ -206,12 +206,14 @@ class GraphDataAdapter(Adapter):
     pyopenworm_class = P.Plot
     channelworm_class = C.GraphData
 
-    pyow_to_cw = {
-        'series_data': '_data_string'
-    }
+    pyow_to_cw = {} # no attributes to map directly
 
     def __init__(self, cw_obj):
         self.channelworm_object = cw_obj
         self.map_properties()
+
+        P.connect()
+        self.pyopenworm_object.set_data(cw_obj.asarray())
+        P.disconnect()
 
 
