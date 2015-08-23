@@ -1,7 +1,7 @@
 import PyOpenWorm, pytest, unittest
 from ion_channel.adapters import Adapter
 from ion_channel.models import (
-    IonChannel, Reference, Experiment, PatchClamp, User
+    IonChannel, Reference, PatchClamp
 )
 
 
@@ -165,7 +165,10 @@ def test_adapt_GraphData(data_pool):
     gda = Adapter.create(graph_data)
 
     cw_obj = gda.get_cw()
-    pow_obj = ica.get_pow()
+    pow_obj = gda.get_pow()
 
-    assert cw_obj.series_data == pow_obj._data_string
-    assert cw_obj.asarray == pow_obj.data
+    PyOpenWorm.connect()
+
+    assert cw_obj.asarray() == pow_obj.data
+
+    PyOpenWorm.disconnect()

@@ -1,7 +1,8 @@
 import pytest
 from django.utils import timezone
 from ion_channel.models import (
-    IonChannel, Reference, Experiment, PatchClamp, User
+    IonChannel, Reference, Experiment, 
+    PatchClamp, User, Graph, GraphData
 )
 
 
@@ -134,7 +135,7 @@ class DataPool(object):
                     "-59.5, -0.0035714285714285587\r\n"
                     "-69.5, -0.0035714285714285587\r\n"
                     "-79.75, -0.0023809523809523725\r\n"
-                    "-89.75, -0.0023809523809523725\r\n'"
+                    "-89.75, -0.0023809523809523725\r\n"
                 )
             )
 
