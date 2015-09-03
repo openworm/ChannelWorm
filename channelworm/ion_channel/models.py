@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import numpy as np
+import quantities as pq
 
 class ParamDict(models.Model):
     name = models.CharField(max_length=50)
@@ -207,12 +209,31 @@ class GraphData(models.Model):
         return self.series_name
 
     def asarray(self):
+        """Returns data as [[x0,y0],[x1,y1],[x2,y2],...]"""
         xy = self.series_data.splitlines()
         data = list()
         for row in xy:
             data += [list(map(float, row.split(',')))]
 
         return data
+    
+    def aszippedarray(self):
+        """Returns data as [[x0,x1,x2...],[y0,y1,y2,...]]"""
+        return list(zip(*self.asarray())) 
+    
+    def asunitedarray(self):
+        """Returns data with units as [[x0*x_unit,x1*x_unit,x2*x_unit,...],
+                                       [y0*y_unit,y1*y_unit,y2*y_unit,...]]"""
+        data = self.aszippedarray()
+        united_data = []
+        for i,series in enumerate(data):
+            if i % 2 == 0: # x-values.  
+                unit = self.graph.x_axis_unit
+            elif i % 2 == 1: # y-values:
+                unit = self.graph.y_axis_unit
+            united_data += [pq.Quantity(series,unit)]
+
+        return united_data
 
 
 Modeling_Method_CHOICES = (
