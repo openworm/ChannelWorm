@@ -16,8 +16,12 @@ setup(
         'django-formtools',
         'django-sql-explorer',
         'inspyred',
+        'neuronunit',
+        'numpy',
         'pillow',
         'pytest',
         'pytest-django',
+        'quantities',
+        'sciunit>=0.1.3.2',
     ]
 )
