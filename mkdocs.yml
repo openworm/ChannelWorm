@@ -3,7 +3,9 @@ theme: readthedocs
 pages:
   - [index.md, Index]
   - [index.md, Introduction]
-  - [information-management.md, Information Management]
   - [digitization.md, Digitization]
+  - [walkthrough.md, Digitization walkthrough]
+  - [information-management.md, Information Management]
   - [validation.md, Validation]
   - [optimization.md, Optimization]
+
