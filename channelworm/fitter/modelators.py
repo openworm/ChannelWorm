@@ -9,6 +9,7 @@ import lems.api as lems
 import osb.metadata
 import osb.resources
 import sys
+from pyneuroml.analysis import NML2ChannelAnalysis
 from channelworm.fitter import validators
 
 class Modelator(object):
@@ -18,6 +19,29 @@ class Modelator(object):
         self.cell_params = bio_params['cell_params']
         self.channel_params = bio_params['channel_params']
         self.sim_params = sim_params
+
+    def ss_plots(self,simData,show=False):
+        """
+        Generates steady state plots for ion channel kinetics (m, h, etc)
+        """
+
+        if 'm_inf' in simData:
+            plt.plot([round(x*1e3) for x in simData['V_ss']],simData['m_inf'], color='b', label='m_inf')
+
+        if 'h_inf' in simData:
+            plt.plot([round(x*1e3) for x in simData['V_ss']],simData['h_inf'], color='r', label='h_inf')
+
+        if 'cdi_inf' in simData:
+            plt.plot([round(x*1e3) for x in simData['V_ss']],simData['cdi_inf'], color='y', label='Ca-dependent inactivation')
+
+        plt.legend()
+        plt.title("Steady state activation and inactivation versus membrane potential")
+        plt.xlabel("Voltage (mV)")
+        plt.ylabel("Steady state activation/inactivation")
+        plt.savefig("steadystate_vs_voltage.png",bbox_inches='tight',format='png')
+
+        if show:
+            plt.show()
 
     def compare_plots(self,sampleData,simData,show=False):
         """
@@ -117,8 +141,12 @@ class Modelator(object):
 
     def generate_channel_nml2(self,bio_params,channel_params,model_params):
         """
+        Generates NeuroML2 file from ion channel parameters.
 
-        :return:
+        :param bio_params: Biological parameters
+        :param channel_params: Channel parameters
+        :param model_params: NeuroML2 file parameters
+        :return: NeuroML2 file
         """
 
         unknowns = ''
@@ -175,8 +203,8 @@ class Modelator(object):
             print("Unknown cell_type: %s"%cell_type)
             unknowns += "Unknown cell_type: %s\n"%cell_type
 
-        for contributor in model_params['contributors']:
-            osb.metadata.RDF('Curator: %s (%s)'%(contributor['name'],contributor['email']))
+        # for contributor in model_params['contributors']:
+        #     metadata.descriptions.append('Curator: %s (%s)'%(contributor['name'],contributor['email']))
 
         print("Currently unknown: <<<%s>>>"%unknowns)
 
@@ -244,9 +272,4 @@ class Modelator(object):
         :return:
         """
 
-        # TODO: check if it is possible to call NML2ChannelAnalysis.main([nml2_file])
-        # from pyneuroml.analysis import NML2ChannelAnalysis
-        # NML2ChannelAnalysis.main([nml2_file])
-
-        from subprocess import call
-        return call(["pynml-channelanalysis", nml2_file])
+        return NML2ChannelAnalysis.run(channel_files=[nml2_file],nogui=False)

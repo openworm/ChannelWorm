@@ -119,13 +119,16 @@ class Simulator(object):
 
         if 'vda' in self.gates:
             act = np.zeros((self.numtests,self.numpoints))
+            m_inf = np.zeros((self.numtests,self.numpoints))
             act_max = np.zeros(self.numtests)
         if 'vdi' in self.gates:
             inact = np.zeros((self.numtests,self.numpoints))
+            h_inf = np.zeros((self.numtests,self.numpoints))
             inact_max = np.zeros(self.numtests)
         if 'cdi' in self.gates:
             Ca = np.zeros((self.numtests,self.numpoints))
             cdi = np.zeros((self.numtests,self.numpoints))
+            cdi_inf = np.zeros((self.numtests,self.numpoints))
             cdi_max = np.zeros(self.numtests)
 
         Vstim = self.protocol_end
@@ -162,20 +165,22 @@ class Simulator(object):
                 po = 1
 
                 if 'vda' in self.gates:
-                    da = (self.boltzmannFit(V[j][i-1], self.v_half_a, self.k_a) - act[j][0])/self.T_a
+                    m_inf[j][i] = self.boltzmannFit(V[j][i-1], self.v_half_a, self.k_a)
+                    da = (m_inf[j][i] - act[j][0])/self.T_a
                     act[j][0] += da*self.deltat
                     act[j][i] = act[j][0]**self.a_power
                     po *= act[j][i]
 
                 if 'vdi' in self.gates:
-                    di = (self.boltzmannFit(V[j][i-1], self.v_half_i, self.k_i) - inact[j][0])/self.T_i
+                    h_inf[j][i] = self.boltzmannFit(V[j][i-1], self.v_half_i, self.k_i)
+                    di = (h_inf[j][i] - inact[j][0])/self.T_i
                     inact[j][0] += di*self.deltat
                     inact[j][i] = inact[j][0]**self.i_power
                     po *= inact[j][i]
 
                 if 'cdi' in self.gates:
-                    cdi_b = self.boltzmannFit(Ca[j][i-1], self.ca_half_i, self.k_ca)
-                    cdi[j][i] = (1 + (cdi_b - 1) * self.alpha_ca)**self.cdi_power
+                    cdi_inf[j][i] = self.boltzmannFit(Ca[j][i-1], self.ca_half_i, self.k_ca)
+                    cdi[j][i] = (1 + (cdi_inf[j][i] - 1) * self.alpha_ca)**self.cdi_power
                     po *= cdi[j][i]
 
                     dCa = -(Ca[j][i-1] / self.T_ca + self.thi_ca * I)
@@ -225,11 +230,14 @@ class Simulator(object):
         self.results['PO_ss'] = self.pov_act(V_ss)
         if 'vda' in self.gates:
             self.results['act'] = act
+            self.results['m_inf'] = m_inf[:, self.numpoints-1]
         if 'vdi' in self.gates:
             self.results['inact'] = inact
+            self.results['h_inf'] = h_inf[:, self.numpoints-1]
         if 'cdi' in self.gates:
             self.results['Ca'] = Ca
             self.results['cdi'] = cdi
+            self.results['cdi_inf'] = cdi_inf[:, self.numpoints-1]
 
         if len(t) > 0:
             if self.pc_type == 'IClamp':

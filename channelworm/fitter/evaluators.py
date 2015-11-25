@@ -355,6 +355,7 @@ class Evaluator(object):
 
         sim_x = np.asarray(sim[0])
         total_cost = 1e9
+        sum_var = 0
 
         if self.weight:
             # TODO: consider IC, IV, etc for sim_params
@@ -367,11 +368,7 @@ class Evaluator(object):
             peak = np.abs(y[onset+1:offset]).argmax() + onset+1
             tail = offset-1
 
-        # mu = np.mean(target[1])
-        max = np.max(target[1])
-        min = np.min(target[1])
-        # y_scale = (min-max)**2
-        # sigmasq = np.var(target[1])
+        mu = np.mean(target[1])
         N=0
 
         for target_x in target[0]:
@@ -406,15 +403,17 @@ class Evaluator(object):
                         cost_val *= self.weight[target_i]
                         N += self.weight[target_i]
 
-                # scale distance
+                # scale cost (for r-squared score)
+                # http://docs.scipy.org/doc/scipy-0.15.1/reference/generated/scipy.stats.linregress.html
                 if self.scale:
-                    # total_cost /= sigmasq
-                    cost_val /= (((target_y - max)**2 + (target_y - min)**2)/2)
-                    # cost_val /= y_scale
-                    # if cost_val > 1: cost_val = 1
+                    var = ((target_y - mu)**2)
+                    sum_var += var
                 total_cost += cost_val
 
-        return total_cost
+        if sum_var == 0:
+            return total_cost
+        else:
+            return (total_cost/sum_var)
 
     def cost_all_traces(self, sim, target):
         """

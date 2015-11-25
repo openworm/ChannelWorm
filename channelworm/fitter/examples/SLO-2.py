@@ -25,8 +25,8 @@ if __name__ == '__main__':
     x_var_VC = {'type':'Time','unit':'ms','toSI':1e-3}
     y_var_VC = {'type':'Current','unit':'nA','toSI':1e-9,'adjust':-0.82}
     traces_VC = [{'vol':110e-3,'csv_path':csv_path_VC_1,'x_var':x_var_VC,'y_var':y_var_VC},
-                 # {'vol':None,'csv_path':csv_path_VC_2,'x_var':x_var_VC,'y_var':y_var_VC},
-                 {'vol':-110e-3,'csv_path':csv_path_VC_3,'x_var':x_var_VC,'y_var':y_var_VC},
+                 {'vol':40e-3,'csv_path':csv_path_VC_2,'x_var':x_var_VC,'y_var':y_var_VC},
+                 {'vol':-140e-3,'csv_path':csv_path_VC_3,'x_var':x_var_VC,'y_var':y_var_VC},
                  {'vol':-90e-3,'csv_path':csv_path_VC_4,'x_var':x_var_VC,'y_var':y_var_VC}]
     ref_VC = {'fig':'6a','doi':'10.1038/77670'}
     VClamp = {'ref':ref_VC,'traces':traces_VC}
@@ -51,10 +51,10 @@ if __name__ == '__main__':
     POV = {'ref':ref_POV,'csv_path':csv_path_POV,'x_var':x_var_POV,'y_var':y_var_POV}
 
     # userData['samples'] = {'IV':IV,'POV':POV}
-    # userData['samples'] = {'VClamp':VClamp}
-    userData['samples'] = {'IV':IV,'POV':POV,'VClamp':VClamp}
+    userData['samples'] = {'VClamp':VClamp}
+    # userData['samples'] = {'IV':IV,'POV':POV,'VClamp':VClamp}
 
-    args = {'weight':{'start':20,'peak':10,'tail':30,'end':30,4:50}}
+    # args = {'weight':{'start':20,'peak':10,'tail':30,'end':30,4:50}}
 
     myInitiator = initiators.Initiator(userData)
     sampleData = myInitiator.get_sample_params()
@@ -66,12 +66,14 @@ if __name__ == '__main__':
     bio_params['cell_type'] = 'Xenopus oocytes'
     bio_params['channel_type'] = 'SLO-2'
     bio_params['ion_type'] = 'K'
+    bio_params['val_cell_params'][0] = 200e-9 # C_mem DOI: 10.1074/jbc.M605814200
+    bio_params['val_cell_params'][1] = 20e-6 # area DOI: 10.1101/pdb.top066308
     bio_params['gate_params'] = {'vda': {'power': 1}}
 
-    bio_params['channel_params'] = ['g','e_rev']
-    bio_params['unit_chan_params'] = ['S','V']
-    bio_params['min_val_channel'] = [1e-9, -0.015]
-    bio_params['max_val_channel'] = [1e-5, 0.015]
+    bio_params['channel_params'] = ['g_dens','e_rev']
+    bio_params['unit_chan_params'] = ['S/m2','V']
+    bio_params['min_val_channel'] = [1e-4,-5e-3]
+    bio_params['max_val_channel'] = [10,   5e-3]
 
     bio_params['channel_params'].extend(['v_half_a','k_a','T_a'])
     bio_params['unit_chan_params'].extend(['V','V','s'])
@@ -90,9 +92,9 @@ if __name__ == '__main__':
     sim_params['protocol_end'] = 110e-3
     sim_params['protocol_steps'] = 10e-3
 
-    # opt = '-pso'
+    opt = '-pso'
     # opt = '-ga'
-    opt = None
+    # opt = None
     if len(sys.argv) == 2:
         opt = sys.argv[1]
 
@@ -128,6 +130,10 @@ if __name__ == '__main__':
                         POV_fit_cost = myEvaluator.pov_cost(popt)
                         print 'POV cost:'
                         print POV_fit_cost
+                    if 'VClamp' in sampleData:
+                        VClamp_fit_cost = myEvaluator.vclamp_cost(popt)
+                        print 'VClamp cost:'
+                        print VClamp_fit_cost
                     vData = np.arange(-0.140, 0.110, 0.001)
                     Iopt = mySimulator.iv_act(vData,*popt)
                     plt.plot([x*1e3 for x in bestSim['V_ss']],bestSim['I_ss'], label = 'Initial parameters', color='y')
@@ -150,7 +156,10 @@ if __name__ == '__main__':
                     POV_fit_cost = myEvaluator.pov_cost(popt)
                     print 'POV cost:'
                     print POV_fit_cost
-
+                    if 'VClamp' in sampleData:
+                        VClamp_fit_cost = myEvaluator.vclamp_cost(popt)
+                        print 'VClamp cost:'
+                        print VClamp_fit_cost
                     vData = np.arange(-0.140, 0.110, 0.001)
                     POopt = mySimulator.pov_act(vData,*popt)
                     plt.plot([x*1e3 for x in bestSim['V_PO_ss']],bestSim['PO_ss'], label = 'Initial parameters', color='y')
@@ -170,6 +179,15 @@ if __name__ == '__main__':
                         bio_params['min_val_channel'][0:4] = popt[0:4]
                         bio_params['max_val_channel'][0:4] = popt[0:4]
 
+                    best_candidate_params = dict(zip(bio_params['channel_params'],popt))
+                    cell_var = dict(zip(bio_params['cell_params'],bio_params['val_cell_params']))
+                    mySimulator = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'])
+                    bestSim = mySimulator.patch_clamp()
+
+                    myModelator = modelators.Modelator(bio_params,sim_params)
+                    myModelator.compare_plots(sampleData,bestSim,show=True)
+                    myModelator.ss_plots(bestSim,show=True)
+
     start = time.time()
 
     if opt == '-ga':
@@ -179,12 +197,17 @@ if __name__ == '__main__':
                                                         args=ga_args)
     elif opt == '-pso':
         pso_args = myInitiator.get_opt_params(type='PSO')
+        pso_args['minstep'] = 1e-24
+        pso_args['minfunc'] = 1e-24
+        pso_args['swarmsize'] = 100
+        pso_args['maxiter'] = 100
         best_candidate, score = myEvaluator.pso_evaluate(lb=bio_params['min_val_channel'],
                                                          ub=bio_params['max_val_channel'],
                                                          args=pso_args)
     else:
         # best_candidate = [2.678373586024887e-08, -0.004343196320916513, -0.15148699378068883, 0.04457177073153084, 0.0006512657782666903]
         best_candidate = [2.6713432536911465e-08, -0.0043477407996737093, -0.077423632426596764, 0.030752484500400822, 0.0007076266889846564]
+        best_candidate[0] = 2.6713432536911465e-08 / bio_params['val_cell_params'][1]
 
     secs = time.time()-start
     print("----------------------------------------------------\n\n"
@@ -197,72 +220,75 @@ if __name__ == '__main__':
 
     myModelator = modelators.Modelator(bio_params,sim_params)
     myModelator.compare_plots(sampleData,bestSim,show=True)
+    myModelator.ss_plots(bestSim,show=True)
 
     print 'best candidate after optimization:'
     print best_candidate_params
-    #
-    # if 'VClamp' in sampleData:
-    #     for trace in sampleData['VClamp']['traces']:
-    #         if 'vol' in trace:
-    #             if trace['vol'] is None:
-    #                 pass
-    #             elif trace['vol'] == 110e-3:
-    #                 end = sim_params['protocol_end']
-    #                 start = sim_params['protocol_start']
-    #                 sim_params['protocol_end'] = trace['vol']
-    #                 sim_params['protocol_start'] = trace['vol']
-    #
-    #                 x = np.asarray(trace['t'])
-    #                 on = sim_params['start_time']
-    #                 off = sim_params['end_time']
-    #                 onset = np.abs(x-on).argmin()
-    #                 offset = np.abs(x-off).argmin()
-    #                 t_sample_on = trace['t'][onset+1:offset]
-    #                 I_sample_on = trace['I'][onset+1:offset]
-    #
-    #                 vcSim = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'])
-    #                 pcSim = vcSim.patch_clamp()
-    #                 popt , p0 = vcSim.optim_curve(params= bio_params['channel_params'],
-    #                                               best_candidate= best_candidate,
-    #                                               target= [t_sample_on,I_sample_on],curve_type='VClamp')
-    #                 vcEval =  evaluators.Evaluator(sampleData,sim_params,bio_params)
-    #
-    #                 print 'Params after VClamp minimization:'
-    #                 print p0
-    #
-    #                 if 'IV' in sampleData:
-    #                     IV_fit_cost = vcEval.iv_cost(popt)
-    #                     print 'IV cost:'
-    #                     print IV_fit_cost
-    #                 if 'POV' in sampleData:
-    #                     POV_fit_cost = vcEval.pov_cost(popt)
-    #                     print 'POV cost:'
-    #                     print POV_fit_cost
-    #                 # VClamp_fit_cost = vcEval.vclamp_cost(popt)
-    #                 # print 'VClamp cost:'
-    #                 # print VClamp_fit_cost
-    #                 tData = np.arange(on, off, sim_params['deltat'])
-    #                 Iopt = vcSim.patch_clamp(tData,*popt)
-    #                 # plt.plot(pcSim['t'],pcSim['I'][0], label = 'Initial parameters', color='y')
-    #                 plt.plot(t_sample_on,I_sample_on, '--ko', label = 'sample data')
-    #                 plt.plot(tData,Iopt, color='r', label = 'Fitted to VClamp trace')
-    #                 plt.legend()
-    #                 plt.title('VClamp Curve Fit for holding potential %i (mV)'%(trace['vol']*1e3))
-    #                 plt.xlabel('T (s)')
-    #                 plt.ylabel('I (A)')
-    #                 plt.show()
-    #
-    #                 sim_params['protocol_end'] = end
-    #                 sim_params['protocol_start'] = start
-    #
-    #                 best_candidate_params = dict(zip(bio_params['channel_params'],popt))
-    #                 # best_candidate_params['T_a'] = popt[4]
-    #                 cell_var = dict(zip(bio_params['cell_params'],bio_params['val_cell_params']))
-    #                 mySimulator = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'])
-    #                 bestSim = mySimulator.patch_clamp()
-    #
-    #                 myModelator = modelators.Modelator(bio_params,sim_params)
-    #                 myModelator.compare_plots(sampleData,bestSim,show=True)
+
+    # Only for tau_max
+    if 'VClamp' in sampleData:
+        for trace in sampleData['VClamp']['traces']:
+            if 'vol' in trace:
+                if trace['vol'] is None:
+                    pass
+                elif trace['vol'] == 110e-3:
+                    end = sim_params['protocol_end']
+                    start = sim_params['protocol_start']
+                    sim_params['protocol_end'] = trace['vol']
+                    sim_params['protocol_start'] = trace['vol']
+
+                    x = np.asarray(trace['t'])
+                    on = sim_params['start_time']
+                    off = sim_params['end_time']
+                    onset = np.abs(x-on).argmin()
+                    offset = np.abs(x-off).argmin()
+                    t_sample_on = trace['t'][onset+1:offset]
+                    I_sample_on = trace['I'][onset+1:offset]
+
+                    vcSim = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'])
+                    pcSim = vcSim.patch_clamp()
+                    popt , p0 = vcSim.optim_curve(params= bio_params['channel_params'],
+                                                  best_candidate= best_candidate,
+                                                  target= [t_sample_on,I_sample_on],curve_type='VClamp')
+                    vcEval =  evaluators.Evaluator(sampleData,sim_params,bio_params)
+
+                    print 'Params after VClamp minimization:'
+                    print p0
+
+                    if 'IV' in sampleData:
+                        IV_fit_cost = vcEval.iv_cost(popt)
+                        print 'IV cost:'
+                        print IV_fit_cost
+                    if 'POV' in sampleData:
+                        POV_fit_cost = vcEval.pov_cost(popt)
+                        print 'POV cost:'
+                        print POV_fit_cost
+                    # VClamp_fit_cost = vcEval.vclamp_cost(popt)
+                    # print 'VClamp cost:'
+                    # print VClamp_fit_cost
+                    tData = np.arange(on, off, sim_params['deltat'])
+                    Iopt = vcSim.patch_clamp(tData,*popt)
+                    # plt.plot(pcSim['t'],pcSim['I'][0], label = 'Initial parameters', color='y')
+                    plt.plot(t_sample_on,I_sample_on, '--ko', label = 'sample data')
+                    plt.plot(tData,Iopt, color='r', label = 'Fitted to VClamp trace')
+                    plt.legend()
+                    plt.title('VClamp Curve Fit for holding potential %i (mV)'%(trace['vol']*1e3))
+                    plt.xlabel('T (s)')
+                    plt.ylabel('I (A)')
+                    plt.show()
+
+                    sim_params['protocol_end'] = end
+                    sim_params['protocol_start'] = start
+
+                    # best_candidate_params = dict(zip(bio_params['channel_params'],popt))
+                    best_candidate_params['T_a'] = popt[4]
+                    cell_var = dict(zip(bio_params['cell_params'],bio_params['val_cell_params']))
+                    mySimulator = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'])
+                    bestSim = mySimulator.patch_clamp()
+
+                    myModelator = modelators.Modelator(bio_params,sim_params)
+                    myModelator.compare_plots(sampleData,bestSim,show=True)
+                    myModelator.ss_plots(bestSim,show=True)
 
     # Generate NeuroML2 file
     model_params = {}
@@ -276,5 +302,5 @@ if __name__ == '__main__':
                                                '(Yuan A; Dourado M; Butler A; Walton N; Wei A; Salkoff L. Nat. Neurosci., 3(8):771-9)'}]
     model_params['file_name'] = cwd+'/slo-2-data/SLO-2.channel.nml'
 
-    # nml2_file = myModelator.generate_channel_nml2(bio_params,best_candidate_params,model_params)
-    # run_nml_out = myModelator.run_nml2(model_params['file_name'])
+    nml2_file = myModelator.generate_channel_nml2(bio_params,best_candidate_params,model_params)
+    run_nml_out = myModelator.run_nml2(model_params['file_name'])
