@@ -13,6 +13,7 @@ setup(
     install_requires=[
         'inspyred',
         'sqlparse',
+        'python-unicodecsv',
         'pillow',
         'pytest',
         'pytest-django',

@@ -9,5 +9,5 @@ setup(
     author='OpenWorm Community',
     author_email='vahidghayoomi@gmail.com, milad.jafary@gmail.com, trav221@gmail.com',
     url='https://github.com/openworm/ChannelWorm',
-    install_requires=['Django','metapub','django-formtools', 'django-sql-explorer', 'python-unicodecsv'],
+    install_requires=['Django','metapub','django-formtools', 'django-sql-explorer'],
 )
