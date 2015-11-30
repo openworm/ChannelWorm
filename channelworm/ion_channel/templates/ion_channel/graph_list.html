@@ -30,7 +30,7 @@
                     <table id="result_table" class="table table-bordered table-striped">
                         <thead>
                         <tr>
-                            <th style="width: 10px">#</th>
+                            <th style="width: 10px">{% trans 'ID' %}</th>
                             <th>{% trans 'Ion channel' %}</th>
                             <th>{% trans 'Patch Clamp Type' %}</th>
                             <th>{% trans 'Experiment' %}</th>
@@ -47,7 +47,7 @@
                         <tbody>
                         {% for graph in graphs %}
                             <tr>
-                                <td>{{ forloop.counter }}</td>
+                                <td>{{ graph.id }}</td>
                                 <td>{{ graph.patch_clamp.ion_channel }}</td>
                                 <td>{{ graph.patch_clamp.type }}</td>
                                 <td>{{ graph.experiment }}</td>

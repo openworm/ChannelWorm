@@ -35,7 +35,7 @@
                     <table id="result_table" class="table table-bordered table-striped">
                         <thead>
                         <tr>
-                            <th style="width: 10px">#</th>
+                            <th style="width: 10px">ID</th>
                             <th>{% trans 'Channel Name' %}</th>
                             <th>{% trans 'Description' %}</th>
                             <th>{% trans 'Channel Type' %}</th>
@@ -48,7 +48,7 @@
                         <tbody>
                         {% for ion_channel in ion_channels %}
                             <tr>
-                                <td>{{forloop.counter}}</td>
+                                <td>{{ ion_channel.id }}</td>
                                 <td>{{ ion_channel.channel_name }}</td>
                                 <td>{{ ion_channel.description }}</td>
                                 <td>{{ ion_channel.channel_type }}; {{ ion_channel.channel_subtype }}</td>

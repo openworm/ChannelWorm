@@ -11,11 +11,8 @@ setup(
     ],
     long_description=open('README.md').read(),
     install_requires=[
-        'cypy',
-        'Django<=1.8',
-        'django-formtools',
-        'django-sql-explorer',
         'inspyred',
+        'sqlparse',
         'pillow',
         'pytest',
         'pytest-django',

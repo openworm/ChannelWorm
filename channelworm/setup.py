@@ -3,18 +3,11 @@
 from setuptools import setup
 
 setup(
-    # GETTING-STARTED: set your app name:
-    name='YourAppName',
-    # GETTING-STARTED: set your app name:
+    name='ChannelWorm',
     version='1.0',
-    # GETTING-STARTED: set your app description:
-    description='OpenShift App',
-    # GETTING-STARTED: set author name (your name):
-    author='Your Name',
-    # GETTING-STARTED: set author name (your name):
-    author_email='example@example.com',
-    # GETTING-STARTED: set author name (your name):
-    url='http://www.python.org/sigs/distutils-sig/',
-    # GETTING-STARTED: define required django version:
-    install_requires=['Django<=1.8','metapub','django-formtools', 'django-sql-explorer'],
+    description='Modeling Ion Channels in C. Elegans',
+    author='OpenWorm Community',
+    author_email='vahidghayoomi@gmail.com, milad.jafary@gmail.com, trav221@gmail.com',
+    url='https://github.com/openworm/ChannelWorm',
+    install_requires=['Django','metapub','django-formtools', 'django-sql-explorer', 'python-unicodecsv'],
 )
