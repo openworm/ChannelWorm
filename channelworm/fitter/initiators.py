@@ -102,8 +102,8 @@ class Initiator(object):
         # TODO: Initialize data provided by user (directly from interface or from DB)
 
         if type == 'GA':
-            self.opt_params['population_size'] = 3
-            self.opt_params['max_evaluations'] = 6
+            self.opt_params['population_size'] = 300
+            self.opt_params['max_evaluations'] = 600
             self.opt_params['num_selected'] = 2
             self.opt_params['num_offspring'] = 15
             self.opt_params['num_elites'] = 1
