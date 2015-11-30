@@ -2,10 +2,11 @@
 ChannelWorm fitter module for initializing needed parameters.
 """
 import matplotlib.pyplot as plt
+import channelworm
 
 class Initiator(object):
 
-    def __init__(self, userData):
+    def __init__(self, userData={}):
 
         """Initializes variables for other modules
 
@@ -14,7 +15,8 @@ class Initiator(object):
 
         # TODO: Initialize data provided by user (directly from interface or from DB)
 
-        self.sampleData = userData['samples']
+        if 'sample' in userData:
+            self.sampleData = userData['samples']
         self.sim_params = dict() # userData['sim_params']
         self.opt_params = dict() # userData['opt_params']
         self.bio_params = dict() # userData['bio_params']
@@ -100,8 +102,8 @@ class Initiator(object):
         # TODO: Initialize data provided by user (directly from interface or from DB)
 
         if type == 'GA':
-            self.opt_params['population_size'] = 300
-            self.opt_params['max_evaluations'] = 600
+            self.opt_params['population_size'] = 3
+            self.opt_params['max_evaluations'] = 6
             self.opt_params['num_selected'] = 2
             self.opt_params['num_offspring'] = 15
             self.opt_params['num_elites'] = 1
@@ -175,7 +177,6 @@ class Initiator(object):
 
         return self.sim_params
 
-
     def get_sample_params(self):
         """
         Get experimental parameters from user / DB and initialize variables.
@@ -202,8 +203,6 @@ class Initiator(object):
             ['IV']
 
         """
-
-        # TODO: Get values from pyOW
 
         # For loop to extract all csv files from user's profile path
         #  1: csv files: IClamp, VClamp, IV, G/Gmax, mtau, minf, htau, hinf, etc
@@ -247,7 +246,6 @@ class Initiator(object):
 
         return self.sampleData
 
-
     def csv_to_XY(self,path,x_var,y_var,ref,plot=False):
         """Extracts X,Y data from a csv file and convert to array
 
@@ -290,3 +288,92 @@ class Initiator(object):
             plt.show()
 
         return x,y
+
+    def get_data_from_db(self,fig_id,adjust={},plot=False):
+        """
+        Get experimental parameters from DB and initialize variables.
+        Data structure for sampleData:
+
+            ['VClamp']
+                ['ref']
+                    ['fig'] e.g. 2A
+                    ['doi'] e.g. 10.1371/journal.pcbi.0030169.
+                ['traces']
+                    ['vol'] e.g. -30 --> ['amp'] in case of IClamp
+                    ['csv_path'] e.g. data/user1/vclampM30.csv
+                    ['x_var']
+                    ['y_var']
+                        ['type'] e.g. current
+                        ['unit'] e.g. nA
+                        ['toSI'] e.g. 1e-9 # multiply by this value to convert to SI
+                        ['adjust'] e.g. -0.5 # add to this value to adjust axis
+                    ['t']
+                    ['I']
+                        [] e.g. -50.5,-49.8,...
+
+            ['IClamp']
+            ['IV']
+
+        :param fig_id: ID of the figure in channelworm (Look at ID column in www.channelworm.com/ion_channel/graph/)
+        :param plot: if TRUE, shows the plot
+        :return: Dict of parameters
+        """
+
+        I_type = ['I','I_ss','I_peak','Current','Steady-state Current','Peak Current']
+        T_type = ['T','Time']
+        V_type = ['V','Voltage']
+        PO_type = ['I_norm', 'Normalized Current', 'G/G_max', 'Po_peak', 'Peak Open Probability', 'Po', 'Open Probability', 'G', 'Conductance']
+        x = []
+        y = []
+
+        channelworm.django_setup()
+        from ion_channel.models import Graph, GraphData
+
+        graph = Graph.objects.get(id=fig_id)
+        graph_data = GraphData.objects.filter(graph__id=graph.id)
+        doi = graph.experiment.reference.doi
+
+        ref = {'fig':graph.figure_ref_address,'doi':doi}
+        x_var = {'type':graph.x_axis_type,'unit':graph.x_axis_unit,'toSI':graph.x_axis_toSI}
+        y_var = {'type':graph.y_axis_type,'unit':graph.y_axis_unit,'toSI':graph.y_axis_toSI}
+        graph_dic = {'ref':ref,'x_var':x_var,'y_var':y_var, 'traces':[]}
+
+        for obj in graph_data:
+            for i,j in obj.asarray():
+                if 'x' in adjust:
+                    i += adjust['x']
+                if 'y' in adjust:
+                    j += adjust['y']
+                x.append(i * x_var['toSI'])
+                y.append(j * y_var['toSI'])
+
+            if graph.x_axis_type in T_type and graph.y_axis_type in I_type:
+                graph_dic['traces'].append({'vol':int(obj.series_name)*1e-3,'t':x,'I':y})
+
+            elif  graph.x_axis_type in T_type and graph.y_axis_type in V_type:
+                graph_dic['traces'].append({'amp':int(obj.series_name)*1e-6,'t':x,'V':y})
+
+            elif graph.x_axis_type in V_type and graph.y_axis_type in I_type:
+                graph_dic['V'] = x
+                if graph.y_axis_type == 'I_peak':
+                    graph_dic['I_peak'] = y
+                else:
+                    graph_dic['I'] = y
+
+            elif graph.x_axis_type in V_type and graph.y_axis_type in PO_type:
+                graph_dic['V'] = x
+                if graph.y_axis_type == 'Po_peak':
+                    graph_dic['PO_peak'] = y
+                else:
+                    graph_dic['PO'] = y
+
+            if plot:
+                plt.plot([i/x_var['toSI'] for i in x],[j/y_var['toSI'] for j in y],'ko')
+                plt.title('Raw data from Fig.%s, DOI: %s'%(ref['fig'],ref['doi']))
+                plt.xlabel('%s (%s)'%(x_var['type'],x_var['unit']))
+                plt.ylabel('%s (%s)'%(y_var['type'],y_var['unit']))
+
+        if plot:
+            plt.show()
+
+        return graph_dic
