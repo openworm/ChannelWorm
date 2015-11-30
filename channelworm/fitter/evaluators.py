@@ -65,7 +65,7 @@ class Evaluator(object):
         if 'population_size' in args:
             population_size = args['population_size']
         else:
-            population_size = 10
+            population_size = 100
         if 'max_evaluations' in args:
             max_evaluations = args['max_evaluations']
         else:
@@ -127,9 +127,6 @@ class Evaluator(object):
         :return: total_fitness
         """
 
-        # TODO: Include weights and minimization function (e.g. prAxis)
-        # Based on Gurkiewicz & Korngreen approach (doi:10.1371/journal.pcbi.0030169.)
-
         fitness = 1e10
         total_fitness = []
         Vcost = 0
@@ -145,7 +142,8 @@ class Evaluator(object):
 
             if 'POV' in self.sampleData:
                 POVcost = self.pov_cost(candidate)
-                if self.func == self.pov_cost:
+                samples +=1
+                if self.pso_flag == False or self.func == self.pov_cost:
                     fitness = POVcost
                 elif POVcost > self.POV_dist:
                     fitness = 1e10
@@ -154,7 +152,8 @@ class Evaluator(object):
 
             if 'IV' in self.sampleData:
                 IVcost = self.iv_cost(candidate)
-                if self.func == self.iv_cost:
+                samples +=1
+                if self.pso_flag == False or self.func == self.iv_cost:
                     fitness = IVcost
                 elif IVcost > self.IV_dist:
                     fitness = 1e10
@@ -163,7 +162,8 @@ class Evaluator(object):
 
             if 'VClamp' in self.sampleData:
                 Vcost = self.vclamp_cost(candidate)
-                if self.func == self.vclamp_cost:
+                samples +=1
+                if self.pso_flag == False or self.func == self.vclamp_cost:
                     fitness = Vcost
                 elif Vcost > self.V_dist:
                     fitness = 1e10
@@ -172,14 +172,16 @@ class Evaluator(object):
 
             if 'IClamp' in self.sampleData:
                 Icost = self.iclamp_cost(candidate)
-                if self.func == self.iclamp_cost:
+                samples +=1
+                if self.pso_flag == False or self.func == self.iclamp_cost:
                     fitness = Icost
                 elif Icost > self.I_dist:
                     fitness = 1e10
                     total_fitness.append(fitness)
                     continue
 
-            # fitness = (Vcost + Icost + IVcost + POVcost) / samples
+            if self.pso_flag == False:
+                fitness = (Vcost + Icost + IVcost + POVcost) / samples
 
             total_fitness.append(fitness)
 
@@ -356,11 +358,11 @@ class Evaluator(object):
         sim_x = np.asarray(sim[0])
         total_cost = 1e9
         sum_var = 0
+        x = np.asarray(target[0])
+        y = np.asarray(target[1])
 
-        if self.weight:
+        if self.weight and set(x) == set(sim_x):
             # TODO: consider IC, IV, etc for sim_params
-            x = np.asarray(target[0])
-            y = np.asarray(target[1])
             on = self.sim_params['start_time']
             off = self.sim_params['end_time']
             onset = np.abs(x-on).argmin()
@@ -386,7 +388,7 @@ class Evaluator(object):
                 N+=1
 
                 # considering weight
-                if self.weight:
+                if self.weight and set(x) == set(sim_x):
                     if target_y == target[1][0]:
                         cost_val *= self.weight['start']
                         N += self.weight['start']
