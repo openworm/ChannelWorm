@@ -5,8 +5,7 @@ from django.shortcuts import render, get_object_or_404
 
 
 # Create your views here.
-from ion_channel.models import Graph
-
+from channelworm.ion_channel.models import Graph
 
 def index(request):
     return render(request, 'digitizer/index.html')

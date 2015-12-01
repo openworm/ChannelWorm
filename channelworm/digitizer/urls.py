@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from digitizer import views
+from channelworm.digitizer import views
 
 urlpatterns = [
     # ex: /polls/

@@ -23,12 +23,12 @@ from django.conf import settings
 
 urlpatterns = [
     url(r'^accounts/', include('django.contrib.auth.urls')),
-    url(r'^accounts/', include('account.urls', namespace='account')),
+    url(r'^accounts/', include('channelworm.account.urls', namespace='account')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^digitizer/', include('digitizer.urls', namespace="digitizer"), ),
-    url(r'^ion_channel/', include('ion_channel.urls', namespace="ion_channel"), ),
-    url(r'^index$', 'ion_channel.views.index' ),
-    url(r'^$', 'ion_channel.views.index' ,name='home'),
+    url(r'^digitizer/', include('channelworm.digitizer.urls', namespace="digitizer"), ),
+    url(r'^ion_channel/', include('channelworm.ion_channel.urls', namespace="ion_channel"), ),
+    url(r'^index$', 'channelworm.ion_channel.views.index' ),
+    url(r'^$', 'channelworm.ion_channel.views.index' ,name='home'),
     url(r'^explorer/', include('explorer.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

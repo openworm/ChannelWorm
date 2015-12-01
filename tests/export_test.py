@@ -1,5 +1,5 @@
 import os, pytest, rdflib, tempfile
-from ion_channel.exporter import Exporter
+from channelworm.ion_channel.exporter import Exporter
 
 
 pytestmark = [pytest.mark.django_db]

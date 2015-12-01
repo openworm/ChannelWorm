@@ -7,7 +7,7 @@ from formtools.wizard.views import SessionWizardView
 from datetime import datetime
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from web_app.views import AjaxMixinListView, AjaxMixinCreateView, AjaxMixinUpdateView, AjaxMixinDeleteView
+from channelworm.web_app.views import AjaxMixinListView, AjaxMixinCreateView, AjaxMixinUpdateView, AjaxMixinDeleteView
 from models import *
 from form import *
 

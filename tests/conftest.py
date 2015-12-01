@@ -1,6 +1,6 @@
 import pytest
 from django.utils import timezone
-from ion_channel.models import (
+from channelworm.ion_channel.models import (
     IonChannel, Reference, Experiment, 
     PatchClamp, User, Graph, GraphData
 )

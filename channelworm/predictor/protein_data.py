@@ -17,7 +17,7 @@ os.environ.setdefault(
 )
 django.setup()
 
-from ion_channel.models import IonChannel, Protein
+from channelworm.ion_channel.models import IonChannel, Protein
 
 wb_pro_url = 'https://www.wormbase.org/search/autocomplete/protein?term=' # slo-2
 

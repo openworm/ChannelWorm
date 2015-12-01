@@ -10,10 +10,10 @@ if hasattr(settings, 'DEBUG'):
     pass
 else:
     # load default settings if they're not set
-    from web_app import settings as defaults
+    from channelworm.web_app import settings as defaults
     settings.configure(default_settings=defaults, DEBUG=True)
 
-import ion_channel.models as C
+import channelworm.ion_channel.models as C
 import PyOpenWorm as P
 from django.forms.models import model_to_dict
 
@@ -47,7 +47,7 @@ class Adapter(object):
     Example usage ::
 
         >>> from adapters import Adapter
-        >>> from ion_channel.models import PatchClamp 
+        >>> from channelworm.ion_channel.models import PatchClamp
         # get some saved patch-clamp experiment from CW
         >>> cw_patch = PatchClamp.objects.all()[0]
         # create an adapter object with it

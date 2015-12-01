@@ -1,6 +1,6 @@
 import PyOpenWorm, pytest, unittest
-from ion_channel.adapters import Adapter
-from ion_channel.models import (
+from channelworm.ion_channel.adapters import Adapter
+from channelworm.ion_channel.models import (
     IonChannel, Reference, PatchClamp
 )
 
