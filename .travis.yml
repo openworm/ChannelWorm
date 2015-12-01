@@ -32,9 +32,9 @@ install:
   # install deps
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose
   - source activate test-environment
-  - python setup.py install
   # install channelworm
   - pip install --allow-all-external -r requirements.txt
+  - python setup.py install
 
 script:
   - py.test .
