@@ -15,11 +15,13 @@ class Initiator(object):
 
         # TODO: Initialize data provided by user (directly from interface or from DB)
 
-        if 'sample' in userData:
+        if 'samples' in userData:
             self.sampleData = userData['samples']
         self.sim_params = dict() # userData['sim_params']
         self.opt_params = dict() # userData['opt_params']
         self.bio_params = dict() # userData['bio_params']
+
+        channelworm.django_setup()
 
     def get_bio_params(self):
         """
@@ -289,7 +291,7 @@ class Initiator(object):
 
         return x,y
 
-    def get_data_from_db(self,fig_id,adjust={},plot=False):
+    def get_graphdata_from_db(self, fig_id, adjust={}, plot=False):
         """
         Get experimental parameters from DB and initialize variables.
         Data structure for sampleData:
@@ -325,8 +327,8 @@ class Initiator(object):
         PO_type = ['I_norm', 'Normalized Current', 'G/G_max', 'Po_peak', 'Peak Open Probability', 'Po', 'Open Probability', 'G', 'Conductance']
         x = []
         y = []
+        label = None
 
-        channelworm.django_setup()
         from channelworm.ion_channel.models import Graph, GraphData
 
         graph = Graph.objects.get(id=fig_id)
@@ -347,11 +349,15 @@ class Initiator(object):
                 x.append(i * x_var['toSI'])
                 y.append(j * y_var['toSI'])
 
+             # TODO: Get vol and amp toSI from user
+
             if graph.x_axis_type in T_type and graph.y_axis_type in I_type:
                 graph_dic['traces'].append({'vol':int(obj.series_name)*1e-3,'t':x,'I':y})
+                label = obj.series_name
 
             elif  graph.x_axis_type in T_type and graph.y_axis_type in V_type:
                 graph_dic['traces'].append({'amp':int(obj.series_name)*1e-6,'t':x,'V':y})
+                label = obj.series_name
 
             elif graph.x_axis_type in V_type and graph.y_axis_type in I_type:
                 graph_dic['V'] = x
@@ -359,6 +365,7 @@ class Initiator(object):
                     graph_dic['I_peak'] = y
                 else:
                     graph_dic['I'] = y
+                label = obj.series_name
 
             elif graph.x_axis_type in V_type and graph.y_axis_type in PO_type:
                 graph_dic['V'] = x
@@ -366,14 +373,46 @@ class Initiator(object):
                     graph_dic['PO_peak'] = y
                 else:
                     graph_dic['PO'] = y
+                label = obj.series_name
 
             if plot:
-                plt.plot([i/x_var['toSI'] for i in x],[j/y_var['toSI'] for j in y],'ko')
-                plt.title('Raw data from Fig.%s, DOI: %s'%(ref['fig'],ref['doi']))
-                plt.xlabel('%s (%s)'%(x_var['type'],x_var['unit']))
-                plt.ylabel('%s (%s)'%(y_var['type'],y_var['unit']))
+                plt.plot([i/x_var['toSI'] for i in x],[j/y_var['toSI'] for j in y],'o', label=label)
 
         if plot:
+            plt.title('Raw data from Fig.%s, DOI: %s'%(ref['fig'],ref['doi']))
+            plt.xlabel('%s (%s)'%(x_var['type'],x_var['unit']))
+            plt.ylabel('%s (%s)'%(y_var['type'],y_var['unit']))
+            plt.legend()
             plt.show()
 
         return graph_dic
+
+    def get_modeldata_from_db(self,fig_id,model_id,contributors,file_path):
+        """
+        Returns dictionary of parameters for generating a model file for the experiment.
+
+        :param experiment_id: Experiment ID in channelworm
+        :return: Dict of parameters
+        """
+
+        from channelworm.ion_channel.models import Graph
+
+        graph = Graph.objects.get(id=fig_id)
+        for channel in graph.ion_channel.all():
+            channel_name = channel.channel_name
+            channel_id = channel.id
+        doi = graph.experiment.reference.doi
+        pmid = graph.experiment.reference.PMID
+        citation = graph.experiment.reference.citation
+
+        model_params = {}
+        model_params['channel_name'] = channel_name
+        model_params['channel_id'] = channel_id
+        model_params['model_id'] = model_id
+        model_params['contributors'] = []
+        for contrib in contributors:
+            model_params['contributors'].append({'name': contrib['name'],'email': contrib['email']})
+        model_params['references'] = [{'doi': doi, 'PMID': pmid, 'citation': citation}]
+        model_params['file_name'] = file_path+channel_name+'.channel.nml'
+
+        return model_params
