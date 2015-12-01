@@ -327,7 +327,7 @@ class Initiator(object):
         y = []
 
         channelworm.django_setup()
-        from ion_channel.models import Graph, GraphData
+        from channelworm.ion_channel.models import Graph, GraphData
 
         graph = Graph.objects.get(id=fig_id)
         graph_data = GraphData.objects.filter(graph__id=graph.id)

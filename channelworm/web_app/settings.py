@@ -37,9 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'digitizer',
-    'ion_channel',
-    'account',
+    'channelworm.digitizer',
+    'channelworm.ion_channel',
+    'channelworm.account',
     'formtools',
     'explorer',
 )
