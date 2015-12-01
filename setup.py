@@ -6,6 +6,7 @@ setup(
         'channelworm',
         'channelworm.ion_channel',
         'channelworm.digitizer',
+        'channelworm.account',
         'channelworm.web_app',
         'channelworm.fitter'
     ],
