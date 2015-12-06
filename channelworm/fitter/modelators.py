@@ -9,6 +9,8 @@ import lems.api as lems
 import osb.metadata
 import osb.resources
 import sys
+import pickle
+from numpy import random, abs, asarray
 from pyneuroml.analysis import NML2ChannelAnalysis
 from channelworm.fitter import validators
 
@@ -20,73 +22,190 @@ class Modelator(object):
         self.channel_params = bio_params['channel_params']
         self.sim_params = sim_params
 
-    def ss_plots(self,simData,show=False):
+    def gating_plots(self, simData, show=False, path=''):
         """
-        Generates steady state plots for ion channel kinetics (m, h, etc)
+        Generates gating plots for ion channel kinetics (m, h, etc)
         """
+
+        i = 1
+
+        it = plt.figure(i)
+        for ind,trace in enumerate(simData['I']):
+            plt.plot([i*1e3 for i in simData['t']],[j*1e6 for j in trace], color=random.rand(3,1), label='%i(mV)'%(simData['V_ss'][ind]*1e3))
+        plt.legend(fontsize=8, bbox_to_anchor=(1., 0., 0.14, .101), loc=3, mode="expand", borderaxespad=0.)
+        plt.title("Current versus Time")
+        plt.xlabel("Time (ms)")
+        plt.ylabel("Current (uA)")
+        plt.savefig(path+"current_time.png",bbox_inches='tight',format='png')
+        pickle.dump(it, file(path+"current_time.pickle", 'w'))
+        if show:
+            plt.draw()
+        i+=1
+
+        pov = plt.figure(i)
+        for ind,trace in enumerate(simData['PO']):
+            plt.plot([i*1e3 for i in simData['t']],trace, color=random.rand(3,1), label='%i(mV)'%(simData['V_ss'][ind]*1e3))
+        plt.legend(fontsize=8, bbox_to_anchor=(1., 0., 0.14, .101), loc=3, mode="expand", borderaxespad=0.)
+        plt.title("G/G_max versus Time")
+        plt.xlabel("Time (ms)")
+        plt.ylabel("G/G_max")
+        plt.savefig(path+"GG_max_time.png",bbox_inches='tight',format='png')
+        pickle.dump(pov, file(path+"GG_max_time.pickle", 'w'))
+        if show:
+            plt.draw()
+        i+=2
+
+        iv_ss = plt.figure(i)
+        plt.plot([round(x*1e3) for x in simData['V_ss']],[j*1e6 for j in simData['I_ss']], color='b', label='Steady state current')
+        plt.plot([round(x*1e3) for x in simData['V_ss']],[j*1e6 for j in simData['I_max']], color='r', label='Peak current')
+        plt.legend(loc='best')
+        plt.title("Current versus membrane potential")
+        plt.xlabel("Voltage (mV)")
+        plt.ylabel("Current (uA)")
+        plt.savefig(path+"current_vs_voltage.png",bbox_inches='tight',format='png')
+        pickle.dump(iv_ss, file(path+"current_vs_voltage.pickle", 'w'))
+        if show:
+            plt.draw()
+        i+=1
 
         if 'm_inf' in simData:
+            m = plt.figure(i)
             plt.plot([round(x*1e3) for x in simData['V_ss']],simData['m_inf'], color='b', label='m_inf')
+            plt.legend(loc='best')
+            plt.title("Steady state activation versus membrane potential")
+            plt.xlabel("Voltage (mV)")
+            plt.ylabel("Steady state activation")
+            plt.savefig(path+"steadyStateAct_vs_voltage.png",bbox_inches='tight',format='png')
+            pickle.dump(m, file(path+"steadyStateAct_vs_voltage.pickle", 'w'))
+            if show:
+                plt.draw()
+            i+=1
 
         if 'h_inf' in simData:
+            h = plt.figure(i)
             plt.plot([round(x*1e3) for x in simData['V_ss']],simData['h_inf'], color='r', label='h_inf')
+            plt.legend(loc='best')
+            plt.title("Steady state inactivation versus membrane potential")
+            plt.xlabel("Voltage (mV)")
+            plt.ylabel("Steady state inactivation")
+            plt.savefig(path+"steadyStateInact_vs_voltage.png",bbox_inches='tight',format='png')
+            pickle.dump(h, file(path+"steadyStateInact_vs_voltage.pickle", 'w'))
+            if show:
+                plt.draw()
+            i+=1
+
+            mh = plt.figure(i)
+            plt.plot([round(x*1e3) for x in simData['V_ss']],[m*h for m,h in zip(simData['m_inf'],simData['h_inf'])], color='k', label='m_inf*h_inf')
+            plt.legend(loc='best')
+            plt.title("Steady state open probability versus membrane potential")
+            plt.xlabel("Voltage (mV)")
+            plt.ylabel("Steady state open probability")
+            plt.savefig(path+"steadyStatePo_vs_voltage.png",bbox_inches='tight',format='png')
+            pickle.dump(mh, file(path+"steadyStatePo_vs_voltage.pickle", 'w'))
+            if show:
+                plt.draw()
+            i+=1
 
         if 'cdi_inf' in simData:
+            cdi = plt.figure(i)
             plt.plot([round(x*1e3) for x in simData['V_ss']],simData['cdi_inf'], color='y', label='Ca-dependent inactivation')
+            plt.legend(loc='best')
+            plt.title("Steady state Calcium-dependent inactivation versus membrane potential")
+            plt.xlabel("Voltage (mV)")
+            plt.ylabel("Steady state Calcium-dependent inactivation")
+            plt.savefig(path+"steadyStateCdi_vs_voltage.png",bbox_inches='tight',format='png')
+            pickle.dump(cdi, file(path+"steadyStateCdi_vs_voltage.pickle", 'w'))
+            if show:
+                plt.draw()
+            i+=1
 
-        plt.legend()
-        plt.title("Steady state activation and inactivation versus membrane potential")
-        plt.xlabel("Voltage (mV)")
-        plt.ylabel("Steady state activation/inactivation")
-        plt.savefig("steadystate_vs_voltage.png",bbox_inches='tight',format='png')
+        if 'm_tau' in simData:
+            tm = plt.figure(i)
+            plt.plot([round(x*1e3) for x in simData['V_ss']],[round(x*1e3) for x in simData['m_tau']], color='b', label='m_tau')
+            plt.legend(loc='best')
+            plt.title("Time constant of activation versus membrane potential")
+            plt.xlabel("Voltage (mV)")
+            plt.ylabel("Time constant of activation (ms)")
+            plt.savefig(path+"mtau_vs_voltage.png",bbox_inches='tight',format='png')
+            pickle.dump(tm, file(path+"mtau_vs_voltage.pickle", 'w'))
+            if show:
+                plt.draw()
+            i+=1
+
+        if 'h_tau' in simData:
+            th = plt.figure(i)
+            plt.plot([round(x*1e3) for x in simData['V_ss']],[round(x*1e3) for x in simData['h_tau']], color='r', label='h_tau')
+            plt.legend(loc='best')
+            plt.title("Time constant of inactivation versus membrane potential")
+            plt.xlabel("Voltage (mV)")
+            plt.ylabel("Time constant of inactivation (ms)")
+            plt.savefig(path+"htau_vs_voltage.png",bbox_inches='tight',format='png')
+            pickle.dump(th, file(path+"htau_vs_voltage.pickle", 'w'))
+            if show:
+                plt.draw()
+            i+=1
 
         if show:
             plt.show()
 
-    def compare_plots(self,sampleData,simData,show=False):
+        return plt
+
+    def compare_plots(self, sampleData, simData, show=False, path=''):
         """
         Generates originals vs simulated plots
         """
 
-        # TODO: Add path and GUID to save plots
+        i = 1
 
         if 'VClamp' in sampleData:
-
+            flag = False
+            vc = plt.figure(i)
             ref = sampleData['VClamp']['ref']
+            x_var = sampleData['VClamp']['x_var']
+            y_var = sampleData['VClamp']['y_var']
             for trace in sampleData['VClamp']['traces']:
-                if 'vol' in trace and trace['vol']:
-                    # sample_plot, = plt.plot(trace['t'],trace['I'], label = '%i (V)'%trace['vol'])
-                    sample_plot, = plt.plot(trace['t'],trace['I'], '--ko')
-                else:
-                    # sample_plot, = plt.plot(trace['t'],trace['I'], marker = '.', linestyle='', color='k')
-                    sample_plot, = plt.plot(trace['t'],trace['I'], '--ko')
+                sample_plot, = plt.plot([i/x_var['toSI'] for i in trace['t']],[j/y_var['toSI'] for j in trace['I']], '--ko')
+                off = self.sim_params['end_time']
+                offset = abs(asarray(trace['t'])-off).argmin()
 
-            voltage = self.sim_params['protocol_end']
-            for trace in simData['I']:
-                # model_plot, = plt.plot(simData['t'],trace, label = '%i (V)'%voltage)
-                model_plot, = plt.plot(simData['t'],trace, color='r')
-                voltage -= self.sim_params['protocol_steps']
+                if 'vol' in trace and trace['vol']:
+                    plt.text(trace['t'][offset]/x_var['toSI']+10, trace['I'][offset]/y_var['toSI'], '%i mV'%(trace['vol']*1e3), color='k')
+
+                    index = abs(simData['V_ss'] - trace['vol']).argmin()
+                    model_plot, = plt.plot([i/x_var['toSI'] for i in simData['t']],[j/y_var['toSI'] for j in simData['I'][index]], color='r')
+                    flag = True
+
+            if flag is False:
+                for ind,trace in enumerate(simData['I']):
+                    off = self.sim_params['end_time']
+                    offset = abs(asarray(trace['t'])-off).argmin()
+                    plt.text(simData['t'][offset]/x_var['toSI']+10, trace[offset]/y_var['toSI'], '%i mV'%(simData['V_ss'][ind]*1e3), color='k')
+                    plt.plot([i/x_var['toSI'] for i in simData['t']],[j/y_var['toSI'] for j in trace], color='r')
+
             plt.legend([sample_plot,model_plot],
-                       ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"],
-                       loc=9, bbox_to_anchor=(0.9, 0.1))
-            plt.title("The Best Model fitted to data for voltage-clamp using optimization")
-            plt.xlabel("Time (s)")
-            plt.ylabel("Current (A)")
-            plt.savefig("data_vs_candidate-VClamp.png",bbox_inches='tight',format='png')
+                       ["Digitized data from Fig.%s, DOI: %s" %(ref['fig'],ref['doi']),"Best fit"],
+                       bbox_to_anchor=(0., 1.01, 1., .101), loc=3,ncol=2, mode="expand", borderaxespad=0., fontsize=10)
+            plt.title("The Best Model fitted to data for voltage-clamp experiment", y=1.05)
+            plt.xlabel('%s (%s)'%(x_var['type'],x_var['unit']))
+            plt.ylabel('%s (%s)'%(y_var['type'],y_var['unit']))
+            plt.savefig(path+"data_vs_candidate-VClamp.png",bbox_inches='tight',format='png')
+            pickle.dump(vc, file(path+"data_vs_candidate-VClamp.pickle", 'w'))
 
             if show:
-                plt.show()
+                plt.draw()
+            i+=1
 
         if 'IClamp' in sampleData:
-
+            ic = plt.figure(i)
             ref = sampleData['IClamp']['ref']
+            x_var = sampleData['IClamp']['x_var']
+            y_var = sampleData['IClamp']['y_var']
             for trace in sampleData['IClamp']['traces']:
                 if 'amp' in trace and trace['amp']:
-                    # sample_plot, = plt.plot(trace['t'],trace['V'], label = '%i (A)'%trace['amp'])
-                    sample_plot, = plt.plot(trace['t'],trace['V'], '--ko')
+                    sample_plot, = plt.plot([i/x_var['toSI'] for i in trace['t']],[j/y_var['toSI'] for j in trace['V']],
+                                            '--ko', label = '%i (uA)'%(trace['amp']*1e6))
                 else:
-                    # sample_plot, = plt.plot(trace['t'],trace['V'], marker = '.', linestyle='', color='k')
-                    sample_plot, = plt.plot(trace['t'],trace['V'], '--ko')
+                    sample_plot, = plt.plot([i/x_var['toSI'] for i in trace['t']],[j/y_var['toSI'] for j in trace['V']], '--ko')
 
             amp = self.sim_params['protocol_end']
             for trace in simData['V']:
@@ -94,50 +213,86 @@ class Modelator(object):
                 model_plot, = plt.plot(simData['t'],trace, color='r')
                 amp -= self.sim_params['protocol_steps']
 
-            plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
-            plt.title("The Best Model fitted to data for current-clamp using optimization")
-            plt.xlabel("Time (s)")
-            plt.ylabel("Voltage (V)")
-            plt.savefig("data_vs_candidate-IClamp.png",bbox_inches='tight',format='png')
+            plt.legend([sample_plot,model_plot],
+                       ["Digitized data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best fit"],
+                       bbox_to_anchor=(0., 1.01, 1., .101), loc=3,ncol=2, mode="expand", borderaxespad=0., fontsize=10)
+            plt.title("The best model fitted to data for current-clamp experiment", y=1.06)
+            plt.xlabel('%s (%s)'%(x_var['type'],x_var['unit']))
+            plt.ylabel('%s (%s)'%(y_var['type'],y_var['unit']))
+            plt.savefig(path+"data_vs_candidate-IClamp.png",bbox_inches='tight',format='png')
+            pickle.dump(ic, file(path+"data_vs_candidate-IClamp.pickle", 'w'))
 
             if show:
-                plt.show()
+                plt.draw()
+            i+=1
 
         if 'IV' in sampleData:
-
+            iv = plt.figure(i)
             ref = sampleData['IV']['ref']
+            x_var = sampleData['IV']['x_var']
+            y_var = sampleData['IV']['y_var']
             if 'I_peak' in sampleData['IV']:
-                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I_peak'],'--ko')
-                model_plot, = plt.plot([round(x*1e3) for x in simData['V_max']],simData['I_max'],'r')
+                # sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I_peak'],'ko')
+                sample_plot, = plt.plot([i/x_var['toSI'] for i in sampleData['IV']['V']],
+                                        [j/y_var['toSI'] for j in sampleData['IV']['I_peak']],'--ko')
+                model_plot, = plt.plot([i/x_var['toSI'] for i in simData['V_max']],
+                                       [j/y_var['toSI'] for j in simData['I_max']],'r')
             else:
-                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I'],'--ko')
-                model_plot, = plt.plot([round(x*1e3) for x in simData['V_ss']],simData['I_ss'],'r')
-            plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
-            plt.title("The Best Model fitted to data for I/V curve using optimization")
-            plt.xlabel("Voltage (mV)")
-            plt.ylabel("Current (A/F)")
-            plt.savefig("data_vs_candidate-IV.png",bbox_inches='tight',format='png')
+                # sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I'],'ko')
+                # model_plot, = plt.plot([round(x*1e3) for x in simData['V_ss']],simData['I_ss'],'r')
+                sample_plot, = plt.plot([i/x_var['toSI'] for i in sampleData['IV']['V']],
+                                        [j/y_var['toSI'] for j in sampleData['IV']['I']],'--ko')
+                model_plot, = plt.plot([i/x_var['toSI'] for i in simData['V_ss']],
+                                       [j/y_var['toSI'] for j in simData['I_ss']],'r')
+            plt.legend([sample_plot,model_plot],
+                       ["Digitized data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best fit"],
+                       bbox_to_anchor=(0., 1.01, 1., .101), loc=3,ncol=2, mode="expand", borderaxespad=0., fontsize=10)
+            plt.title("The Best Model fitted to data for I/V curve", y=1.06)
+            plt.xlabel('%s (%s)'%(x_var['type'],x_var['unit']))
+            plt.ylabel('%s (%s)'%(y_var['type'],y_var['unit']))
+            plt.savefig(path+"data_vs_candidate-IV.png",bbox_inches='tight',format='png')
+            pickle.dump(iv, file(path+"data_vs_candidate-IV.pickle", 'w'))
 
             if show:
-                plt.show()
+                plt.draw()
+            i+=1
 
         if 'POV' in sampleData:
-
+            pov = plt.figure(i)
             ref = sampleData['POV']['ref']
+            x_var = sampleData['POV']['x_var']
+            y_var = sampleData['POV']['y_var']
             if 'PO_peak' in sampleData['POV']:
-                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO_peak'],'--ko')
-                model_plot, = plt.plot([round(x*1e3) for x in simData['V_PO_max']],simData['PO_max'],'r')
+                # sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO_peak'],'ko')
+                # model_plot, = plt.plot([round(x*1e3) for x in simData['V_PO_max']],simData['PO_max'],'r')
+                sample_plot, = plt.plot([i/x_var['toSI'] for i in sampleData['POV']['V']],
+                                        [j/y_var['toSI'] for j in sampleData['POV']['PO_peak']],'--ko')
+                model_plot, = plt.plot([i/x_var['toSI'] for i in simData['V_PO_max']],
+                                       [j/y_var['toSI'] for j in simData['PO_max']],'r')
             else:
-                sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO'],'--ko')
-                model_plot, = plt.plot([round(x*1e3) for x in simData['V_ss']],simData['PO_ss'],'r')
-            plt.legend([sample_plot,model_plot], ["Original data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best model"])
-            plt.title("The Best Model fitted to data for G/Gmax / V curve using optimization")
-            plt.xlabel("Voltage (mV)")
-            plt.ylabel("G/Gmax")
-            plt.savefig("data_vs_candidate-POV.png",bbox_inches='tight',format='png')
+                # sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO'],'ko')
+                # model_plot, = plt.plot([round(x*1e3) for x in simData['V_ss']],simData['PO_ss'],'r')
+                sample_plot, = plt.plot([i/x_var['toSI'] for i in sampleData['POV']['V']],
+                                        [j/y_var['toSI'] for j in sampleData['POV']['PO']],'--ko')
+                model_plot, = plt.plot([i/x_var['toSI'] for i in simData['V_ss']],
+                                       [j/y_var['toSI'] for j in simData['PO_ss']],'r')
+            plt.legend([sample_plot,model_plot],
+                       ["Digitized data from Fig.%s, DOI: %s"%(ref['fig'],ref['doi']),"Best fit"],
+                       bbox_to_anchor=(0., 1.01, 1., .101), loc=3,ncol=2, mode="expand", borderaxespad=0., fontsize=10)
+            plt.title("The Best Model fitted to data for G/Gmax / V curve", y=1.06)
+            plt.xlabel('%s (%s)'%(x_var['type'],x_var['unit']))
+            plt.ylabel('%s (%s)'%(y_var['type'],y_var['unit']))
+            plt.savefig(path+"data_vs_candidate-POV.png",bbox_inches='tight',format='png')
+            pickle.dump(pov, file(path+"data_vs_candidate-POV.pickle", 'w'))
 
             if show:
-                plt.show()
+                plt.draw()
+            i+=1
+
+        if show:
+            plt.show()
+
+        return plt
 
     def generate_channel_nml2(self,bio_params,channel_params,model_params):
         """
