@@ -22,6 +22,57 @@ class Modelator(object):
         self.channel_params = bio_params['channel_params']
         self.sim_params = sim_params
 
+    def patch_clamp_plots(self, simData, show=False, path=''):
+        """
+        Generates patch clamp plots for ion channel kinetics (I/t, Po/t, etc.)
+        """
+
+        i = 1
+
+        it = plt.figure(i)
+        for ind,trace in enumerate(simData['I']):
+            plt.plot([i*1e3 for i in simData['t']],[j*1e12 for j in trace], color=random.rand(3,1), label='%i mV'%(simData['V_ss'][ind]*1e3))
+        plt.legend(fontsize=9, bbox_to_anchor=(1., 0., 0.14, .101), loc=3, mode="expand", borderaxespad=0.)
+        plt.title("Current versus Time")
+        plt.xlabel("Time (ms)")
+        plt.ylabel("Current (pA)")
+        plt.savefig(path+"current_time.png",bbox_inches='tight',format='png')
+        pickle.dump(it, file(path+"current_time.pickle", 'w'))
+        if show:
+            plt.draw()
+        i+=1
+
+        pot = plt.figure(i)
+        for ind,trace in enumerate(simData['PO']):
+            plt.plot([i*1e3 for i in simData['t']],trace, color=random.rand(3,1), label='%i mV'%(simData['V_ss'][ind]*1e3))
+        plt.legend(fontsize=9, bbox_to_anchor=(1., 0., 0.14, .101), loc=3, mode="expand", borderaxespad=0.)
+        plt.title("G/G_max versus Time")
+        plt.xlabel("Time (ms)")
+        plt.ylabel("G/G_max")
+        plt.savefig(path+"GG_max_time.png",bbox_inches='tight',format='png')
+        pickle.dump(pot, file(path+"GG_max_time.pickle", 'w'))
+        if show:
+            plt.draw()
+        i+=2
+
+        vt = plt.figure(i)
+        for ind,trace in enumerate(simData['V']):
+            plt.plot([i*1e3 for i in simData['t']],[j*1e3 for j in trace], color=random.rand(3,1), label='%i mV'%(simData['V_ss'][ind]*1e3))
+        plt.legend(fontsize=9, bbox_to_anchor=(1., 0., 0.14, .101), loc=3, mode="expand", borderaxespad=0.)
+        plt.title("Voltage versus Time")
+        plt.xlabel("Time (ms)")
+        plt.ylabel("Voltage (mV)")
+        plt.savefig(path+"voltage_time.png",bbox_inches='tight',format='png')
+        pickle.dump(vt, file(path+"voltage_time.pickle", 'w'))
+        if show:
+            plt.draw()
+        i+=1
+
+        if show:
+            plt.show()
+
+        return plt
+
     def gating_plots(self, simData, show=False, path=''):
         """
         Generates gating plots for ion channel kinetics (m, h, etc)
@@ -29,41 +80,28 @@ class Modelator(object):
 
         i = 1
 
-        it = plt.figure(i)
-        for ind,trace in enumerate(simData['I']):
-            plt.plot([i*1e3 for i in simData['t']],[j*1e6 for j in trace], color=random.rand(3,1), label='%i(mV)'%(simData['V_ss'][ind]*1e3))
-        plt.legend(fontsize=8, bbox_to_anchor=(1., 0., 0.14, .101), loc=3, mode="expand", borderaxespad=0.)
-        plt.title("Current versus Time")
-        plt.xlabel("Time (ms)")
-        plt.ylabel("Current (uA)")
-        plt.savefig(path+"current_time.png",bbox_inches='tight',format='png')
-        pickle.dump(it, file(path+"current_time.pickle", 'w'))
+        iv_ss = plt.figure(i)
+        plt.plot([round(x*1e3) for x in simData['V_ss']],[j*1e12 for j in simData['I_ss']], color='b', label='Steady state current')
+        plt.plot([round(x*1e3) for x in simData['V_ss']],[j*1e12 for j in simData['I_max']], color='r', label='Peak current')
+        plt.legend(loc='best')
+        plt.title("Current versus membrane potential")
+        plt.xlabel("Voltage (mV)")
+        plt.ylabel("Current (pA)")
+        plt.savefig(path+"current_vs_voltage.png",bbox_inches='tight',format='png')
+        pickle.dump(iv_ss, file(path+"current_vs_voltage.pickle", 'w'))
         if show:
             plt.draw()
         i+=1
 
         pov = plt.figure(i)
-        for ind,trace in enumerate(simData['PO']):
-            plt.plot([i*1e3 for i in simData['t']],trace, color=random.rand(3,1), label='%i(mV)'%(simData['V_ss'][ind]*1e3))
-        plt.legend(fontsize=8, bbox_to_anchor=(1., 0., 0.14, .101), loc=3, mode="expand", borderaxespad=0.)
-        plt.title("G/G_max versus Time")
-        plt.xlabel("Time (ms)")
-        plt.ylabel("G/G_max")
-        plt.savefig(path+"GG_max_time.png",bbox_inches='tight',format='png')
-        pickle.dump(pov, file(path+"GG_max_time.pickle", 'w'))
-        if show:
-            plt.draw()
-        i+=2
-
-        iv_ss = plt.figure(i)
-        plt.plot([round(x*1e3) for x in simData['V_ss']],[j*1e6 for j in simData['I_ss']], color='b', label='Steady state current')
-        plt.plot([round(x*1e3) for x in simData['V_ss']],[j*1e6 for j in simData['I_max']], color='r', label='Peak current')
+        plt.plot([round(x*1e3) for x in simData['V_ss']],[j for j in simData['PO_ss']], color='b', label='Steady state G/G_max')
+        plt.plot([round(x*1e3) for x in simData['V_ss']],[j for j in simData['PO_max']], color='r', label='Peak G/G_max')
         plt.legend(loc='best')
-        plt.title("Current versus membrane potential")
+        plt.title("G/G_max versus membrane potential")
         plt.xlabel("Voltage (mV)")
-        plt.ylabel("Current (uA)")
-        plt.savefig(path+"current_vs_voltage.png",bbox_inches='tight',format='png')
-        pickle.dump(iv_ss, file(path+"current_vs_voltage.pickle", 'w'))
+        plt.ylabel("G/G_max")
+        plt.savefig(path+"GG_max_vs_voltage.png",bbox_inches='tight',format='png')
+        pickle.dump(pov, file(path+"GG_max_vs_voltage.pickle", 'w'))
         if show:
             plt.draw()
         i+=1
@@ -90,18 +128,6 @@ class Modelator(object):
             plt.ylabel("Steady state inactivation")
             plt.savefig(path+"steadyStateInact_vs_voltage.png",bbox_inches='tight',format='png')
             pickle.dump(h, file(path+"steadyStateInact_vs_voltage.pickle", 'w'))
-            if show:
-                plt.draw()
-            i+=1
-
-            mh = plt.figure(i)
-            plt.plot([round(x*1e3) for x in simData['V_ss']],[m*h for m,h in zip(simData['m_inf'],simData['h_inf'])], color='k', label='m_inf*h_inf')
-            plt.legend(loc='best')
-            plt.title("Steady state open probability versus membrane potential")
-            plt.xlabel("Voltage (mV)")
-            plt.ylabel("Steady state open probability")
-            plt.savefig(path+"steadyStatePo_vs_voltage.png",bbox_inches='tight',format='png')
-            pickle.dump(mh, file(path+"steadyStatePo_vs_voltage.pickle", 'w'))
             if show:
                 plt.draw()
             i+=1
