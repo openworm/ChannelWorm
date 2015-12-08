@@ -325,8 +325,6 @@ class Initiator(object):
         T_type = ['T','Time']
         V_type = ['V','Voltage']
         PO_type = ['I_norm', 'Normalized Current', 'G/G_max', 'Po_peak', 'Peak Open Probability', 'Po', 'Open Probability', 'G', 'Conductance']
-        x = []
-        y = []
         label = None
 
         from channelworm.ion_channel.models import Graph, GraphData
@@ -341,6 +339,8 @@ class Initiator(object):
         graph_dic = {'ref':ref,'x_var':x_var,'y_var':y_var, 'traces':[]}
 
         for obj in graph_data:
+            x = []
+            y = []
             for i,j in obj.asarray():
                 if 'x' in adjust:
                     i += adjust['x']
@@ -356,7 +356,7 @@ class Initiator(object):
                 label = obj.series_name
 
             elif  graph.x_axis_type in T_type and graph.y_axis_type in V_type:
-                graph_dic['traces'].append({'amp':int(obj.series_name)*1e-6,'t':x,'V':y})
+                graph_dic['traces'].append({'amp':int(obj.series_name)*1e-12,'t':x,'V':y})
                 label = obj.series_name
 
             elif graph.x_axis_type in V_type and graph.y_axis_type in I_type:
@@ -391,7 +391,11 @@ class Initiator(object):
         """
         Returns dictionary of parameters for generating a model file for the experiment.
 
-        :param experiment_id: Experiment ID in channelworm
+        :param fig_id: Figure(graph) ID in channelworm
+        :param model_id: Model ID in channelworm
+        :param contributors: List of contributors. e.g. [{'name': 'Vahid Ghayoomi','email': 'vahidghayoomi@gmail.com'}]
+        :param file_path: File path to save the model
+
         :return: Dict of parameters
         """
 
