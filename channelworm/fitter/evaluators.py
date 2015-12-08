@@ -112,7 +112,7 @@ class Evaluator(object):
                                                  seeds=seeds,
                                                  verbose=verbose)
 
-        best_candidate, score = candidates.optimize(do_plot=True, seed=1234)
+        best_candidate, score = candidates.optimize(do_plot=False, seed=1234)
 
         return best_candidate,score
 
@@ -216,7 +216,8 @@ class Evaluator(object):
                     M += 1
                     del VClampSim_I_copy[indexTemp]
                 else:
-                    index = int((self.sim_params['protocol_end'] - trace['vol']) / self.sim_params['protocol_steps'])
+                    # index = int((self.sim_params['protocol_end'] - trace['vol']) / self.sim_params['protocol_steps'])
+                    index = np.abs(self.mySimulator['V_ss'] - trace['vol']).argmin()
                     tempCost = self.cost([mySimulator['t'],mySimulator['I'][index]],[trace['t'],trace['I']])
                     Vcost += tempCost
                     N += len(trace['t'])
@@ -259,7 +260,7 @@ class Evaluator(object):
                if trace['amp'] is None:
                     costList = list()
                     for index in range(0,len(IClampSim_I_copy)):
-                        tempCost = self.cost([mySimulator['t'],IClampSim_I_copy[index]],[trace['t'],trace['V']])
+                        tempCost = self.cost([mySimulator['t'],IClampSim_I_copy[index]],[trace['t'],trace['V']],'IClamp')
                         costList.append(tempCost)
                     tempCost = min(costList)
                     indexTemp = costList.index(tempCost)
@@ -273,7 +274,7 @@ class Evaluator(object):
                     else:
                         index = int((trace['amp'] - self.sim_params['protocol_start']) / self.sim_params['protocol_steps'])
                     if mySimulator['V'][index]:
-                        tempCost = self.cost([mySimulator['t'],mySimulator['V'][index]],[trace['t'],trace['V']])
+                        tempCost = self.cost([mySimulator['t'],mySimulator['V'][index]],[trace['t'],trace['V']],'IClamp')
                         Icost += tempCost
                         N += len(trace['t'])
                         M += 1
@@ -304,9 +305,9 @@ class Evaluator(object):
         mySimulator = self.mySimulator
 
         if 'I_peak' in self.sampleData['IV']:
-            IVcost = self.cost([mySimulator['V_max'],mySimulator['I_max']],[self.sampleData['IV']['V'],self.sampleData['IV']['I_peak']])
+            IVcost = self.cost([mySimulator['V_max'],mySimulator['I_max']],[self.sampleData['IV']['V'],self.sampleData['IV']['I_peak']],'IV')
         else:
-            IVcost = self.cost([mySimulator['V_ss'],mySimulator['I_ss']],[self.sampleData['IV']['V'],self.sampleData['IV']['I']])
+            IVcost = self.cost([mySimulator['V_ss'],mySimulator['I_ss']],[self.sampleData['IV']['V'],self.sampleData['IV']['I']],'IV')
         N = len(self.sampleData['IV']['V'])
         if N != 0:
             IVcost /= N
@@ -329,9 +330,9 @@ class Evaluator(object):
 
         mySimulator = self.mySimulator
         if 'PO_peak' in self.sampleData['POV']:
-            POVcost = self.cost([mySimulator['V_PO_max'],mySimulator['PO_max']],[self.sampleData['POV']['V'],self.sampleData['POV']['PO_peak']])
+            POVcost = self.cost([mySimulator['V_PO_max'],mySimulator['PO_max']],[self.sampleData['POV']['V'],self.sampleData['POV']['PO_peak']],'POV')
         else:
-            POVcost = self.cost([mySimulator['V_ss'],mySimulator['PO_ss']],[self.sampleData['POV']['V'],self.sampleData['POV']['PO']])
+            POVcost = self.cost([mySimulator['V_ss'],mySimulator['PO_ss']],[self.sampleData['POV']['V'],self.sampleData['POV']['PO']],'POV')
         N = len(self.sampleData['POV']['V'])
         if N != 0:
             POVcost /= N
@@ -341,7 +342,7 @@ class Evaluator(object):
         else:
             return POVcost
 
-    def cost(self, sim, target):
+    def cost(self, sim, target, type='VClamp'):
         """
         Gets simulation data and target data (experimental/digitazed) to calculate cost for each trace.
         Cost function calculation is based on Gurkiewicz & Korngreen approach (doi:10.1371/journal.pcbi.0030169.)
@@ -350,7 +351,6 @@ class Evaluator(object):
 
         :param: sim: A 2D array of simulated data (one trace for I- or V- clamp)
         :param: target: A 2D array of experimental/digitized data
-        :param: scale: if True, then scales the cost value by dividing by the sigma squared of the Y-axis in the target dataset.
         :return: cost_val: the cost value
         """
         # TODO: a better way to calculate cost is to measure the area between two plots!!
@@ -361,8 +361,8 @@ class Evaluator(object):
         x = np.asarray(target[0])
         y = np.asarray(target[1])
 
-        if self.weight and set(x) == set(sim_x):
-            # TODO: consider IC, IV, etc for sim_params
+        # TODO: consider IC, IV, etc for sim_params
+        if self.weight and type in ['VClamp','IClamp']:
             on = self.sim_params['start_time']
             off = self.sim_params['end_time']
             onset = np.abs(x-on).argmin()
@@ -388,7 +388,7 @@ class Evaluator(object):
                 N+=1
 
                 # considering weight
-                if self.weight and set(x) == set(sim_x):
+                if self.weight and type in ['VClamp','IClamp']:
                     if target_y == target[1][0]:
                         cost_val *= self.weight['start']
                         N += self.weight['start']
@@ -423,7 +423,6 @@ class Evaluator(object):
 
         :param: sim: Array of simulated experiment including all traces
         :param: terget: A 2D array of experimental/digitized data
-        :param: scale: if True, then scales the cost value by dividing by the sigma squared of the Y-axis in the target dataset.
         :return: total_cost: the cost value
         """
 
