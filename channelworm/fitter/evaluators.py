@@ -198,7 +198,6 @@ class Evaluator(object):
 
         Vcost = 0
         tempCost = 0
-        M = 0
         N = 0
         VClampSim_I_copy = list(copy.deepcopy(mySimulator['I']))
 
@@ -213,7 +212,6 @@ class Evaluator(object):
                     indexTemp = costList.index(tempCost)
                     Vcost += tempCost
                     N += len(trace['t'])
-                    M += 1
                     del VClampSim_I_copy[indexTemp]
                 else:
                     # index = int((self.sim_params['protocol_end'] - trace['vol']) / self.sim_params['protocol_steps'])
@@ -221,14 +219,12 @@ class Evaluator(object):
                     tempCost = self.cost([mySimulator['t'],mySimulator['I'][index]],[trace['t'],trace['I']])
                     Vcost += tempCost
                     N += len(trace['t'])
-                    M += 1
             else:
                 Vcost = self.cost_all_traces([mySimulator['t'],mySimulator['I']],[trace['t'],trace['I']])
                 N = 1
-                M = 1
 
-            if (N * M) != 0:
-                Vcost /= (N * M)
+        if N != 0:
+            Vcost /= N
 
         if self.pso_flag and self.func != self.vclamp_cost:
             return self.V_dist - Vcost
@@ -249,7 +245,6 @@ class Evaluator(object):
         mySimulator = self.mySimulator
 
         tempCost = 0
-        M = 0
         N = 0
         IClampSim_I_copy = list(copy.deepcopy(mySimulator['V']))
 
@@ -266,7 +261,6 @@ class Evaluator(object):
                     indexTemp = costList.index(tempCost)
                     Icost += tempCost
                     N += len(trace['t'])
-                    M += 1
                     del IClampSim_I_copy[indexTemp]
                else:
                     if 'IC' in self.sim_params:
@@ -277,14 +271,12 @@ class Evaluator(object):
                         tempCost = self.cost([mySimulator['t'],mySimulator['V'][index]],[trace['t'],trace['V']],'IClamp')
                         Icost += tempCost
                         N += len(trace['t'])
-                        M += 1
             else:
                 Icost = self.cost_all_traces([mySimulator['t'],mySimulator['V']],[trace['t'],trace['V']])
                 N = 1
-                M = 1
 
-        if (N * M) != 0:
-            Icost /= (N * M)
+        if N != 0:
+            Icost /= N
 
         if self.pso_flag and self.func != self.iclamp_cost:
             return self.I_dist - Icost
