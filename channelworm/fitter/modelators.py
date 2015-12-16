@@ -146,14 +146,14 @@ class Modelator(object):
             i+=1
 
         if 'm_tau' in simData:
-            tm = plt.figure(i)
+            mt = plt.figure(i)
             plt.plot([round(x*1e3) for x in simData['V_ss']],[round(x*1e3) for x in simData['m_tau']], color='b', label='m_tau')
             plt.legend(loc='best')
             plt.title("Time constant of activation versus membrane potential")
             plt.xlabel("Voltage (mV)")
             plt.ylabel("Time constant of activation (ms)")
             plt.savefig(path+"mtau_vs_voltage.png",bbox_inches='tight',format='png')
-            pickle.dump(tm, file(path+"mtau_vs_voltage.pickle", 'w'))
+            pickle.dump(mt, file(path+"mtau_vs_voltage.pickle", 'w'))
             if show:
                 plt.draw()
             i+=1
@@ -235,7 +235,6 @@ class Modelator(object):
 
             amp = self.sim_params['protocol_end']
             for trace in simData['V']:
-                # model_plot, = plt.plot(simData['t'],trace, label = '%i (A)'%amp)
                 model_plot, = plt.plot(simData['t'],trace, color='r')
                 amp -= self.sim_params['protocol_steps']
 
@@ -258,14 +257,11 @@ class Modelator(object):
             x_var = sampleData['IV']['x_var']
             y_var = sampleData['IV']['y_var']
             if 'I_peak' in sampleData['IV']:
-                # sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I_peak'],'ko')
                 sample_plot, = plt.plot([i/x_var['toSI'] for i in sampleData['IV']['V']],
                                         [j/y_var['toSI'] for j in sampleData['IV']['I_peak']],'--ko')
                 model_plot, = plt.plot([i/x_var['toSI'] for i in simData['V_max']],
                                        [j/y_var['toSI'] for j in simData['I_max']],'r')
             else:
-                # sample_plot, = plt.plot([round(x*1e3) for x in sampleData['IV']['V']],sampleData['IV']['I'],'ko')
-                # model_plot, = plt.plot([round(x*1e3) for x in simData['V_ss']],simData['I_ss'],'r')
                 sample_plot, = plt.plot([i/x_var['toSI'] for i in sampleData['IV']['V']],
                                         [j/y_var['toSI'] for j in sampleData['IV']['I']],'--ko')
                 model_plot, = plt.plot([i/x_var['toSI'] for i in simData['V_ss']],
@@ -289,15 +285,11 @@ class Modelator(object):
             x_var = sampleData['POV']['x_var']
             y_var = sampleData['POV']['y_var']
             if 'PO_peak' in sampleData['POV']:
-                # sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO_peak'],'ko')
-                # model_plot, = plt.plot([round(x*1e3) for x in simData['V_PO_max']],simData['PO_max'],'r')
                 sample_plot, = plt.plot([i/x_var['toSI'] for i in sampleData['POV']['V']],
                                         [j/y_var['toSI'] for j in sampleData['POV']['PO_peak']],'--ko')
                 model_plot, = plt.plot([i/x_var['toSI'] for i in simData['V_PO_max']],
                                        [j/y_var['toSI'] for j in simData['PO_max']],'r')
             else:
-                # sample_plot, = plt.plot([round(x*1e3) for x in sampleData['POV']['V']],sampleData['POV']['PO'],'ko')
-                # model_plot, = plt.plot([round(x*1e3) for x in simData['V_ss']],simData['PO_ss'],'r')
                 sample_plot, = plt.plot([i/x_var['toSI'] for i in sampleData['POV']['V']],
                                         [j/y_var['toSI'] for j in sampleData['POV']['PO']],'--ko')
                 model_plot, = plt.plot([i/x_var['toSI'] for i in simData['V_ss']],
