@@ -98,7 +98,7 @@ class Simulator(object):
 
             if 'power' in gate_params['m']:
                 self.m_power = int(gate_params['m']['power'])
-            if 'm_power' in channel_params:
+            elif 'm_power' in channel_params:
                 self.m_power = int(channel_params['m_power'])
             else:
                 self.m_power = 1
@@ -312,10 +312,11 @@ class Simulator(object):
             # cdi_max = np.zeros(self.numtests)
         if 'm' in self.gates:
             act = np.zeros((self.numtests,self.numpoints))
+            m_tau = np.zeros((self.numtests,self.numpoints))
             m_inf = np.zeros(self.numtests)
             alpha_m = np.zeros(self.numtests)
             beta_m = np.zeros(self.numtests)
-            m_tau = np.zeros(self.numtests)
+            tau_m = np.zeros(self.numtests)
             alpha_m_hold = self.alphaBetaFit(self.v_hold, self.v_half_m_a, self.k_m_a, self.rate_m_a, self.a_m_a,self.b_m_a,self.c_m_a,self.d_m_a)
             beta_m_hold = self.alphaBetaFit(self.v_hold, self.v_half_m_b, self.k_m_b, self.rate_m_b, self.a_m_b,self.b_m_b,self.c_m_b,self.d_m_b)
             if (alpha_m_hold + beta_m_hold) != 0:
@@ -325,12 +326,13 @@ class Simulator(object):
             m = m_inf_hold
         if 'h' in self.gates:
             inact = np.zeros((self.numtests,self.numpoints))
+            h_tau =  np.zeros((self.numtests,self.numpoints))
             h_inf = np.zeros(self.numtests)
             alpha_h = np.zeros(self.numtests)
             beta_h = np.zeros(self.numtests)
-            h_tau = np.zeros(self.numtests)
+            tau_h = np.zeros(self.numtests)
             alpha_h_hold = self.alphaBetaFit(self.v_hold, self.v_half_h_a, self.k_h_a, self.rate_h_a, self.a_h_a,self.b_h_a,self.c_h_a,self.d_h_a)
-            beta_h_hold = self.alphaBetaFit(self.v_hold, self.v_half_h_b, self.k_h_b, self.rate_h_b, self.a_h_b,self.b_h_b,self.c_h_b,self.d_h_b)            
+            beta_h_hold = self.alphaBetaFit(self.v_hold, self.v_half_h_b, self.k_h_b, self.rate_h_b, self.a_h_b,self.b_h_b,self.c_h_b,self.d_h_b)
             if (alpha_h_hold + beta_h_hold) != 0:
                 h_inf_hold = alpha_h_hold / (alpha_h_hold + beta_h_hold)
             else:
@@ -368,115 +370,117 @@ class Simulator(object):
                 alpha_m[j] = self.alphaBetaFit(V_ss[j], self.v_half_m_a, self.k_m_a, self.rate_m_a, self.a_m_a,self.b_m_a,self.c_m_a,self.d_m_a)
                 beta_m[j] = self.alphaBetaFit(V_ss[j], self.v_half_m_b, self.k_m_b, self.rate_m_b, self.a_m_b,self.b_m_b,self.c_m_b,self.d_m_b)
                 if (alpha_m[j] + beta_m[j]) != 0:
-                    m_tau[j] = 1 / (alpha_m[j] + beta_m[j])
+                    tau_m[j] = 1 / (alpha_m[j] + beta_m[j])
                     m_inf[j] = alpha_m[j] / (alpha_m[j] + beta_m[j])
                 else:
-                    m_tau[j] = 1e-10
+                    tau_m[j] = 1e-10
                     m_inf[j] = 0
             if 'h' in self.gates:
-                # alpha_h[j] = self.alphaBetaFit(V_ss[j],self.a_h_a,self.b_h_a,self.c_h_a,self.h_h_a, self.v_half_h_a, self.k_h_a)
-                # beta_h[j] = self.alphaBetaFit(V_ss[j],self.a_h_b,self.b_h_b,self.c_h_b,self.h_h_b, self.v_half_h_b, self.k_h_b)
                 alpha_h[j] = self.alphaBetaFit(V_ss[j], self.v_half_h_a, self.k_h_a, self.rate_h_a, self.a_h_a,self.b_h_a,self.c_h_a,self.d_h_a)
                 beta_h[j] = self.alphaBetaFit(V_ss[j], self.v_half_h_b, self.k_h_b, self.rate_h_b, self.a_h_b,self.b_h_b,self.c_h_b,self.d_h_b)
                 if (alpha_h[j] + beta_h[j]) != 0:
-                    h_tau[j] = 1 / (alpha_h[j] + beta_h[j])
+                    tau_h[j] = 1 / (alpha_h[j] + beta_h[j])
                     h_inf[j] = alpha_h[j] / (alpha_h[j] + beta_h[j])
                 else:
-                    h_tau[j] = 1e-10
+                    tau_h[j] = 1e-10
                     h_inf[j] = 0
 
-        else:
-            for j in range(0,self.numtests):
-                for i in range(1,self.numpoints):
-                    I = self.g * (V[j][i-1] - self.e_rev)
-                    po = 1
-    
-                    if 'vda' in self.gates:
-                        if self.onset < i < self.offset:
-                            da = (m_inf[j] - m)/self.T_a
-                        else:
-                            da = (m_inf_hold - m)/self.T_a
-                        m += (da*self.deltat)
-                        act[j][i] = m**self.a_power
-                        po *= act[j][i]
-    
-                    if 'vdi' in self.gates:
-                        if self.onset < i < self.offset:
-                            di = (h_inf[j] - h)/self.T_i
-                        else:
-                            di = (h_inf_hold - h)/self.T_i
-                        h += (di*self.deltat)
-                        inact[j][i] = h**self.i_power
-                        po *= inact[j][i]
-    
-                    if 'cdi' in self.gates:
-                        cdi_inf[j][i] = self.boltzmannFit(Ca[j][i-1], self.ca_half_i, self.k_ca)
-                        cdi[j][i] = (1 + (cdi_inf[j][i] - 1) * self.alpha_ca)**self.cdi_power
-                        po *= cdi[j][i]
-    
-                        dCa = -(Ca[j][i-1] / self.T_ca + self.thi_ca * I * po)
-                        Ca[j][i] = Ca[j][i-1] + dCa * self.deltat
-    
-                    if 'm' in self.gates:
-                        if self.onset < i < self.offset:
-                            dm = (alpha_m[j]*(1.0-m)) - (beta_m[j]*m)
-                        else:
-                            dm = (alpha_m_hold*(1.0-m)) - (beta_m_hold*m)
-                        m += (dm*self.deltat)
+        for j in range(0,self.numtests):
+            for i in range(1,self.numpoints):
+                dt = i*self.deltat
+                I = self.g * (V[j][i-1] - self.e_rev)
+                po = 1
 
-                        # Preventing overflow when fitting parameters are inappropriate
-                        if m > 1:
-                            m = 1
-                        elif m < 0:
-                            m = 0
-                        act[j][i] = m**self.m_power
-                        po *= act[j][i]
-        
-                    if 'h' in self.gates:
-                        if self.onset < i < self.offset:
-                            dh = (alpha_h[j]*(1.0-h)) - (beta_m[j]*h)
-                        else:
-                            dh = (alpha_h_hold*(1.0-h)) - (beta_h_hold*h)
-                        h += (dh*self.deltat)
-
-                        # Preventing overflow when parameters are inappropriate
-                        if h > 1:
-                            h = 1
-                        elif h < 0:
-                            h = 0
-                        inact[j][i] = h**self.h_power
-                        po *= inact[j][i]
-    
-                    PO[j][i] = po
-                    I_mem[j][i] = I * po
-    
-                    if hasattr(self,'gL'):
-                        IL = self.gL*(V[j][i-1] - self.VL)
-                        I_mem[j][i] += IL
-
-                    if self.pc_type == 'IClamp':
-                        # dv = -(I_in[j][i] + I_mem[j][i]) / self.c_mem
-                        if hasattr(self,'gL'):
-                            dv = -(I_in[j][i] + I_mem[j][i] + IL)
-                        else:
-                            dv = -(I_in[j][i] + I_mem[j][i])
-                        V[j][i] = V[j][i-1] + dv * self.deltat
-    
+                if 'vda' in self.gates:
                     if self.onset < i < self.offset:
-                        if abs(I_mem[j][i]) > abs(I_max[j]):
-                            I_max[j] = I_mem[j][i]
-                            V_max[j] = V_ss[j]
-                        if po > PO_max[j]:
-                            PO_max[j] = po
-                            V_PO_max[j] = V_ss[j]
-                        if self.pc_type == 'IClamp':
-                            if abs(V_max[j][i]) > abs(V_max[j]):
-                                V_max[j] = V[j][i]
-                            if abs(V_PO_max[j][i]) > abs(V_PO_max[j]):
-                                V_PO_max[j] = V[j][i]
+                        da = (m_inf[j] - m)/self.T_a
+                    else:
+                        da = (m_inf_hold - m)/self.T_a
+                    m += (da*self.deltat)
+                    act[j][i] = m**self.a_power
+                    po *= act[j][i]
 
-                I_mem[j][0] = I_mem[j][1]
-                I_ss[j] = I_mem[j][self.offset-1]
+                if 'vdi' in self.gates:
+                    if self.onset < i < self.offset:
+                        di = (h_inf[j] - h)/self.T_i
+                    else:
+                        di = (h_inf_hold - h)/self.T_i
+                    h += (di*self.deltat)
+                    inact[j][i] = h**self.i_power
+                    po *= inact[j][i]
+
+                if 'cdi' in self.gates:
+                    cdi_inf[j][i] = self.boltzmannFit(Ca[j][i-1], self.ca_half_i, self.k_ca)
+                    cdi[j][i] = (1 + (cdi_inf[j][i] - 1) * self.alpha_ca)**self.cdi_power
+                    po *= cdi[j][i]
+
+                    dCa = -(Ca[j][i-1] / self.T_ca + self.thi_ca * I * po)
+                    Ca[j][i] = Ca[j][i-1] + dCa * self.deltat
+
+                if 'm' in self.gates:
+                    if self.onset < i < self.offset:
+                        dm = (alpha_m[j]*(1.0-m)) - (beta_m[j]*m)
+                        m_tau[j][i] = (m_inf[j] - ((m_inf[j] - m_inf_hold)*np.exp(-dt/tau_m[j])))**self.m_power
+                    else:
+                        dm = (alpha_m_hold*(1.0-m)) - (beta_m_hold*m)
+                        m_tau[j][i] = m_inf_hold**self.m_power
+                    m += (dm*self.deltat)
+
+                    # Preventing overflow when fitting parameters are inappropriate
+                    if m > 1:
+                        m = 1
+                    elif m < 0:
+                        m = 0
+                    act[j][i] = m**self.m_power
+                    po *= act[j][i]
+
+                if 'h' in self.gates:
+                    if self.onset < i < self.offset:
+                        dh = (alpha_h[j]*(1.0-h)) - (beta_m[j]*h)
+                        h_tau[j][i] = h_inf[j] - ((h_inf[j] - h_inf_hold)*np.exp(-dt/tau_h[j]))**self.h_power
+                    else:
+                        dh = (alpha_h_hold*(1.0-h)) - (beta_h_hold*h)
+                        h_tau[j][i] = h_inf_hold**self.h_power
+                    h += (dh*self.deltat)
+
+                    # Preventing overflow when parameters are inappropriate
+                    if h > 1:
+                        h = 1
+                    elif h < 0:
+                        h = 0
+                    inact[j][i] = h**self.h_power
+                    po *= inact[j][i]
+
+                PO[j][i] = po
+                I_mem[j][i] = I * po
+
+                if hasattr(self,'gL'):
+                    IL = self.gL*(V[j][i-1] - self.VL)
+                    I_mem[j][i] += IL
+
+                if self.pc_type == 'IClamp':
+                    # dv = -(I_in[j][i] + I_mem[j][i]) / self.c_mem
+                    if hasattr(self,'gL'):
+                        dv = -(I_in[j][i] + I_mem[j][i] + IL)
+                    else:
+                        dv = -(I_in[j][i] + I_mem[j][i])
+                    V[j][i] = V[j][i-1] + dv * self.deltat
+
+                if self.onset < i < self.offset:
+                    if abs(I_mem[j][i]) > abs(I_max[j]):
+                        I_max[j] = I_mem[j][i]
+                        V_max[j] = V_ss[j]
+                    if po > PO_max[j]:
+                        PO_max[j] = po
+                        V_PO_max[j] = V_ss[j]
+                    if self.pc_type == 'IClamp':
+                        if abs(V_max[j][i]) > abs(V_max[j]):
+                            V_max[j] = V[j][i]
+                        if abs(V_PO_max[j][i]) > abs(V_PO_max[j]):
+                            V_PO_max[j] = V[j][i]
+
+            I_mem[j][0] = I_mem[j][1]
+            I_ss[j] = I_mem[j][self.offset-1]
 
         self.results['t'] = self.xaxis
         self.results['V'] = V
@@ -507,12 +511,16 @@ class Simulator(object):
             self.results['m_inf'] = m_inf
             self.results['alpha_m'] = alpha_m
             self.results['beta_m'] = beta_m
-            self.results['m_tau'] = m_tau
+            self.results['m_tau'] = m_tau[:, self.offset-1]
+            self.results['tau_m'] = tau_m
+            # self.results['PO'] = m_tau
+            # self.results['PO_ss'] = m_tau[:, self.offset-1]
         if 'h' in self.gates:
             self.results['h_inf'] = h_inf
             self.results['alpha_h'] = alpha_h
             self.results['beta_h'] = beta_h
-            self.results['h_tau'] = h_tau
+            self.results['h_tau'] = h_tau[:, self.offset-1]
+            self.results['tau_h'] = tau_h
 
         if len(t) > 0:
             if self.pc_type == 'IClamp':
@@ -572,21 +580,67 @@ class Simulator(object):
             self.zparams = dict(zip(self.fit_params,args))
         else:
             self.zparams = self.channel_params
+            
+        if 'm' in self.gates and 'a_m_a' in self.gates['m']:
+            self.zparams.update(dict(zip(self.gates['m'].keys(),self.gates['m'].values())))
+        if 'h' in self.gates and 'a_h_a' in self.gates['h']:
+            self.zparams.update(dict(zip(self.gates['h'].keys(),self.gates['h'].values())))
 
-        alpha_m_hold = self.alphaBetaFit(self.v_hold, self.v_half_m_a, self.k_m_a, self.rate_m_a, self.a_m_a,self.b_m_a,self.c_m_a,self.d_m_a)
-        beta_m_hold = self.alphaBetaFit(self.v_hold, self.v_half_m_b, self.k_m_b, self.rate_m_b, self.a_m_b,self.b_m_b,self.c_m_b,self.d_m_b)
+        if 'V' in self.zparams:
+            V = self.zparams['V']
+        else:
+            V = self.protocol_start
+
+        if 'g_cap' in self.zparams:
+            g = self.zparams['g_cap'] * self.c_mem
+        elif ('g_dens' in self.zparams):
+            g = self.zparams['g_dens'] * self.c_mem / self.cell_params['spec_cap']
+        else:
+            g = self.zparams['g']
+
+        if 'gL' in self.zparams:
+            if 'g_cap' in self.zparams:
+                self.gL *= self.c_mem
+            elif ('g_dens' in self.zparams):
+                self.gL *= (self.c_mem / self.cell_params['spec_cap'])
+            else:
+                self.gL = self.zparams['gL']
+            self.VL = self.zparams['VL']
+
+        alpha_m_hold = self.alphaBetaFit(self.v_hold, self.zparams['v_half_m_a'], self.zparams['k_m_a'], self.zparams['rate_m_a'], self.zparams['a_m_a'],self.zparams['b_m_a'],self.zparams['c_m_a'],self.zparams['d_m_a'])
+        beta_m_hold = self.alphaBetaFit(self.v_hold, self.zparams['v_half_m_b'], self.zparams['k_m_b'], self.zparams['rate_m_b'], self.zparams['a_m_b'],self.zparams['b_m_b'],self.zparams['c_m_b'],self.zparams['d_m_b'])
 
         n0 = np.divide(alpha_m_hold, (alpha_m_hold + beta_m_hold))
 
-        alpha = self.alphaBetaFit(self.zparams['V'], self.v_half_m_a, self.k_m_a, self.rate_m_a, self.a_m_a,self.b_m_a,self.c_m_a,self.d_m_a)
-        beta = self.alphaBetaFit(self.zparams['V'], self.v_half_m_b, self.k_m_b, self.rate_m_b, self.a_m_b,self.b_m_b,self.c_m_b,self.d_m_b)
+        alpha = self.alphaBetaFit(V, self.zparams['v_half_m_a'], self.zparams['k_m_a'], self.zparams['rate_m_a'], self.zparams['a_m_a'],self.zparams['b_m_a'],self.zparams['c_m_a'],self.zparams['d_m_a'])
+        beta = self.alphaBetaFit(V, self.zparams['v_half_m_b'], self.zparams['k_m_b'], self.zparams['rate_m_b'], self.zparams['a_m_b'],self.zparams['b_m_b'],self.zparams['c_m_b'],self.zparams['d_m_b'])
 
         tau = np.divide(1, (alpha + beta))
         nv = np.divide(alpha, (alpha + beta))
 
         n = nv - ((nv - n0)*np.exp(-t/tau))
+        I = g * n**self.m_power * (V - self.zparams['e_rev'])
 
-        return n
+        if 'h' in self.gates:
+
+            alpha_h_hold = self.alphaBetaFit(self.v_hold, self.zparams['v_half_h_a'], self.zparams['k_h_a'], self.zparams['rate_h_a'], self.zparams['a_h_a'],self.zparams['b_h_a'],self.zparams['c_h_a'],self.zparams['d_h_a'])
+            beta_h_hold = self.alphaBetaFit(self.v_hold, self.zparams['v_half_h_b'], self.zparams['k_h_b'], self.zparams['rate_h_b'], self.zparams['a_h_b'],self.zparams['b_h_b'],self.zparams['c_h_b'],self.zparams['d_h_b'])
+
+            n0 = np.divide(alpha_h_hold, (alpha_h_hold + beta_h_hold))
+
+            alpha = self.alphaBetaFit(V, self.zparams['v_half_h_a'], self.zparams['k_h_a'], self.zparams['rate_h_a'], self.zparams['a_h_a'],self.zparams['b_h_a'],self.zparams['c_h_a'],self.zparams['d_h_a'])
+            beta = self.alphaBetaFit(V, self.zparams['v_half_h_b'], self.zparams['k_h_b'], self.zparams['rate_h_b'], self.zparams['a_h_b'],self.zparams['b_h_b'],self.zparams['c_h_b'],self.zparams['d_h_b'])
+
+            tau = np.divide(1, (alpha + beta))
+            nv = np.divide(alpha, (alpha + beta))
+
+            n_h = nv - ((nv - n0)*np.exp(-t/tau))
+            I *= n_h**self.h_power
+
+        if 'gL' in self.zparams:
+            I += self.gL*(V - self.VL)
+
+        return I
 
     def n_inf(self,V,*args):
 
@@ -595,14 +649,25 @@ class Simulator(object):
         else:
             self.zparams = self.channel_params
 
-        alpha = self.alphaBetaFit(V, self.v_half_m_a, self.k_m_a, self.rate_m_a, self.a_m_a,self.b_m_a,self.c_m_a,self.d_m_a)
-        beta = self.alphaBetaFit(V, self.v_half_m_b, self.k_m_b, self.rate_m_b, self.a_m_b,self.b_m_b,self.c_m_b,self.d_m_b)
+        if 'm' in self.gates and 'a_m_a' in self.gates['m']:
+            self.zparams.update(dict(zip(self.gates['m'].keys(),self.gates['m'].values())))
+        if 'h' in self.gates and 'a_h_a' in self.gates['h']:
+            self.zparams.update(dict(zip(self.gates['h'].keys(),self.gates['h'].values())))
 
-        ninf = np.divide(alpha, (alpha + beta))
+        alpha = self.alphaBetaFit(V, self.zparams['v_half_m_a'], self.zparams['k_m_a'], self.zparams['rate_m_a'], self.zparams['a_m_a'],self.zparams['b_m_a'],self.zparams['c_m_a'],self.zparams['d_m_a'])
+        beta = self.alphaBetaFit(V, self.zparams['v_half_m_b'], self.zparams['k_m_b'], self.zparams['rate_m_b'], self.zparams['a_m_b'],self.zparams['b_m_b'],self.zparams['c_m_b'],self.zparams['d_m_b'])
+
+        ninf = (np.divide(alpha, (alpha + beta))**self.m_power)
+
+        if 'h' in self.gates:
+
+            alpha = self.alphaBetaFit(V, self.zparams['v_half_h_a'], self.zparams['k_h_a'], self.zparams['rate_h_a'], self.zparams['a_h_a'],self.zparams['b_h_a'],self.zparams['c_h_a'],self.zparams['d_h_a'])
+            beta = self.alphaBetaFit(V, self.zparams['v_half_h_b'], self.zparams['k_h_b'], self.zparams['rate_h_b'], self.zparams['a_h_b'],self.zparams['b_h_b'],self.zparams['c_h_b'],self.zparams['d_h_b'])
+            ninf *= (np.divide(alpha, (alpha + beta))**self.h_power)
 
         return ninf
 
-    def n_tau(self,V,*args):
+    def tau_n(self,V,*args):
 
         if len(args)>0:
             self.zparams = dict(zip(self.fit_params,args))
@@ -612,9 +677,9 @@ class Simulator(object):
         alpha = self.alphaBetaFit(V, self.v_half_m_a, self.k_m_a, self.rate_m_a, self.a_m_a,self.b_m_a,self.c_m_a,self.d_m_a)
         beta = self.alphaBetaFit(V, self.v_half_m_b, self.k_m_b, self.rate_m_b, self.a_m_b,self.b_m_b,self.c_m_b,self.d_m_b)
 
-        ntau = np.divide(1, (alpha + beta))
+        tau = np.divide(1, (alpha + beta))
 
-        return ntau
+        return tau
 
     def optim_curve(self, params, best_candidate, target, curve_type='IV'):
 
@@ -639,8 +704,8 @@ class Simulator(object):
             popt,pcov = curve_fit(self.patch_clamp, X,Y,best_candidate)
         elif curve_type == 'n_tau_fit':
             popt,pcov = curve_fit(self.n_tau_fit, X,Y,best_candidate)
-        elif curve_type == 'n_tau':
-            popt,pcov = curve_fit(self.n_tau, X,Y,best_candidate)
+        elif curve_type == 'tau_n':
+            popt,pcov = curve_fit(self.tau_n, X,Y,best_candidate)
         elif curve_type == 'n_inf':
             popt,pcov = curve_fit(self.n_inf, X,Y,best_candidate)
 
