@@ -5,6 +5,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.bak
 
 # C extensions
 *.so
@@ -72,6 +73,7 @@ ChannelWorm.egg-info/
 tests/.ipynb_checkpoints
 tests/*.dat
 tests/*.xml
+tests/SCU*.py
 
 # some lingering egg files
 dist/*.egg
