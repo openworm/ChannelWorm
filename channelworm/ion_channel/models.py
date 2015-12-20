@@ -12,21 +12,54 @@ class KeyVal(models.Model):
     container = models.ForeignKey(ParamDict, db_index=True)
     key = models.CharField(max_length=240, db_index=True)
     value = models.CharField(max_length=240, db_index=True)
+    # references = models.ManyToManyField(Reference)
 
     def __unicode__(self):
         return self.container.name + "[" + self.key + "=" + self.value + "]"
 
 Channel_Type_CHOICES = (
-    ('Ca', 'Calcium Channel'),
-    ('K', 'Potassium Channel')
+    ('Calcium Channel', 'Calcium Channel'),
+    ('Potassium Channel', 'Potassium Channel'),
+    ('Transient Receptor Potential Channel', 'Transient Receptor Potential Channel'),
+    ('Cyclic Nucleotide-Gated Channel', 'Cyclic Nucleotide-Gated Channel'),
+    ('Ligand-Gated Ion Channel', 'Ligand-Gated Ion Channel'),
+    ('Ionotropic Glutamate Receptors', 'Ionotropic Glutamate Receptors'),
+    ('DEG/ENaC Channels', 'DEG/ENaC Channels'),
+    ('Chloride Channel', 'Chloride Channel')
 )
+# Channel_Subype_CHOICES = (
+#     ('CaV', 'Voltage-gated'),
+#     ('KV1', 'Voltage-gated, Shaker/Kv1'),
+#     ('KV2', 'Voltage-gated, Shab/Kv2'),
+#     ('KV3', 'Voltage-gated, Shaw/Kv3'),
+#     ('KV4', 'Voltage-gated, Shal/Kv4'),
+#     ('KQT', 'KQT'),
+#     ('KV10-12', 'Voltage-gated, Eag-like/Kv10-12'),
+#     ('KCa-Slo', 'Calcium-activated Slo'),
+#     ('KCa-SK', 'Calcium-activated SK'),
+#     ('TWK', 'TWK'),
+#     ('Kir', 'Inward-Rectifier'),
+#     ('Cation, TRP', 'Transient Receptor Potential Cation Channel'),
+#     ('CNG', 'Cyclic Nucleotide-Gated Channel'),
+#     ('LGIC', 'Ligand-Gated Ion Channel'),
+#     ('iGluRs', 'Ionotropic Glutamate Receptors'),
+#     ('DEG/ENaC/ASIC', 'DEGenerin/Epithelial Na+ Channels/Acid Sensing Ion Channels'),
+#     ('CLC', 'Chloride Channels And Transporters'),
+#     ('Auxiliary', 'Auxiliary subunit')
+# )
 Ion_Type_CHOICES = (
-    ('Ca', 'Calcium'),
-    ('K', 'Potassium'),
-    ('Cl', 'Chloride')
+    ('Ca2+', 'Calcium'),
+    ('K+', 'Potassium'),
+    ('Cl-', 'Chloride'),
+    ('Na+', 'Cation'),
+    ('Cation', 'Cation')
 )
 Ligand_Type_CHOICES = (
-
+    ('ATP', 'ATP'),
+    ('Glutamate', 'Glutamate'),
+    ('Acetylcholine', 'Acetylcholine'),
+    ('Serotonin', 'Serotonin'),
+    ('Tyramine', 'Tyramine')
 )
 class IonChannel(models.Model):
     channel_name = models.CharField(null=True, max_length=300)
@@ -66,6 +99,16 @@ class Cell(models.Model):
 
     def __unicode__(self):
         return self.cell_type + ", " + self.cell_name
+#
+# class CellChannel(models.Model):
+#     cell = models.ForeignKey(Cell)
+#     ion_channel = models.ForeignKey(IonChannel)
+#     channel_density = models.FloatField(blank=True, null=True,verbose_name='Density of the channel in cell (1/m2)')
+#     e_rev = models.FloatField(blank=True, null=True,verbose_name='Reversal potential of the channel in cell (V)')
+#     reference = models.ManyToManyField(Reference)
+#
+#     def __unicode__(self):
+#         return `self.cell` + ", " + `self.ion_channel`
 
 Reference_Type_CHOICES = (
     ('Genomics', 'Genomics'),
@@ -170,6 +213,7 @@ Axis_Type_CHOICES = (
     ('G', 'Conductance'),
     ('G/G_max', 'G/G_max'),
     ('Po', 'Open Probability'),
+    ('Po_Peak', 'Peak Open Probability'),
     ('Ca_concentration', 'Calcium Concentration'),
     ('Cl_concentration', 'Chloride Concentration'),
     ('Bar', 'Bar Chart'),
@@ -195,7 +239,9 @@ class Graph(models.Model):
     file = models.ImageField(upload_to='ion_channel/graph/%Y/%m/%d')
 
     def __unicode__(self):
-        return `self.experiment`+ " Fig. " + self.figure_ref_address
+        return str(self.y_axis_type) + "/" + str(self.x_axis_type) + " relation, Fig. " + \
+               str(self.figure_ref_address) + ", From:  " + self.experiment.reference.citation + \
+               ", " + self.experiment.reference.year
 
 
 class GraphData(models.Model):
@@ -230,10 +276,10 @@ class IonChannelModel(models.Model):
     model_type = models.CharField(max_length=300,choices=Model_Type_CHOICES, default='HH')
     modeling_type = models.CharField(max_length=300,choices=Modeling_Method_CHOICES,default='Experimental')
     experiment = models.ForeignKey(Experiment)
-    main_graph = models.ForeignKey(Graph)
+    graphs = models.ManyToManyField(Graph)
     username = models.ManyToManyField(User,verbose_name='Curator(s)')
     date = models.DateTimeField(auto_now=True)
-    parameters = models.ForeignKey(ParamDict, blank=True, null=True)
+    parameters = models.ManyToManyField(ParamDict)
     score = models.FloatField(default=None, blank=True, null=True,verbose_name='Evaluated Score')
     neuroML_file = models.FilePathField(blank=True, null=True)
     references = models.ManyToManyField(Reference)
