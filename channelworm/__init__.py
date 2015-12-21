@@ -9,5 +9,5 @@ def django_setup():
         sys.path.append(CHANNELWORM_PATH)
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
-                      "web_app.settings") # web_app should be an app on the channelworm path.
+                          "web_app.settings") # web_app should be an app on the channelworm path.
     django.setup()

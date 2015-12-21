@@ -1,6 +1,9 @@
 # NOTE: libpng-dev, libjpeg8-dev, libfreetype6-dev are required dependencies for matplotlib which do not being installed by pip
 # Also make sure libxml2-dev libxslt1-dev python-dev is already installed
 
+# OpenSourceBrain python API should be installed manually:
+# https://github.com/OpenSourceBrain/OSB_API
+
 # required for pyNeuroML
 -e git+https://github.com/NeuralEnsemble/libNeuroML.git@development#egg=libNeuroML
 -e git+https://github.com/purcell/airspeed.git#egg=airspeed 

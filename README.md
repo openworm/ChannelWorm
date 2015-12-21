@@ -6,7 +6,8 @@ The aim of the **ChannelWorm** is to integrate information and tools related to 
 
 ## Installation
 
-To install this project, just clone it locally and do `pip install -r requirements.txt'
+To install this project, just clone it locally and do `pip install -r requirements.txt`.
+Also, take a look at the comments in *requirements.txt* for some requirements that can not be installed automatically via pip.
 
 ## Objectives
 * **Information Management**
