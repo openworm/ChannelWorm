@@ -127,7 +127,7 @@ class Evaluator(object):
         :return: total_fitness
         """
 
-        fitness = 1e10
+        fitness = 1e100
         total_fitness = []
         Vcost = 0
         Icost = 0
@@ -146,7 +146,7 @@ class Evaluator(object):
                 if self.pso_flag == False or self.func == self.pov_cost:
                     fitness = POVcost
                 elif POVcost > self.POV_dist:
-                    fitness = 1e10
+                    fitness = 1e100
                     total_fitness.append(fitness)
                     continue
 
@@ -156,7 +156,7 @@ class Evaluator(object):
                 if self.pso_flag == False or self.func == self.iv_cost:
                     fitness = IVcost
                 elif IVcost > self.IV_dist:
-                    fitness = 1e10
+                    fitness = 1e100
                     total_fitness.append(fitness)
                     continue
 
@@ -166,7 +166,7 @@ class Evaluator(object):
                 if self.pso_flag == False or self.func == self.vclamp_cost:
                     fitness = Vcost
                 elif Vcost > self.V_dist:
-                    fitness = 1e10
+                    fitness = 1e100
                     total_fitness.append(fitness)
                     continue
 
@@ -176,7 +176,7 @@ class Evaluator(object):
                 if self.pso_flag == False or self.func == self.iclamp_cost:
                     fitness = Icost
                 elif Icost > self.I_dist:
-                    fitness = 1e10
+                    fitness = 1e100
                     total_fitness.append(fitness)
                     continue
 
@@ -216,7 +216,10 @@ class Evaluator(object):
                 else:
                     # index = int((self.sim_params['protocol_end'] - trace['vol']) / self.sim_params['protocol_steps'])
                     index = np.abs(self.mySimulator['V_ss'] - trace['vol']).argmin()
-                    tempCost = self.cost([mySimulator['t'],mySimulator['I'][index]],[trace['t'],trace['I']])
+                    tw = None
+                    if 'time_weight' in self.weight and trace['vol'] in self.weight['time_weight']:
+                        tw = self.weight['time_weight'][trace['vol']]
+                    tempCost = self.cost([mySimulator['t'],mySimulator['I'][index]],[trace['t'],trace['I']],time_weight=tw)
                     Vcost += tempCost
                     N += len(trace['t'])
             else:
@@ -303,6 +306,8 @@ class Evaluator(object):
         N = len(self.sampleData['IV']['V'])
         if N != 0:
             IVcost /= N
+        if 'IV' in self.weight:
+            IVcost *= self.weight['IV']
 
         if self.pso_flag and self.func != self.iv_cost:
             return self.IV_dist - IVcost
@@ -328,13 +333,15 @@ class Evaluator(object):
         N = len(self.sampleData['POV']['V'])
         if N != 0:
             POVcost /= N
+        if 'POV' in self.weight:
+            POVcost *= self.weight['POV']
 
         if self.pso_flag and self.func != self.pov_cost:
             return self.POV_dist - POVcost
         else:
             return POVcost
 
-    def cost(self, sim, target, type='VClamp'):
+    def cost(self, sim, target, type='VClamp', time_weight=None):
         """
         Gets simulation data and target data (experimental/digitazed) to calculate cost for each trace.
         Cost function calculation is based on Gurkiewicz & Korngreen approach (doi:10.1371/journal.pcbi.0030169.)
@@ -348,7 +355,7 @@ class Evaluator(object):
         # TODO: a better way to calculate cost is to measure the area between two plots!!
 
         sim_x = np.asarray(sim[0])
-        total_cost = 1e9
+        total_cost = 1e100
         sum_var = 0
         x = np.asarray(target[0])
         y = np.asarray(target[1])
@@ -362,17 +369,21 @@ class Evaluator(object):
             peak = np.abs(y[onset+1:offset]).argmax() + onset+1
             tail = offset-1
 
-        mu = np.mean(target[1])
+        if time_weight is not None:
+            tw_index = [np.abs(i - x).argmin() for i in time_weight.keys()]
+            tw_dict = dict(zip(tw_index,time_weight.values()))
+
+        mu = y.mean()
         N=0
 
-        for target_x in target[0]:
+        for target_x in x:
             index = np.abs(sim_x - target_x).argmin()
 
             if index < len(sim[1]):
                 # if there is a comparable data and it's the first time, initialize the cost value with zero to calculate the total cost
                 # else return a big number, to ignore this candidate
 
-                if total_cost == 1e9: total_cost = 0
+                if total_cost == 1e100: total_cost = 0
                 sim_y = sim[1][index]
                 target_i = target[0].index(target_x)
                 target_y = target[1][target_i]
@@ -383,19 +394,23 @@ class Evaluator(object):
                 if self.weight and type in ['VClamp','IClamp']:
                     if target_y == target[1][0]:
                         cost_val *= self.weight['start']
-                        N += self.weight['start']
+                        N += self.weight['start']-1
                     elif target_y == target[1][-1]:
                         cost_val *= self.weight['end']
-                        N += self.weight['end']
+                        N += self.weight['end']-1
                     elif target_y ==  target[1][peak]:
                         cost_val *= self.weight['peak']
-                        N += self.weight['peak']
+                        N += self.weight['peak']-1
                     elif target_y ==  target[1][tail]:
                         cost_val *= self.weight['tail']
-                        N += self.weight['tail']
+                        N += self.weight['tail']-1
                     elif target_i in self.weight:
                         cost_val *= self.weight[target_i]
-                        N += self.weight[target_i]
+                        N += self.weight[target_i]-1
+
+                if time_weight is not None and target_i in tw_index:
+                    cost_val *= tw_dict[target_i]
+                    N += tw_dict[target_i]-1
 
                 # scale cost (for r-squared score)
                 # http://docs.scipy.org/doc/scipy-0.15.1/reference/generated/scipy.stats.linregress.html
@@ -403,6 +418,10 @@ class Evaluator(object):
                     var = ((target_y - mu)**2)
                     sum_var += var
                 total_cost += cost_val
+
+                # Prevent nan
+                if np.isnan(total_cost):
+                    total_cost = 1e100
 
         if sum_var == 0:
             return total_cost

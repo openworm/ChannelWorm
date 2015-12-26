@@ -27,6 +27,7 @@ class Modelator(object):
         Generates patch clamp plots for ion channel kinetics (I/t, Po/t, etc.)
         """
 
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
         i = 1
 
         it = plt.figure(i)
@@ -78,6 +79,7 @@ class Modelator(object):
         Generates gating plots for ion channel kinetics (m, h, etc)
         """
 
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
         i = 1
 
         iv_ss = plt.figure(i)
