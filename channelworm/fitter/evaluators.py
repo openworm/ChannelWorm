@@ -301,9 +301,10 @@ class Evaluator(object):
 
         if 'I_peak' in self.sampleData['IV']:
             IVcost = self.cost([mySimulator['V_max'],mySimulator['I_max']],[self.sampleData['IV']['V'],self.sampleData['IV']['I_peak']],'IV')
+            N = min(len(self.sampleData['IV']['V']),len(mySimulator['V_max']))
         else:
             IVcost = self.cost([mySimulator['V_ss'],mySimulator['I_ss']],[self.sampleData['IV']['V'],self.sampleData['IV']['I']],'IV')
-        N = len(self.sampleData['IV']['V'])
+            N = min(len(self.sampleData['IV']['V']),len(mySimulator['V_ss']))
         if N != 0:
             IVcost /= N
         if 'IV' in self.weight:
@@ -328,9 +329,10 @@ class Evaluator(object):
         mySimulator = self.mySimulator
         if 'PO_peak' in self.sampleData['POV']:
             POVcost = self.cost([mySimulator['V_PO_max'],mySimulator['PO_max']],[self.sampleData['POV']['V'],self.sampleData['POV']['PO_peak']],'POV')
+            N = min(len(self.sampleData['POV']['V']),len(mySimulator['V_PO_max']))
         else:
             POVcost = self.cost([mySimulator['V_ss'],mySimulator['PO_ss']],[self.sampleData['POV']['V'],self.sampleData['POV']['PO']],'POV')
-        N = len(self.sampleData['POV']['V'])
+            N = min(len(self.sampleData['POV']['V']),len(mySimulator['V_ss']))
         if N != 0:
             POVcost /= N
         if 'POV' in self.weight:
@@ -375,6 +377,10 @@ class Evaluator(object):
 
         mu = y.mean()
         N=0
+
+        if len(sim_x) < len(x):
+            index_target = [np.abs(x - s_x).argmin() for s_x in sim_x]
+            x = x[index_target]
 
         for target_x in x:
             index = np.abs(sim_x - target_x).argmin()
