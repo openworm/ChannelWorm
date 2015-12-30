@@ -46,7 +46,7 @@ class Initiator(object):
 
         # g (S) = (g_dens (S/m2) / spec_cap (F/m2)) * C_mem (F)
 
-        self.bio_params['gate_params'] = {'vda': {'power': 1},'vdi': {'power': 1},'cdi': {'power': 1}}
+        self.bio_params['gate_params'] = {'vda': {'power': 1},'vdi': {'power': 1},'cd': {'power': 1}}
 
         self.bio_params['channel_params'] = ['g_dens','e_rev']
         self.bio_params['unit_chan_params'] = ['S/m2','V']
@@ -79,10 +79,10 @@ class Initiator(object):
             self.bio_params['min_val_channel'].extend([-150e-3, -0.1,  0.0001])
             self.bio_params['max_val_channel'].extend([ 150e-3, -0.0001, 0.01])
 
-        if 'cdi' in self.bio_params['gate_params']:
+        if 'cd' in self.bio_params['gate_params']:
 
-            #Parameters for Ca-dependent inactivation (Boyle & Cohen 2008)
-            self.bio_params['channel_params'].extend(['ca_half_i','alpha_ca','k_ca','T_ca'])
+            #Parameters for Ca Dynamics (Boyle & Cohen 2008)
+            self.bio_params['channel_params'].extend(['ca_half','alpha_ca','k_ca','T_ca'])
             self.bio_params['unit_chan_params'].extend(['M','','M','s'])
 
             self.bio_params['min_val_channel'].extend([1e-9, 0.1, -1e-6, 1e-3])
