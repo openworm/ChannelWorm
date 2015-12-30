@@ -403,14 +403,14 @@ class Initiator(object):
 
         graph = Graph.objects.get(id=fig_id)
         for channel in graph.ion_channel.all():
-            channel_name = channel.channel_name
-            channel_id = channel.id
-        doi = graph.experiment.reference.doi
-        pmid = graph.experiment.reference.PMID
-        citation = graph.experiment.reference.citation
+            channel_name = str(channel.channel_name)
+            channel_id = str(channel.id)
+        doi = str(graph.experiment.reference.doi)
+        pmid = str(graph.experiment.reference.PMID)
+        citation = str(graph.experiment.reference.citation)
 
         model_params = {}
-        model_params['channel_name'] = channel_name
+        model_params['channel_name'] = channel_name.replace('-','')
         model_params['channel_id'] = channel_id
         model_params['model_id'] = model_id
         model_params['contributors'] = []

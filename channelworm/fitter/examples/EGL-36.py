@@ -172,10 +172,10 @@ if __name__ == '__main__':
     print 'best candidate after optimization:'
     print best_candidate_params
 
-    # mySimulator = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'],act_fit=True)
+    mySimulator = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'],act_fit=True)
     mySimulator = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'])
     bestSim = mySimulator.patch_clamp()
-
+    #
     myModelator = modelators.Modelator(bio_params,sim_params)
     myModelator.compare_plots(sampleData,bestSim,show=True, path=path)
     myModelator.patch_clamp_plots(bestSim,show=True, path=path)
@@ -194,16 +194,5 @@ if __name__ == '__main__':
     model_params = myInitiator.get_modeldata_from_db(fig_id=vc_id,model_id=3,contributors=contributors,file_path=path)
     print model_params
 
-    # model_params = {}
-    # model_params['channel_name'] = 'EGL36'
-    # model_params['channel_id'] = '35'
-    # model_params['model_id'] = '3'
-    # model_params['contributors'] = [{'name': 'Vahid Ghayoomi','email': 'vahidghayoomi@gmail.com'}]
-    # model_params['references'] = [{'doi': '10.1038/77670',
-    #                                'PMID': '10903569',
-    #                                'citation': 'SLO-2, a K+ channel with an unusual Cl- dependence. '
-    #                                            '(Yuan A; Dourado M; Butler A; Walton N; Wei A; Salkoff L. Nat. Neurosci., 3(8):771-9)'}]
-    # model_params['file_name'] = cwd+'/egl-36-data/EGL-36.channel.nml'
-    #
-    # nml2_file = myModelator.generate_channel_nml2(bio_params,best_candidate_params,model_params)
-    # run_nml_out = myModelator.run_nml2(model_params['file_name'])
+    nml2_file = myModelator.generate_channel_nml2(bio_params,best_candidate_params,model_params)
+    run_nml_out = myModelator.run_nml2(model_params['file_name'])

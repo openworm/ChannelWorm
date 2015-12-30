@@ -400,28 +400,28 @@ class Modelator(object):
             instances = bio_params['gate_params'][gate_name]['power']
             g_type='HHSigmoidVariable'
 
-            g = neuroml.GateHHTauInf(id=gate_name, instances=instances)
-
             if gate_name == 'vda':
+                g = neuroml.GateHHTauInf(id=gate_name, instances=instances)
                 v_half = str(channel_params['v_half_a']) + ' ' + str(unit['v_half_a'])
                 k = str(channel_params['k_a']) + ' ' + str(unit['k_a'])
-                g.steady_state = neuroml.HHTime(midpoint=v_half,scale=k,rate=1,type=g_type)
+                g.steady_state = neuroml.HHRate(midpoint=v_half,scale=k,rate=1,type=g_type)
                 if 'T_a' in channel_params:
                     T = str(channel_params['T_a']) + ' ' + str(unit['T_a'])
                     t_type="fixedTimeCourse"
                     g.time_course = neuroml.HHTime(tau=T, type=t_type)
+                target.append(g)
             elif gate_name == 'vdi':
+                g = neuroml.GateHHTauInf(id=gate_name, instances=instances)
                 v_half = str(channel_params['v_half_i']) + ' ' + str(unit['v_half_i'])
                 k = str(channel_params['k_i']) + ' ' + str(unit['k_i'])
-                g.steady_state = neuroml.HHTime(midpoint=v_half,scale=k,rate=1,type=g_type)
+                g.steadyState = neuroml.HHTime(midpoint=v_half,scale=k,rate=1,type=g_type)
                 if 'T_i' in channel_params:
                     T = str(channel_params['T_i']) + ' ' + str(unit['T_i'])
                     t_type="fixedTimeCourse"
-                    g.time_course = neuroml.HHTime(tau=T, type=t_type)
+                    g.timeCourse = neuroml.HHTime(tau=T, type=t_type)
+                target.append(g)
 
             # TODO: Consider ion dependent activation/inactivation
-
-            target.append(g)
 
         nml2_file_name = model_params['file_name']
         doc.ion_channel_hhs.append(chan)
