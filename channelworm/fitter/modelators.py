@@ -134,15 +134,15 @@ class Modelator(object):
                 plt.draw()
             i+=1
 
-        if 'cdi_inf' in simData:
-            cdi = plt.figure(i)
-            plt.plot([round(x*1e3) for x in simData['V_ss']],simData['cdi_inf'], color='y', label='Ca-dependent inactivation')
+        if 'cd_inf' in simData:
+            cd = plt.figure(i)
+            plt.plot([round(x*1e3) for x in simData['V_ss']],simData['cd_inf'], color='y', label='Calcium Dynamics')
             plt.legend(loc='best')
-            plt.title("Steady state Calcium-dependent inactivation versus membrane potential")
+            plt.title("Steady state Calcium Dynamics versus membrane potential")
             plt.xlabel("Voltage (mV)")
-            plt.ylabel("Steady state Calcium-dependent inactivation")
-            plt.savefig(path+"steadyStateCdi_vs_voltage.png",bbox_inches='tight',format='png')
-            pickle.dump(cdi, file(path+"steadyStateCdi_vs_voltage.pickle", 'w'))
+            plt.ylabel("Steady state Calcium Dynamics")
+            plt.savefig(path+"steadyStateCD_vs_voltage.png",bbox_inches='tight',format='png')
+            pickle.dump(cd, file(path+"steadyStateCD_vs_voltage.pickle", 'w'))
             if show:
                 plt.draw()
             i+=1
@@ -194,7 +194,8 @@ class Modelator(object):
             for trace in sampleData['VClamp']['traces']:
                 sample_plot, = plt.plot([i/x_var['toSI'] for i in trace['t']],[j/y_var['toSI'] for j in trace['I']], '--ko')
                 off = self.sim_params['end_time']
-                offset = abs(asarray(trace['t'])-off).argmin()
+                near_off = off - asarray(trace['t'])
+                offset = near_off[near_off>0].argmin()
 
                 if 'vol' in trace and trace['vol']:
                     plt.text(trace['t'][offset]/x_var['toSI']+10, trace['I'][offset]/y_var['toSI'], '%i mV'%(trace['vol']*1e3), color='k')
@@ -206,7 +207,8 @@ class Modelator(object):
             if flag is False:
                 for ind,trace in enumerate(simData['I']):
                     off = self.sim_params['end_time']
-                    offset = abs(asarray(trace['t'])-off).argmin()
+                    near_off = off - asarray(trace['t'])
+                    offset = near_off[near_off>0].argmin()
                     plt.text(simData['t'][offset]/x_var['toSI']+10, trace[offset]/y_var['toSI'], '%i mV'%(simData['V_ss'][ind]*1e3), color='k')
                     plt.plot([i/x_var['toSI'] for i in simData['t']],[j/y_var['toSI'] for j in trace], color='r')
 
