@@ -63,20 +63,36 @@ class Simulator(object):
             if 'mtau' not in self.gates:
                 self.T_a = channel_params['T_a']
             self.a_power = int(self.gates['vda']['power'])
+            if 'rate_a' in channel_params:
+                self.rate_a = channel_params['rate_a']
+            else:
+                self.rate_a = 1
+            if 'C_a' in channel_params:
+                self.C_a = channel_params['C_a']
+            else:
+                self.C_a = 1-self.rate_a
 
         if 'vdi' in self.gates:
             self.v_half_i = channel_params['v_half_i']
             self.k_i = channel_params['k_i']
+            self.i_power = int(self.gates['vdi']['power'])
             if 'htau' not in self.gates:
                 self.T_i = channel_params['T_i']
-            self.i_power = int(self.gates['vdi']['power'])
+            if 'rate_i' in channel_params:
+                self.rate_i = channel_params['rate_i']
+            else:
+                self.rate_i = 1
+            if 'C_i' in channel_params:
+                self.C_i = channel_params['C_i']
+            else:
+                self.C_i = 1-self.rate_i
 
-        if 'cdi' in self.gates:
-            self.ca_half_i = channel_params['ca_half_i']
+        if 'cd' in self.gates:
+            self.ca_half = channel_params['ca_half']
             self.k_ca = channel_params['k_ca']
             self.T_ca = channel_params['T_ca']
             self.alpha_ca = channel_params['alpha_ca']
-            self.cdi_power = int(self.gates['cdi']['power'])
+            self.cd_power = int(self.gates['cd']['power'])
 
             self.ca_con = sim_params['ca_con']
             self.thi_ca = self.ca_con/(self.T_ca * self.g)
@@ -86,12 +102,20 @@ class Simulator(object):
             self.k_mt = channel_params['k_mt']
             self.rate_mt = channel_params['rate_mt']
             self.mt_power = int(self.gates['mtau']['power'])
+            if 'C_mt' in channel_params:
+                self.C_mt = channel_params['C_mt']
+            else:
+                self.C_mt = 0
 
         if 'htau' in self.gates:
             self.v_half_ht = channel_params['v_half_ht']
             self.k_ht = channel_params['k_ht']
             self.rate_ht = channel_params['rate_ht']
             self.ht_power = int(self.gates['htau']['power'])
+            if 'C_ht' in channel_params:
+                self.C_ht = channel_params['C_ht']
+            else:
+                self.C_ht = 0
 
         if 'm' in self.gates:
             if 'v_half_m_a' in channel_params:
@@ -267,17 +291,17 @@ class Simulator(object):
             else:
                 self.d_h_b = 1
 
-    def boltzmannFit(self, x, mu, k, a=1):
+    def boltzmannFit(self, x, mu, k, a=1, c=0):
 
         # Preventing exp() overflow error
         # if -708 < (mu - x)/k < 708:
         try:
-            return a/(1 + exp((mu - x)/k))
+            return (a/(1 + exp((mu - x)/k))) + c
         except OverflowError:
             if (mu - x)/k > 0:
-                return 1e-100
+                return 1e-100 + c
             else:
-                return a
+                return a + c
 
     def alphaBetaFit(self,V,mu,k,rate=1,a=1,b=1,c=1,d=1):
 
@@ -338,22 +362,22 @@ class Simulator(object):
         if 'vda' in self.gates:
             act = np.zeros((self.numtests,self.numpoints))
             m_inf = np.zeros(self.numtests)
-            m_inf_hold = self.boltzmannFit(self.v_hold, self.v_half_a, self.k_a)
+            m_inf_hold = self.boltzmannFit(self.v_hold, self.v_half_a, self.k_a, self.rate_a, self.C_a)
             m = m_inf_hold
             T_a = np.zeros(self.numtests)
             # act_max = np.zeros(self.numtests)
         if 'vdi' in self.gates:
             inact = np.zeros((self.numtests,self.numpoints))
             h_inf = np.zeros(self.numtests)
-            h_inf_hold = self.boltzmannFit(self.v_hold, self.v_half_i, self.k_i)
+            h_inf_hold = self.boltzmannFit(self.v_hold, self.v_half_i, self.k_i, self.rate_i, self.C_i)
             h = h_inf_hold
             T_i = np.zeros(self.numtests)
             # inact_max = np.zeros(self.numtests)
-        if 'cdi' in self.gates:
+        if 'cd' in self.gates:
             Ca = np.zeros((self.numtests,self.numpoints))
-            cdi = np.zeros((self.numtests,self.numpoints))
-            cdi_inf = np.zeros((self.numtests,self.numpoints))
-            # cdi_max = np.zeros(self.numtests)
+            cd = np.zeros((self.numtests,self.numpoints))
+            cd_inf = np.zeros((self.numtests,self.numpoints))
+            # cd_max = np.zeros(self.numtests)
         if 'm' in self.gates:
             act = np.zeros((self.numtests,self.numpoints))
             m_tau = np.zeros((self.numtests,self.numpoints))
@@ -407,15 +431,15 @@ class Simulator(object):
         # Variable initialization
         for j in range(0,self.numtests):
             if 'vda' in self.gates:
-                m_inf[j] = self.boltzmannFit(V_ss[j], self.v_half_a, self.k_a)
+                m_inf[j] = self.boltzmannFit(V_ss[j], self.v_half_a, self.k_a, self.rate_a, self.C_a)
                 if 'mtau' in self.gates:
-                    T_a[j] = self.boltzmannFit(V_ss[j], self.v_half_mt, self.k_mt, self.rate_mt)**self.mt_power
+                    T_a[j] = self.boltzmannFit(V_ss[j], self.v_half_mt, self.k_mt, self.rate_mt, self.C_mt)**self.mt_power
                 else:
                     T_a[j] = self.T_a
             if 'vdi' in self.gates:
-                h_inf[j] = self.boltzmannFit(V_ss[j], self.v_half_i, self.k_i)
+                h_inf[j] = self.boltzmannFit(V_ss[j], self.v_half_i, self.k_i, self.rate_i, self.C_i)
                 if 'htau' in self.gates:
-                    T_i[j] = self.boltzmannFit(V_ss[j], self.v_half_ht, self.k_ht, self.rate_ht)**self.ht_power
+                    T_i[j] = self.boltzmannFit(V_ss[j], self.v_half_ht, self.k_ht, self.rate_ht, self.C_ht)**self.ht_power
                 else:
                     T_i[j] = self.T_i
             if 'm' in self.gates:
@@ -458,10 +482,10 @@ class Simulator(object):
                             m += (da*self.deltat)
 
                     # Preventing overflow when fitting parameters are inappropriate
-                    if m > 1:
-                        m = 1
-                    elif m < 0:
-                        m = 0
+                    # if m > 1:
+                    #     m = 1
+                    # elif m < 0:
+                    #     m = 0
 
                     act[j][i] = m**self.a_power
                     po *= act[j][i]
@@ -489,10 +513,10 @@ class Simulator(object):
                     inact[j][i] = h**self.i_power
                     po *= inact[j][i]
 
-                if 'cdi' in self.gates:
-                    cdi_inf[j][i] = self.boltzmannFit(Ca[j][i-1], self.ca_half_i, self.k_ca)
-                    cdi[j][i] = (1 + (cdi_inf[j][i] - 1) * self.alpha_ca)**self.cdi_power
-                    po *= cdi[j][i]
+                if 'cd' in self.gates:
+                    cd_inf[j][i] = self.boltzmannFit(Ca[j][i-1], self.ca_half, self.k_ca)
+                    cd[j][i] = (1 + (cd_inf[j][i] - 1) * self.alpha_ca)**self.cd_power
+                    po *= cd[j][i]
 
                     dCa = -(Ca[j][i-1] / self.T_ca + self.thi_ca * I * po)
                     Ca[j][i] = Ca[j][i-1] + dCa * self.deltat
@@ -587,10 +611,10 @@ class Simulator(object):
         if 'vdi' in self.gates:
             self.results['inact'] = inact
             self.results['h_inf'] = h_inf
-        if 'cdi' in self.gates:
+        if 'cd' in self.gates:
             self.results['Ca'] = Ca
-            self.results['cdi'] = cdi
-            self.results['cdi_inf'] = cdi_inf[:, self.offset-1]
+            self.results['cd'] = cd
+            self.results['cd_inf'] = cd_inf[:, self.offset-1]
         if 'm' in self.gates:
             self.results['m_inf'] = m_inf
             self.results['alpha_m'] = alpha_m
@@ -675,9 +699,10 @@ class Simulator(object):
             PO_vdi = (1/(1 + np.exp((self.zparams['v_half_i'] - V)/self.zparams['k_i'])))**self.i_power
             PO = np.multiply(PO,PO_vdi)
 
-        if 'cdi' in self.gates:
-            PO_cdi = (1/(1 + np.exp((self.zparams['ca_half_i'] - V)/self.zparams['k_ca'])))**self.cdi_power
-            PO = np.multiply(PO,PO_cdi)
+        # if 'cd' in self.gates:
+        #     cd_inf = (1/(1 + np.exp((self.zparams['ca_half'] - (PO*self.ca_con))/self.zparams['k_ca'])))
+        #     PO_cd = (1+((cd_inf-1)*self.zparams['alpha_ca']))**self.cd_power
+        #     PO = np.multiply(PO,PO_cd)
 
         return PO
 
@@ -760,6 +785,11 @@ class Simulator(object):
             n_h = nv - ((nv - n0)*np.exp(-t/tau))
             I *= n_h**self.i_power
 
+        # if 'cd' in self.gates:
+        #     cd_inf = (1/(1 + np.exp((self.zparams['ca_half'] - V)/self.zparams['k_ca'])))
+        #     PO_cd = (1+((cd_inf-1)*self.zparams['alpha_ca']))**self.cd_power
+        #     PO = np.multiply(PO,PO_cd)
+
         if 'gL' in self.zparams:
             I += self.gL*(V - self.VL)
 
@@ -830,8 +860,10 @@ class Simulator(object):
         self.fit_params = params
         if curve_type == 'IV':
             popt,pcov = curve_fit(self.iv_act, X,Y,best_candidate)
-        elif curve_type == 'POV':
+        elif curve_type == 'POV_act':
             popt,pcov = curve_fit(self.pov_act, X,Y,best_candidate)
+        elif curve_type == 'POV':
+            popt,pcov = curve_fit(self.pov, X,Y,best_candidate)
         elif curve_type == 'VClamp':
             popt,pcov = curve_fit(self.patch_clamp, X,Y,best_candidate)
         elif curve_type == 'n_tau_fit':
@@ -868,7 +900,6 @@ class Simulator(object):
         else:
             full_output = 0
 
-        # ErrorFunc=lambda p,x,y: np.asarray([np.asarray(self.patch_clamp(x[i],p))-np.asarray(y[i]) for i in range(0,len(x))]).mean(axis=0)
         def ErrorFunc(p,*args):
             x = args[0]
             y = args[1]
@@ -877,52 +908,24 @@ class Simulator(object):
             Y_res = []
             for i in range(0,len(self.trace_size)-1):
                 # Check if POV data is also available
-                # if i == len(self.trace_size)-2 and hasattr(self,'POV_least'):
-                #     if 'POV' in weight:
-                #         weight_pov = weight['POV']
-                #     else:
-                #         weight_pov = 1
-                #     index = [np.abs(np.asarray(pc_res['V_ss']) - np.asarray(target_x)).argmin() for target_x in x[self.trace_size[i]:self.trace_size[i+1]]]
-                #     if 'PO_peak' in self.POV_least:
-                #         I_norm = np.divide(pc_res['I_max'][index],pc_res['PO_max'][index])
-                #         Y_res.extend([pc_res['I_max'][j]*weight_pov for j in index])
-                #         y[self.trace_size[i]:self.trace_size[i+1]] = np.multiply(y[self.trace_size[i]:self.trace_size[i+1]],I_norm)*weight_pov
-                #     else:
-                #         I_norm = np.divide(pc_res['I_ss'][index],pc_res['PO_ss'][index])
-                #         Y_res.extend([pc_res['I_ss'][j]*weight_pov for j in index])
-                #         y[self.trace_size[i]:self.trace_size[i+1]] = np.multiply(y[self.trace_size[i]:self.trace_size[i+1]],I_norm)*weight_pov
-                # else:
-                #     index = [np.abs(np.asarray(self.xaxis) - np.asarray(target_x)).argmin() for target_x in x[self.trace_size[i]:self.trace_size[i+1]]]
-                #     Y_res.extend([pc_res['I'][i][j] for j in index])
-
-                # if i == len(self.trace_size)-2 and hasattr(self,'POV_least'):
-                #     if 'POV' in weight:
-                #         weight_pov = weight['POV']
-                #     else:
-                #         weight_pov = 1
-                #     index = [np.abs(np.asarray(pc_res['V_ss']) - np.asarray(target_x)).argmin() for target_x in x[self.trace_size[i]:self.trace_size[i+1]]]
-                #     if 'PO_peak' in self.POV_least:
-                #         Y_res.extend([pc_res['PO_max'][j]*weight_pov for j in index])
-                #         y[self.trace_size[i]:self.trace_size[i+1]] = np.multiply(y[self.trace_size[i]:self.trace_size[i+1]],weight_pov)
-                #     else:
-                #         Y_res.extend([pc_res['PO_ss'][j]*weight_pov for j in index])
-                #         y[self.trace_size[i]:self.trace_size[i+1]] = np.multiply(y[self.trace_size[i]:self.trace_size[i+1]],weight_pov)
-                # else:
-                #     index = [np.abs(np.asarray(self.xaxis) - np.asarray(target_x)).argmin() for target_x in x[self.trace_size[i]:self.trace_size[i+1]]]
-                #     Y_res.extend([pc_res['I'][i][j] for j in index])
-
-                # if i == len(self.trace_size)-2 and hasattr(self,'POV_least'):
-                #     if 'POV' in weight:
-                #         weight_pov = weight['POV']
-                #     else:
-                #         weight_pov = 1
-
                 if i == len(self.trace_size)-2 and hasattr(self,'POV_least'):
+                    if 'POV' in weight:
+                        weight_pov = weight['POV']
+                    else:
+                        weight_pov = 1
                     index = [np.abs(np.asarray(pc_res['V_ss']) - np.asarray(target_x)).argmin() for target_x in x[self.trace_size[i]:self.trace_size[i+1]]]
                     if 'PO_peak' in self.POV_least:
-                        Y_res.extend([pc_res['PO_max'][j] for j in index])
+                        # pc_res['PO_max'][index][pc_res['PO_max'][index] == 0] = 1e-100
+                        I_norm = np.divide(pc_res['I_max'][index],pc_res['PO_max'][index])
+                        I_norm[np.isnan(I_norm)] = 0
+                        Y_res.extend([pc_res['I_max'][j]*weight_pov for j in index])
+                        y[self.trace_size[i]:self.trace_size[i+1]] = np.multiply(y[self.trace_size[i]:self.trace_size[i+1]],I_norm)*weight_pov
                     else:
-                        Y_res.extend([pc_res['PO_ss'][j] for j in index])
+                        # pc_res['PO_ss'][index][pc_res['PO_ss'][index] == 0] = 1e-100
+                        I_norm = np.divide(pc_res['I_ss'][index],pc_res['PO_ss'][index])
+                        I_norm[np.isnan(I_norm)] = 0
+                        Y_res.extend([pc_res['I_ss'][j]*weight_pov for j in index])
+                        y[self.trace_size[i]:self.trace_size[i+1]] = np.multiply(y[self.trace_size[i]:self.trace_size[i+1]],I_norm)*weight_pov
                 else:
                     index = [np.abs(np.asarray(self.xaxis) - np.asarray(target_x)).argmin() for target_x in x[self.trace_size[i]:self.trace_size[i+1]]]
                     Y_res.extend([pc_res['I'][i][j] for j in index])
@@ -934,13 +937,8 @@ class Simulator(object):
         for i,trace in enumerate(sampleData['VClamp']['traces']):
             X = np.asarray(trace['t'])
             Y = np.asarray(trace['I'])
-            onset = np.abs(X-on).argmin()
-            offset = np.abs(X-off).argmin()
-            # X_f.extend(X[onset+1:offset])
             X_f.extend(X)
-            # Y_f.extend(Y[onset+1:offset])
             Y_f.extend(Y)
-            # self.trace_size.append(self.trace_size[i]+len(X[onset+1:offset]))
             self.trace_size.append(self.trace_size[i]+len(X))
 
         if 'POV' in sampleData:
@@ -952,16 +950,6 @@ class Simulator(object):
                 self.POV_least = 'PO'
                 Y_f.extend(sampleData['POV']['PO'])
             self.trace_size.append(self.trace_size[-1]+len(sampleData['POV']['V']))
-
-            # # in scipy leastsq, number of parameters must not exceed number of points.
-            # diff = len(best_candidate) - len(X)
-            # if diff > 0:
-            #     for i in range(0,diff):
-            #         t_sample_on = np.append(X,X[-1])
-            #         I_sample_on = np.append(Y,Y[-1])
-
-            # T.append(t_sample_on)
-            # I.append(I_sample_on)
 
         result, cov = leastsq(ErrorFunc, best_candidate, args=(X_f,Y_f), full_output=full_output,ftol=ftol, xtol=xtol)
 
