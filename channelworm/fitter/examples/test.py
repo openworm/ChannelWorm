@@ -58,6 +58,7 @@ if __name__ == '__main__':
 
     best_candidate_params = bcp
 
+    print '\nm gate:'
     print 'expression: rate*(a OR (V-mu)/k))/ (b + c*exp(-d*(V-mu)/k)))'
     print 'Alpha:'
     print '(%.2f*(%i OR (V-%.2f)/%.2f))/(%.2f + %i*exp(-%i*(V-%.2f)/%.2f)))' \
@@ -67,6 +68,28 @@ if __name__ == '__main__':
     print '(%.2f*(%i OR (V-%.2f)/%.2f))/(%.2f + %i*exp(-%i*(V-%.2f)/%.2f)))' \
           %(bcp['rate_m_b'],int(bcp['a_m_b']),bcp['v_half_m_b']*1e3,bcp['k_m_b']*1e3,int(bcp['b_m_b']),int(bcp['c_m_b']),
             int(bcp['d_m_b']),bcp['v_half_m_b']*1e3,bcp['k_m_b']*1e3)
+
+    bcp['a_h_a'] = int(bcp['a_h_a'])
+    bcp['b_h_a'] = int(bcp['b_h_a'])
+    bcp['c_h_a'] = int(bcp['c_h_a'])
+    bcp['d_h_a'] = int(bcp['d_h_a'])
+    bcp['a_h_b'] = int(bcp['a_h_b'])
+    bcp['b_h_b'] = int(bcp['b_h_b'])
+    bcp['c_h_b'] = int(bcp['c_h_b'])
+    bcp['d_h_b'] = int(bcp['d_h_b'])
+
+    best_candidate_params = bcp
+
+    print '\nh gate:'
+    print 'expression: rate*(a OR (V-mu)/k))/ (b + c*exp(-d*(V-mu)/k)))'
+    print 'Alpha:'
+    print '(%.2f*(%i OR (V-%.2f)/%.2f))/(%.2f + %i*exp(-%i*(V-%.2f)/%.2f)))' \
+          %(bcp['rate_h_a'],int(bcp['a_h_a']),bcp['v_half_h_a']*1e3,bcp['k_h_a']*1e3,int(bcp['b_h_a']),int(bcp['c_h_a']),
+            int(bcp['d_h_a']),bcp['v_half_h_a']*1e3,bcp['k_h_a']*1e3)
+    print 'Beta:'
+    print '(%.2f*(%i OR (V-%.2f)/%.2f))/(%.2f + %i*exp(-%i*(V-%.2f)/%.2f)))' \
+          %(bcp['rate_h_b'],int(bcp['a_h_b']),bcp['v_half_h_b']*1e3,bcp['k_h_b']*1e3,int(bcp['b_h_b']),int(bcp['c_h_b']),
+            int(bcp['d_h_b']),bcp['v_half_h_b']*1e3,bcp['k_h_b']*1e3)
 
     cell_var = dict(zip(bio_params['cell_params'],bio_params['val_cell_params']))
     mySimulator = simulators.Simulator(sim_params,best_candidate_params,cell_var,bio_params['gate_params'])

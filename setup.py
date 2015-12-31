@@ -8,12 +8,11 @@ setup(
         'channelworm.digitizer',
         'channelworm.account',
         'channelworm.web_app',
-        'channelworm.fitter'
+        'channelworm.fitter',
+        'channelworm.predictor'
     ],
     long_description=open('README.md').read(),
     install_requires=[
-        'inspyred',
-        'sqlparse',
         'unicodecsv',
         'pillow',
         'pytest',
