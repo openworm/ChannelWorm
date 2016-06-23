@@ -146,7 +146,7 @@ class CellChannel(models.Model):
     reference = models.ForeignKey(Reference)
 
     def __unicode__(self):
-        return `self.cell` + ", " + `self.ion_channel`
+        return repr(self.cell) + ", " + repr(self.ion_channel)
 
 
 # TODO: Separate experiment conditions from patch clamp
@@ -198,7 +198,7 @@ class PatchClamp(models.Model):
     pipette_solution = models.TextField(blank=True, null=True, verbose_name='Pipette Solution (e.g. 120e-3 KCl, 20e-3 KOH,...)')
 
     def __unicode__(self):
-        return `self.ion_channel` + " " + `self.experiment` + " " + self.type
+        return repr(self.ion_channel) + " " + repr(self.experiment) + " " + self.type
 
 
 # TODO: consider multiple channels
@@ -285,7 +285,7 @@ class IonChannelModel(models.Model):
     references = models.ManyToManyField(Reference)
 
     def __unicode__(self):
-        return `self.channel_name` + " " + `self.experiment`
+        return repr(self.channel_name) + " " + repr(self.experiment)
 
 class Protein(models.Model):
     name = models.CharField(max_length=300, unique=True)
