@@ -81,3 +81,5 @@ dist/*.egg
 # ignore build/ directory
 build/
 
+tests/sciunit/.ipynb_checkpoints
+tests/sciunit/*.dat
