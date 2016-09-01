@@ -41,7 +41,6 @@ INSTALLED_APPS = (
     'channelworm.ion_channel',
     'channelworm.account',
     'formtools',
-    'explorer',
 )
 
 MIDDLEWARE_CLASSES = (
