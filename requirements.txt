@@ -13,11 +13,11 @@
 
 # required for neuronunit
 -e git+http://github.com/neuralensemble/elephant.git#egg=elephant-0.1.1
--e git+http://github.com/neuralensemble/python-neo/tarball/0.4.x#egg=neo
--e git+https://github.com/scidash/sciunit/tarball/dev#egg=sciunit
+-e git+http://github.com/neuralensemble/python-neo@0.4.x#egg=neo
+-e git+https://github.com/scidash/sciunit@dev#egg=sciunit
 
 # neuronunit itself
--e git+https://github.com/scidash/neuronunit/tarball/dev#egg=neuronunit
+-e git+https://github.com/scidash/neuronunit@dev#egg=neuronunit
 
 # required for PyOpenWorm
 -e git+https://github.com/RDFLib/FuXi.git#egg=FuXi
