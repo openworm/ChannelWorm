@@ -1,7 +1,7 @@
 language: python
 
 python:
-  - "3.5"
+  - "2.7"
 
 notifications:
   webhooks:
@@ -40,5 +40,6 @@ script:
   - py.test .
   - sciunit run
   - sciunit make-nb
+  - jupyter kernelspec list
   - sciunit run-nb
 
