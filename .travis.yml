@@ -40,7 +40,5 @@ script:
   - py.test .
   - sciunit run
   - sciunit make-nb
-  - pip install jupyter
-  - jupyter kernelspec list
   - sciunit run-nb
 
