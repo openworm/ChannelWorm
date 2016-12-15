@@ -27,8 +27,8 @@ headers = {'content-type': 'application/json'}
 
 prots = {}
 for channel,gene in chan_gene:
-    print '\n'
-    print gene
+    print('\n')
+    print(gene)
     prots[gene] = {}
     r = requests.get(wb_pro_url + gene, headers=headers)
     # print(r.json())
@@ -38,14 +38,14 @@ for channel,gene in chan_gene:
         prot_name = resp['label']
         prot_id = resp['id']
 
-        print prot_id
-        print prot_name
+        print(prot_id)
+        print(prot_name)
 
         if ('WP:' in prot_id) and (gene.lower() == prot_name.lower() or (gene.lower()+',' in prot_name.lower())):
 
             prots[gene][prot_id] = prot_name
 
-            print '\n'
+            print('\n')
             print('channel id:%s'%channel) # channel id
             print('protein:%s'%prot_name) # protein name
             protein_str = '"'+prot_name+'"'
@@ -84,7 +84,7 @@ for channel,gene in chan_gene:
 
                     if Protein.objects.filter(name=prot_name).exists() is False:
 
-                        print 'Going to add to database...'
+                        print('Going to add to database...')
                         prot_model = Protein(name = prot_name,
                                              ion_channel_id = channel,
                                              sequence = record.seq,
@@ -92,10 +92,10 @@ for channel,gene in chan_gene:
                                              gi = records["IdList"][0],
                                              wb_ID=prot_id)
                         # prot_model.save()
-                        print prot_model
+                        print(prot_model)
 
                     else:
-                        print 'Already exist'
+                        print('Already exist')
                         Protein.objects.filter(name=prot_name).update(wb_ID=prot_id)
 
                 else:
@@ -105,14 +105,14 @@ for channel,gene in chan_gene:
                 time.sleep(2)
 
             print('Before sort:')
-            print prots[gene]
+            print(prots[gene])
             prots_s = sorted(prots[gene].items(), key=operator.itemgetter(1))
             prots[gene] = prots_s
             print('After sort:')
-            print prots[gene]
+            print(prots[gene])
 
             chan_prots = ''
             for key,val in prots[gene]:
                 chan_prots += val+'; '
-            print chan_prots
+            print(chan_prots)
             # IonChannel.objects.filter(gene_name=gene).update(channel_name=gene.upper(),proteins=chan_prots)
