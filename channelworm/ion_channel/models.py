@@ -287,6 +287,7 @@ class IonChannelModel(models.Model):
     def __unicode__(self):
         return repr(self.channel_name) + " " + repr(self.experiment)
 
+
 class Protein(models.Model):
     name = models.CharField(max_length=300, unique=True)
     ion_channel = models.ForeignKey(IonChannel)
