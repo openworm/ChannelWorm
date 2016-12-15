@@ -83,3 +83,4 @@ build/
 
 tests/scidash/.ipynb_checkpoints
 tests/scidash/*.dat
+tests/scidash/scidash.ipynb
