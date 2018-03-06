@@ -1,0 +1,19 @@
+// Heroku implementation
+
+{
+  "name": "ChannelWorm",
+  "description": "The aim of the ChannelWorm is to integrate information and tools related to modeling ion channels in C. elegans for the OpenWorm Project."
+  "repository": "https://github.com/openworm/ChannelWorm",
+  "keywords": ["ChannelWorm", "openworm", "ion channel", "elegans"],
+  "env": {
+    "DJANGO_DEBUG": "off",
+    "DJANGO_SETTINGS_MODULE": "web_app.settings",
+    "DJANGO_SECURE_SSL_REDIRECT": "on"
+  },
+  "scripts": {
+    "postdeploy": "echo 'y' | python manage.py makemigrations && python manage.py migrate"
+  }
+//  "addons": [
+//    "heroku-postgresql:hobby-dev"
+//  ]
+}
