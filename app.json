@@ -1,5 +1,3 @@
-// Heroku implementation
-
 {
   "name": "ChannelWorm",
   "description": "The aim of the ChannelWorm is to integrate information and tools related to modeling ion channels in C. elegans for the OpenWorm Project."
@@ -13,7 +11,4 @@
   "scripts": {
     "postdeploy": "echo 'y' | python manage.py makemigrations && python manage.py migrate"
   }
-//  "addons": [
-//    "heroku-postgresql:hobby-dev"
-//  ]
 }
