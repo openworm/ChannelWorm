@@ -3,7 +3,8 @@ from sciunit import TestSuite
 import tests as t
 
 def hook(test, tests, score, **kwargs):
-    score.plot()
+    if score.score is not None:
+        score.plot()
 
 egl19_suite = TestSuite('EGL-19 IV Curves',t.egl19_iv_test,
                         include_models = ['EGL-19*'],
