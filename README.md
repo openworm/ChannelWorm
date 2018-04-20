@@ -18,7 +18,7 @@ Also, take a look at the comments in *requirements.txt* for some requirements th
 * **Ion channel modeling**
   * Build Hodgkin-Huxley models for ion channels based on experimental patch clamp studies
   * Estimate kinetics and build models for ion channels with no patch clamp data available (based on homologous channel types)
-  * Create verification & validation tests to prove matching of the models with experimental data
+  * Create tests to validate models with respect to experimental data
 * **Setting up a simulation environment**
   * Simulate the computational analysis phase of a patch clamp experiment
   * Simulate and run customized versions of ion channel(s) in cell(s)
@@ -38,7 +38,8 @@ Also, take a look at the comments in *requirements.txt* for some requirements th
 ## Relationship to PyOpenWorm and other sub-projects
 Simulating *C. elegans* requires curating multiple types of static data and physiological models
 pertaining to the biology of the worm.  Ion channels are simply one type of model.
-Others types include muscular movement, the structure of the nervous system itself (i.e. connectome),
+Others types include models of muscular movement, data pertaining to the structure
+of the nervous system itself (i.e. connectome),
 and in the future, models of development and reproduction.  
 
 PyOpenWorm is intended to be an integrated and unified data access layer for
