@@ -1,16 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='ChannelWorm',
-    packages=[
-        'channelworm',
-        'channelworm.ion_channel',
-        'channelworm.digitizer',
-        'channelworm.account',
-        'channelworm.web_app',
-        'channelworm.fitter',
-        'channelworm.predictor'
-    ],
+    version='0.1',
+    packages=find_packages(),
     long_description=open('README.md').read(),
     install_requires=[
         'unicodecsv',

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='channelworm',
     version='0.9.0',
+    packages=find_packages(),
     description='Modeling Ion Channels in C. Elegans',
     author='OpenWorm Community',
     author_email='vahidghayoomi@gmail.com, milad.jafary@gmail.com, trav221@gmail.com',
