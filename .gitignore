@@ -81,3 +81,9 @@ dist/*.egg
 # ignore build/ directory
 build/
 
+# Other
+channelworm/fitter/examples/.ipynb_checkpoints/*.*
+channelworm/fitter/examples/*.dat
+channelworm/fitter/examples/*.xml
+channelworm/fitter/examples/*.png
+*.pickle
