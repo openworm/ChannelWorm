@@ -158,7 +158,7 @@ def test_adapt_IonChannel(data_pool):
 
 def test_adapt_GraphData(data_pool):
     """
-    Test that we can map some GraphData to a PyOpenWorm 
+    Test that we can map some GraphData to a PyOpenWorm
     data object.
     """
     graph_data = data_pool.get_graph_data()
