@@ -22,4 +22,12 @@ Please be sure to look at the contents of `requirements.txt` for certain depende
   * Create verification & validation tests to prove matching of the models with experimental data using SciUnit.  
 * **Integration with Simulation Platform**
   * Export models in NeuroML2 for storage in PyOpenWorm.
-  * Built data access pipeline for c302 to access ion channel models from PyOpenWorm.   
+  * Built data access pipeline for c302 to access ion channel models from PyOpenWorm.  
+
+## Repository contents
+* channelworm/
+* data/- spread sheet with extensive curated information about ion channels
+* docs/ Documentation for plot digitization, parameter extraction, and validation tools.  
+* models/ NeuroML2 files generated from the parameter fitting process.  These are temporarily housed here, but will ultimately be accessed by the simulation platform through [PyOpenWorm](https://github.com/openworm/pyopenworm).  
+* scripts/
+* tests/ standard software tests as well as model validation tests. Some of the tests in this folder are unit / integration tests.  The model validation tests in the Python framework [SciUnit](https://github.com/scidash/sciunit) have now been moved to a separate, project-wide repository for housing and running model validation tests, simply called [openworm/tests](https://github.com/openworm/tests).  
