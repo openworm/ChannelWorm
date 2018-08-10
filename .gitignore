@@ -95,3 +95,12 @@ ga_statistics.csv
 *.pickle
 *.png
 *.xml
+
+# Other
+channelworm/fitter/examples/.ipynb_checkpoints/*.*
+channelworm/fitter/examples/*.dat
+channelworm/fitter/examples/*.xml
+channelworm/fitter/examples/*.png
+*.pickle
+*.aux
+*.synctex.gz
