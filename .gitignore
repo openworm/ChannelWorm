@@ -87,3 +87,7 @@ channelworm/fitter/examples/*.dat
 channelworm/fitter/examples/*.xml
 channelworm/fitter/examples/*.png
 *.pickle
+
+# LaTeX Files
+*.aux
+*.synctex.gz
