@@ -38,4 +38,7 @@ install:
 
 script:
   - py.test .
+  - sciunit run
+  - sciunit make-nb
+  - sciunit run-nb
 
