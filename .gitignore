@@ -81,6 +81,10 @@ dist/*.egg
 # ignore build/ directory
 build/
 
+tests/scidash/.ipynb_checkpoints
+tests/scidash/*.dat
+tests/scidash/scidash.ipynb
+
 # Other
 channelworm/fitter/examples/.ipynb_checkpoints/*.*
 channelworm/fitter/examples/*.dat

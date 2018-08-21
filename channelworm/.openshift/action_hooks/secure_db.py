@@ -41,4 +41,4 @@ c.close()
 conn.close()
 
 # Print the new password info
-print "Django application credentials:\n\tuser: admin\n\t" + new_pass
+print("Django application credentials:\n\tuser: admin\n\t" + new_pass)

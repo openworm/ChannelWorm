@@ -281,7 +281,7 @@ class GraphDataList(ListView):
     context_object_name = 'graph_data'
 
     def get_queryset(self):
-        print self.kwargs
+        print(self.kwargs)
         self.graph = get_object_or_404(Graph, id=self.kwargs['graph_id'])
         return GraphData.objects.filter(graph=self.graph)
 
@@ -295,9 +295,9 @@ class GraphDataDelete(DeleteView):
 
 def save_graph_data(request):
     response_data = {'status': 'error', 'result': 'Saving graph data has been failed'}
-    print response_data
+    print(response_data)
     if request.method == 'POST':
-        print "is post"
+        print("is post")
         graph = get_object_or_404(Graph, pk=request.POST.get("graph_id"))
         data = GraphData(graph=graph, series_name=request.POST.get("series_name"),
                          series_data=request.POST.get("series_data"))

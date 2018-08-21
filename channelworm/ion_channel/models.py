@@ -9,7 +9,7 @@ class ParamDict(models.Model):
         return self.name
 
 class KeyVal(models.Model):
-    container = models.ForeignKey(ParamDict, db_index=True)
+    container = models.ForeignKey(ParamDict, db_index=True, on_delete=models.CASCADE)
     key = models.CharField(max_length=240, db_index=True)
     value = models.CharField(max_length=240, db_index=True)
     # references = models.ManyToManyField(Reference)
@@ -129,7 +129,7 @@ class Reference(models.Model):
     pages = models.CharField(max_length=300,blank=True, null=True)
     url = models.URLField(blank=True, null=True)
     create_date = models.DateTimeField(auto_now=True)
-    username = models.ForeignKey(User,verbose_name='Contributor')
+    username = models.ForeignKey(User,verbose_name='Contributor',on_delete=models.CASCADE)
     ion_channels = models.ManyToManyField(IonChannel,blank=True)
     cells = models.ManyToManyField(Cell,blank=True)
     subject = models.CharField(max_length=300,choices=Reference_Type_CHOICES)
@@ -140,22 +140,22 @@ class Reference(models.Model):
 
 
 class CellChannel(models.Model):
-    cell = models.ForeignKey(Cell)
-    ion_channel = models.ForeignKey(IonChannel)
+    cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
+    ion_channel = models.ForeignKey(IonChannel,on_delete=models.CASCADE)
     channel_density = models.FloatField(blank=True, null=True,verbose_name='Density of the channel in cell (1/m2)')
-    reference = models.ForeignKey(Reference)
+    reference = models.ForeignKey(Reference,on_delete=models.CASCADE)
 
     def __unicode__(self):
-        return "self.cell" + ", " + "self.ion_channel"
+        return repr(self.cell) + ", " + repr(self.ion_channel)
 
 
 # TODO: Separate experiment conditions from patch clamp
 
 class Experiment(models.Model):
-    reference = models.ForeignKey(Reference)
+    reference = models.ForeignKey(Reference,on_delete=models.CASCADE)
     create_date = models.DateTimeField()
     last_update = models.DateTimeField(auto_now=True)
-    username = models.ForeignKey(User,verbose_name='Contributer')
+    username = models.ForeignKey(User,verbose_name='Contributer', on_delete=models.CASCADE)
     comments = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
@@ -174,11 +174,11 @@ Patch_Type_CHOICES = (
 # TODO: Consider measurement fields: https://pypi.python.org/pypi/django-measurement
 
 class PatchClamp(models.Model):
-    experiment = models.ForeignKey(Experiment)
-    ion_channel = models.ForeignKey(IonChannel)
+    experiment = models.ForeignKey(Experiment,on_delete=models.CASCADE)
+    ion_channel = models.ForeignKey(IonChannel,on_delete=models.CASCADE)
     type = models.CharField(max_length=200,choices=PatchClamp_Type_CHOICES)
     patch_type = models.CharField(max_length=200,choices=Patch_Type_CHOICES)
-    cell = models.ForeignKey(Cell, blank=True, null=True,verbose_name='Type of the cell (e.g. muscle, ADAL, Xenopus Oocyte)')
+    cell = models.ForeignKey(Cell, blank=True, null=True,on_delete=models.CASCADE,verbose_name='Type of the cell (e.g. muscle, ADAL, Xenopus Oocyte)')
     duration = models.FloatField(verbose_name='Patch-Clamp Duration (ms)')
     deltat = models.FloatField(default=0.01, verbose_name='Time interval-Deltat (ms)')
     start_time = models.FloatField(default=0,verbose_name='Start time (ms)')
@@ -198,7 +198,7 @@ class PatchClamp(models.Model):
     pipette_solution = models.TextField(blank=True, null=True, verbose_name='Pipette Solution (e.g. 120e-3 KCl, 20e-3 KOH,...)')
 
     def __unicode__(self):
-        return "self.ion_channel" + " " + "self.experiment" + " " + self.type
+        return repr(self.ion_channel) + " " + repr(self.experiment) + " " + self.type
 
 
 # TODO: consider multiple channels
@@ -220,8 +220,8 @@ Axis_Type_CHOICES = (
 )
 
 class Graph(models.Model):
-    experiment = models.ForeignKey(Experiment, null=True, blank=True)
-    patch_clamp = models.ForeignKey(PatchClamp, null=True, blank=True)
+    experiment = models.ForeignKey(Experiment, null=True, blank=True, on_delete=models.CASCADE)
+    patch_clamp = models.ForeignKey(PatchClamp, null=True, blank=True, on_delete=models.CASCADE)
 
     x_axis_type = models.CharField(max_length=50, choices=Axis_Type_CHOICES)
     x_axis_unit = models.CharField(max_length=50,verbose_name='Axis unit in the original figure (e.g. ms)')
@@ -245,7 +245,7 @@ class Graph(models.Model):
 
 
 class GraphData(models.Model):
-    graph = models.ForeignKey(Graph)
+    graph = models.ForeignKey(Graph, on_delete=models.CASCADE)
     series_name = models.CharField(max_length=200)
     series_data = models.TextField()
 
@@ -271,11 +271,11 @@ Model_Type_CHOICES = (
     ('Markov', 'Markov')
 )
 class IonChannelModel(models.Model):
-    channel_name = models.ForeignKey(IonChannel)
-    cell_name = models.ForeignKey(Cell, blank=True, null=True)
+    channel_name = models.ForeignKey(IonChannel, on_delete=models.CASCADE)
+    cell_name = models.ForeignKey(Cell, blank=True, null=True, on_delete=models.CASCADE)
     model_type = models.CharField(max_length=300,choices=Model_Type_CHOICES, default='HH')
     modeling_type = models.CharField(max_length=300,choices=Modeling_Method_CHOICES,default='Experimental')
-    experiment = models.ForeignKey(Experiment)
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     graphs = models.ManyToManyField(Graph)
     username = models.ManyToManyField(User,verbose_name='Curator(s)')
     date = models.DateTimeField(auto_now=True)
@@ -285,11 +285,12 @@ class IonChannelModel(models.Model):
     references = models.ManyToManyField(Reference)
 
     def __unicode__(self):
-        return "self.channel_name" + " " + "self.experiment"
+        return repr(self.channel_name) + " " + repr(self.experiment)
+
 
 class Protein(models.Model):
     name = models.CharField(max_length=300, unique=True)
-    ion_channel = models.ForeignKey(IonChannel)
+    ion_channel = models.ForeignKey(IonChannel, on_delete=models.CASCADE)
     sequence = models.TextField(blank=True, null=True)
     fasta = models.TextField(blank=True, null=True)
     gi = models.CharField(max_length=300,blank=True, null=True,verbose_name='GI number')

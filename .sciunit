@@ -1,0 +1,17 @@
+[misc]
+config-version = 1.0
+nb-name = scidash
+matplotlib = inline
+
+[root]
+path = ./tests/scidash
+
+[models]
+module = models
+
+[tests]
+module = tests
+
+[suites]
+module = suites
+

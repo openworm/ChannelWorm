@@ -18,5 +18,8 @@ setup(
         'pillow',
         'pytest',
         'pytest-django',
+        'django',
+        'django-formtools',
+        'django-sql-explorer',
     ]
 )
