@@ -84,3 +84,14 @@ build/
 tests/scidash/.ipynb_checkpoints
 tests/scidash/*.dat
 tests/scidash/scidash.ipynb
+
+# Other
+channelworm/fitter/examples/.ipynb_checkpoints/*.*
+channelworm/fitter/examples/*.dat
+channelworm/fitter/examples/*.xml
+channelworm/fitter/examples/*.png
+*.pickle
+
+# LaTeX Files
+*.aux
+*.synctex.gz

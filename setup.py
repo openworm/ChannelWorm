@@ -2,6 +2,7 @@ from setuptools import setup
 
 setup(
     name='ChannelWorm',
+    version='0.1',
     packages=[
         'channelworm',
         'channelworm.ion_channel',

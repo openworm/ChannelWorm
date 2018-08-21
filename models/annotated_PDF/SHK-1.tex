@@ -1,0 +1,79 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Welcome to Overleaf --- just edit your article on the left,
+% and we'll compile it for you on the right. If you give 
+% someone the link to this page, they can edit at the same
+% time. See the help menu above for more info. Enjoy!
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% For more detailed article preparation guidelines, please see:
+% http://f1000research.com/author-guidelines
+
+\documentclass[10pt,a4paper]{article}
+\usepackage[procnames]{listings}
+\usepackage{url}
+\usepackage{color}
+\usepackage[numbers]{natbib}
+
+\definecolor{keywords}{RGB}{255,0,90}
+\definecolor{comments}{RGB}{0,0,113}
+\definecolor{red}{RGB}{160,0,0}
+\definecolor{blue}{RGB}{0,0,160}
+\definecolor{green}{RGB}{0,150,0}
+\definecolor{verylightgray}{RGB}{240, 240, 240}
+
+\usepackage[margin=3cm]{geometry}
+\usepackage{float}
+ 
+\lstset{language=Python, 
+	backgroundcolor=\color{verylightgray},
+        basicstyle=\ttfamily\footnotesize, 
+        keywordstyle=\color{keywords},
+        commentstyle=\color{comments},
+        stringstyle=\color{blue},
+        showstringspaces=false,
+        identifierstyle=\color{green},
+        procnamekeys={def,class},
+        numbers=left,
+		stepnumber=1,    
+		firstnumber=1,
+		numberfirstline=true,
+        breaklines=true
+}
+
+%\renewcommand{\floatpagefraction}{.9}
+%\renewcommand{\topfraction}{.9}
+%\renewcommand{\dbltopfraction}{.9}
+%\renewcommand{\bottomfraction}{.9}
+
+\begin{document}
+
+\begin{lstlisting}[
+float=*,
+floatplacement=!htbp,
+language=XML,
+caption={NeuroML File for SHK-1 Ion Channel}\label{lst:simple_test}]
+<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2  https://raw.github.com/NeuroML/NeuroML2/master/Schemas/NeuroML2/NeuroML_v2beta.xsd"
+    id="k_slow">
+
+    <ionChannel id="k_slow" conductance="10pS" type="ionChannelHH" species="k">
+
+        <notes>K slow channel from Boyle and Cohen 2008</notes>
+
+        <gateHHtauInf id="n" instances="1">
+
+            <timeCourse type="fixedTimeCourse" tau="25.0007 ms"/>
+            <steadyState type="HHSigmoidVariable" rate="1" scale="15.8512 mV" midpoint="19.8741 mV"/>
+            
+        </gateHHtauInf>
+        
+    </ionChannel>
+
+</neuroml>
+\end{lstlisting}
+
+\end{document}
