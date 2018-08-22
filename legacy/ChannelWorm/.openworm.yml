@@ -1,23 +1,22 @@
 repo: openworm/ChannelWorm
-shortDescription: "A repository to integrate data, information, scripts, and models of ion channels in C. elegans"
+shortDescription: "Tools and curated datasets to build quantitative models of C. elegans ion channels"
 coordinator: stephen@openworm.org
 documentation: "https://channelworm.readthedocs.io/en/latest/"
-earnable-badges: 
+earnable-badges:
   - "http://www.badgelist.com/OpenWorm/Hodgkin-Huxley-Tutorial-Graduate"
-gitter: "http://gitter.im/openworm/ChannelWorm"
-keywords: 
+keywords:
   - database
   - data
   - cells
   - channels
-languages: 
+languages:
   - python
-members: 
+members:
   - vahidghayoomi@gmail.com
-  - milad.jafary@gmail.com 
-outputs: 
+  - milad.jafary@gmail.com
+outputs:
   - openworm/muscle_model
   - openworm/CElegansNeuroML
-parent: 
+parent:
   - openworm/OpenWorm
 tests: true

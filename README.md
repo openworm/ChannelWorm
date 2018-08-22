@@ -1,14 +1,10 @@
 # ChannelWorm
 
-[![Build Status](https://travis-ci.org/openworm/ChannelWorm.svg?branch=dev)](https://travis-ci.org/openworm/ChannelWorm)
-
 The aim of **ChannelWorm** is to build
 quantitative models of ion channel behavior in _C. elegans_ neurons.  The resulting models are exported to [**PyOpenWorm**](https://github.com/openworm/pyopenworm), OpenWorm's data access layer for storing both static physiological information as well as dynamic models about the nematode.  Ultimately, these models are used by [**c302**](https://github.com/openworm/c302) for simulating nervous system dynamics.  
 
 ## Installation
-
-To install this project, clone it locally with `git` and run `pip install -r requirements.txt` at a console.
-Please be sure to look at the contents of `requirements.txt` for certain dependencies cannot be installed automatically via `pip`.
+There are currently no installation scripts.  Simply clone the repository to begin working with the data and associated code.
 
 ## Objectives
 * **Information Management of Primary Data Sources**
@@ -21,13 +17,16 @@ Please be sure to look at the contents of `requirements.txt` for certain depende
   * Estimate kinetics for ion channels with no patch clamp data available based on homologous channel types.  
   * Create verification & validation tests to prove matching of the models with experimental data using SciUnit.  
 * **Integration with Simulation Platform**
-  * Export models in NeuroML2 for storage in PyOpenWorm.
-  * Built data access pipeline for c302 to access ion channel models from PyOpenWorm.  
+  * Export models in NeuroML2 for storage in [PyOpenWorm](https://github.com/openworm/pyopenworm).
+  * Build data access pipeline for [c302](https://github.com/openworm/c302) to access ion channel models from [PyOpenWorm](https://github.com/openworm/pyopenworm).  
 
 ## Repository Contents
-* channelworm/- a variety of tools for digitizing plots, fitting parameters, and exporting models.  
-* data/- spreadsheet with curated information about ion channels.
-* docs/- documentation for plot digitization, parameter extraction, and validation tools.  
-* models/- NeuroML2 files generated from the parameter fitting process.  These are temporarily housed here, but will ultimately be accessed by the simulation platform through [PyOpenWorm](https://github.com/openworm/pyopenworm).  
-* scripts/- miscellaneous scripts for channel modeling.
-* tests/- standard software tests as well as model validation tests. Some of the tests in this folder are unit / integration tests.  The model validation tests in the Python framework [SciUnit](https://github.com/scidash/sciunit) have now been moved to a separate, project-wide repository for housing and running model validation tests, simply called [openworm/tests](https://github.com/openworm/tests).  
+* docs/- documentation for plot digitization, parameter extraction, and validation tools.  Deployed to [channelworm.readthedocs.io](https://channelworm.readthedocs.io)
+* legacy/- contents of previous iteration of ChannelWorm repository.  See associated issues and milestones for tasks related to incorporating this work into the current setup.
+* parameter_fitting/- genetic algorithms for extracting parameters for Hodgkin-Huxley type ion channel models.
+* raw_data/- spreadsheets with curated data about ion channels, relevant plots from publications, and digitized time series to be used for parameter extraction.
+* NML2_models/- NeuroML2 files generated from the parameter fitting process.
+* tutorials_etc/- learning resources for ion channel modeling.  
+
+## Release Notes
+* _8/22/2018_: Major restructuring of repository.  Previous version of ChannelWorm has been moved to legacy folder.  New structure is organized around the raw data exported from [Chopen](chopen.herokuapp.com).  
